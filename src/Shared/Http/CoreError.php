@@ -10,7 +10,8 @@ declare(strict_types=1);
 namespace WooNyx\Shared\Http;
 
 /**
- * Why a call failed: the core's `error_code`, or one of the plugin's own codes below when no usable answer came back.
+ * Why a call failed: the core's `error_code`, or one of the plugin's own codes below when no usable answer came back
+ * or a check before sending failed.
  *
  * The core's `message` and the raw body are deliberately not kept: the owner sees a translated message per code
  * (ErrorMessages) and logs carry only the code, the HTTP status and the request id.
@@ -56,6 +57,36 @@ final class CoreError {
 	 * An error status without a usable `error_code` (e.g. an HTML page from a proxy).
 	 */
 	public const UNKNOWN_ERROR = 'unknown_error';
+
+	/**
+	 * The text entered is not a license key (`WN-` + four groups of six characters); nothing was sent.
+	 */
+	public const LICENSE_KEY_FORMAT = 'license_key_format';
+
+	/**
+	 * The site's address is plain http outside a local or development environment; nothing was sent.
+	 */
+	public const SITE_NOT_HTTPS = 'site_not_https';
+
+	/**
+	 * `rest_url()` is not on the same scheme, host and port as `site_url()`; nothing was sent.
+	 */
+	public const REST_URL_MISMATCH = 'rest_url_mismatch';
+
+	/**
+	 * The WooCommerce REST key for the core could not be created; nothing was sent.
+	 */
+	public const REST_KEY_FAILED = 'rest_key_failed';
+
+	/**
+	 * The core activated the store, but the connection could not be saved: activate again.
+	 */
+	public const CONNECTION_NOT_SAVED = 'connection_not_saved';
+
+	/**
+	 * The core issued a new shared secret, but it could not be saved; the current one still works: rotate again.
+	 */
+	public const SECRET_NOT_SAVED = 'secret_not_saved';
 
 	private const CODE_PATTERN = '/^[a-z][a-z0-9_]{0,63}$/D';
 

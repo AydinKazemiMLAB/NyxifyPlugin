@@ -10,7 +10,17 @@ declare(strict_types=1);
 namespace WooNyx;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use WooNyx\Features\Settings\DeactivationWarning;
 use WooNyx\Features\Settings\SettingsPage;
+use WooNyx\Features\Store\ActivationHandler;
+use WooNyx\Features\Store\Activator;
+use WooNyx\Features\Store\Deactivator;
+use WooNyx\Features\Store\LicenseKey;
+use WooNyx\Features\Store\SecretRotationHandler;
+use WooNyx\Features\Store\SecretRotator;
+use WooNyx\Features\Store\StatusRefreshHandler;
+use WooNyx\Features\Store\StatusService;
+use WooNyx\Shared\Logging\Logger;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Options\SecretStore;
 use WooNyx\Shared\Security\Encryptor;
@@ -48,6 +58,17 @@ final class Plugin {
 		add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'plugins_loaded', array( $this, 'boot' ) );
+		register_deactivation_hook( $this->plugin_file, array( $this, 'deactivate' ) );
+	}
+
+	/**
+	 * Tells the core the plugin was deactivated and, once it confirms, forgets the connection (see Deactivator). Runs
+	 * whether or not WooCommerce is active, and never throws.
+	 *
+	 * @param bool $network_wide Whether the plugin is being deactivated for the whole network.
+	 */
+	public function deactivate( bool $network_wide = false ): void {
+		Deactivator::run( $network_wide, plugin_basename( $this->plugin_file ) );
 	}
 
 	/**
@@ -71,13 +92,26 @@ final class Plugin {
 	 * Starts the features once every plugin is loaded, or explains why it can't.
 	 */
 	public function boot(): void {
+		// Deactivating stops the bots whether or not WooCommerce is active, so the warning doesn't wait for it.
+		if ( is_admin() ) {
+			( new DeactivationWarning( $this->plugin_file, new SecretStore( Encryptor::for_site() ) ) )->register();
+		}
+
 		if ( ! self::woocommerce_is_ready() ) {
 			add_action( 'admin_notices', array( $this, 'render_woocommerce_notice' ) );
 			return;
 		}
 
 		if ( is_admin() ) {
-			( new SettingsPage( $this->plugin_file, new SecretStore( Encryptor::for_site() ), CoreClient::configured_base_url() ) )->register();
+			$store    = new SecretStore( Encryptor::for_site() );
+			$core_url = CoreClient::configured_base_url();
+			$status   = new StatusService( new CoreClient( $store, $core_url ), new Logger() );
+
+			( new SettingsPage( $this->plugin_file, $store, $core_url, $status ) )->register();
+			( new StatusRefreshHandler() )->register();
+			// The activator and the rotator are built only when their form is posted.
+			( new ActivationHandler( static fn( LicenseKey $license, int $user_id ) => Activator::for_site()->activate( $license, $user_id ) ) )->register();
+			( new SecretRotationHandler( static fn() => SecretRotator::for_site()->rotate() ) )->register();
 		}
 	}
 

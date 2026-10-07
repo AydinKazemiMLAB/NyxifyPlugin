@@ -248,9 +248,10 @@ final class CoreClient {
 	}
 
 	/**
-	 * Plain http only on a developer's machine (WP_ENVIRONMENT_TYPE `local` or `development`).
+	 * Plain http only on a developer's machine (WP_ENVIRONMENT_TYPE `local` or `development`); the activation applies
+	 * the same rule to the shop's own address.
 	 */
-	private static function allows_plain_http(): bool {
+	public static function allows_plain_http(): bool {
 		return in_array( wp_get_environment_type(), array( 'local', 'development' ), true );
 	}
 

@@ -5,8 +5,10 @@ store's products through Telegram, Bale and Rubika bots. The plugin activates th
 catalog and order changes to the core, and gives the store owner a settings page for the bots, the admin PIN and the
 bot admins.
 
-> Status: phase 1 (skeleton). The plugin installs, shows an empty settings page under **WooCommerce > WooNyx** and
-> sends nothing to the core. Plans and progress: `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
+> Status: phase 2 (activation and connection), version 0.2.0. On **WooCommerce > WooNyx** the owner enters a license
+> key and the store is connected to the core; the page shows the store's status, checks the connection and rotates
+> the shared secret; deactivating the plugin tells the core, and uninstalling removes everything the plugin stored.
+> Bots, catalog and order sync come in the next phases. Plans and progress: `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
 > WordPress.org doesn't accept slugs starting with `woo`, so the public name, slug and text domain change before the
 > first release.
 
@@ -41,16 +43,29 @@ On Windows run Composer from PowerShell or cmd (Git Bash may not find `php`).
 | `WOONYX_API_BASE_URL` | `https://api.woonyx.nyxon.tech:88` (the test core, until a production URL exists) | The core's address, without `/api/v1`. Must be https unless `WP_ENVIRONMENT_TYPE` is `local` or `development`. |
 | `WOONYX_ENCRYPTION_KEY` | the site's `AUTH_KEY`/`AUTH_SALT` (`wp_salt('auth')`) | Key material for the encrypted options. Changing it, or the salts when it isn't set, means activating the store again. |
 
+## Connecting a store
+
+1. **WooCommerce > WooNyx**: enter the license key and activate. The plugin creates a read/write WooCommerce REST key
+   for the current admin (deleting that user or the key disconnects the shop) and sends it to the core with the
+   site's URLs; the core answers with the store id and a shared secret, kept encrypted. The license key is not kept.
+2. The page then shows the store's status (license, plan, platforms, catalog sync), cached for 5 minutes; "Check
+   connection" fetches it again and "Rotate secret" replaces the shared secret.
+3. Deactivating the plugin tells the core (the bots stop) and removes the connection and the REST key; if the core
+   can't be reached or the subscription has expired, both stay until the plugin is deleted. Connecting again needs
+   the license key. On a network, each site is activated on its own.
+
 ## Layout
 
 ```
 woonyx.php            plugin header, constants, Composer autoload, boot
-uninstall.php         removes the plugin's options (every site of a multisite)
-src/Plugin.php        hooks: WooCommerce check, HPOS compatibility, translations, features
+uninstall.php         removes the plugin's REST key, options and transients (every site of a multisite)
+src/Plugin.php        hooks: WooCommerce check, HPOS compatibility, translations, deactivation, features
 src/Shared/           Security (Encryptor, HmacSigner), Options (SecretStore), Http (CoreClient, errors),
-                      Logging (Logger), Admin (AdminAction: nonce and capability checks)
-src/Features/         Settings (the admin page); later Store, Bots, Catalog, Orders, Sync
+                      Logging (Logger), Admin (AdminAction: nonce and capability checks; Notices: one-time results)
+src/Features/         Settings (the admin page, status section, deactivation warning), Store (license key, REST key,
+                      activation, status, secret rotation, deactivation); later Bots, Catalog, Orders, Sync
 assets/css/           admin styles (logical CSS properties, RTL-safe)
+assets/js/            confirmations: secret rotation (settings page), deactivation (plugins list)
 languages/            woonyx.pot and the Persian translation
 tests/Unit/           PHPUnit + Brain Monkey
 bin/build-zip.php     the zip builder behind `composer build`
@@ -66,6 +81,9 @@ docs/                 handoff, phase plans, the core's OpenAPI spec
   core's raw responses are never shown: every `error_code` has a translated message.
 - Secrets (shared secret, admin PIN) are stored encrypted with libsodium and never autoloaded, logged or displayed;
   the license key and bot tokens are not stored at all. The logger redacts secret-looking values as a safety net.
+- The WooCommerce REST key the core uses is created by the plugin for the admin who activates; its consumer key and
+  secret exist only in memory for the activation request. The plugin only ever deletes the key it created (its id is
+  kept in `woonyx_rest_key_id`), never a key made by hand.
 
 The contract with the core: `.agents/skills/woonyx-plugin-contract/SKILL.md`, `.agents/skills/woonyx-security/SKILL.md`
 and `docs/core-api/openapi.json`. Background and decisions: `docs/WooNyxPlugin-HANDOFF.md`.

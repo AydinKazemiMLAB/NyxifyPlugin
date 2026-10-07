@@ -10,29 +10,264 @@ declare(strict_types=1);
 namespace WooNyx\Tests\Unit;
 
 use Brain\Monkey\Functions;
+use Mockery;
+use Mockery\MockInterface;
+use WooNyx\Features\Store\RestKeys;
+use WooNyx\Features\Store\StatusService;
 use WooNyx\Shared\Options\SecretStore;
 use WooNyx\Uninstaller;
 
 /**
- * Every option is deleted, on one site or on each site of a network.
+ * The plugin's REST key, options and transients are deleted, on one site or on each site of a network, and nothing is
+ * sent to the core. Options and transients are kept per site; $wpdb is mocked.
  */
 final class UninstallerTest extends TestCase {
 
-	public function test_single_site_deletes_every_option(): void {
+	private const MAIN_SITE = 1;
+
+	/**
+	 * In-memory wp_options per site: site id => name => value.
+	 *
+	 * @var array<int, array<string, mixed>>
+	 */
+	private array $options = array();
+
+	/**
+	 * Transients deleted, as "site:name".
+	 *
+	 * @var list<string>
+	 */
+	private array $deleted_transients = array();
+
+	/**
+	 * REST keys deleted, as "table:key id".
+	 *
+	 * @var list<string>
+	 */
+	private array $deleted_keys = array();
+
+	/**
+	 * Queries run through $wpdb->query().
+	 *
+	 * @var list<string>
+	 */
+	private array $queries = array();
+
+	/**
+	 * Calls to $wpdb->suppress_errors().
+	 *
+	 * @var list<bool>
+	 */
+	private array $suppress_calls = array();
+
+	/**
+	 * The current site, and the sites switched from.
+	 *
+	 * @var list<int>
+	 */
+	private array $site_stack = array( self::MAIN_SITE );
+
+	/**
+	 * Mocked database.
+	 *
+	 * @var \wpdb&MockInterface
+	 */
+	private $wpdb;
+
+	protected function setUp(): void {
+		parent::setUp();
+
 		Functions\when( 'is_multisite' )->justReturn( false );
-		Functions\expect( 'delete_option' )->once()->with( SecretStore::OPTION_CONNECTION );
-		Functions\expect( 'delete_option' )->once()->with( SecretStore::OPTION_ADMIN_PIN );
+		Functions\when( 'get_option' )->alias(
+			fn( string $name, $default_value = false ) => $this->options[ $this->site() ][ $name ] ?? $default_value
+		);
+		Functions\when( 'delete_option' )->alias(
+			function ( string $name ): bool {
+				unset( $this->options[ $this->site() ][ $name ] );
+				return true;
+			}
+		);
+		Functions\when( 'delete_transient' )->alias(
+			function ( string $name ): bool {
+				$this->deleted_transients[] = $this->site() . ':' . $name;
+				return true;
+			}
+		);
+		Functions\when( 'switch_to_blog' )->alias(
+			function ( int $site_id ): bool {
+				$this->site_stack[] = $site_id;
+				$this->set_prefix();
+				return true;
+			}
+		);
+		Functions\when( 'restore_current_blog' )->alias(
+			function (): bool {
+				array_pop( $this->site_stack );
+				$this->set_prefix();
+				return true;
+			}
+		);
+		Functions\expect( 'wp_remote_request' )->never();
+
+		$this->wpdb = Mockery::mock( \wpdb::class );
+		$this->set_prefix();
+		$this->wpdb->shouldReceive( 'delete' )->andReturnUsing(
+			function ( string $table, array $where ) {
+				$this->deleted_keys[] = $table . ':' . $where['key_id'];
+				return 1;
+			}
+		);
+		$this->wpdb->shouldReceive( 'suppress_errors' )->andReturnUsing(
+			function ( bool $suppress ): bool {
+				$this->suppress_calls[] = $suppress;
+				return false;
+			}
+		);
+		$this->wpdb->shouldReceive( 'esc_like' )->andReturnUsing( fn( string $text ): string => addcslashes( $text, '_%\\' ) );
+		$this->wpdb->shouldReceive( 'prepare' )->andReturnUsing(
+			fn( string $query, string ...$args ): string => vsprintf( str_replace( '%s', "'%s'", $query ), $args )
+		);
+		$this->wpdb->shouldReceive( 'query' )->andReturnUsing(
+			function ( string $query ): int {
+				$this->queries[] = $query;
+				return 0;
+			}
+		);
+		$GLOBALS['wpdb'] = $this->wpdb; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The test's database.
+	}
+
+	protected function tearDown(): void {
+		unset( $GLOBALS['wpdb'] );
+		parent::tearDown();
+	}
+
+	private function site(): int {
+		return $this->site_stack[ count( $this->site_stack ) - 1 ];
+	}
+
+	/**
+	 * Sets the table prefixes of the current site, as WordPress does.
+	 */
+	private function set_prefix(): void {
+		$this->wpdb->prefix  = self::MAIN_SITE === $this->site() ? 'wp_' : 'wp_' . $this->site() . '_';
+		$this->wpdb->options = $this->wpdb->prefix . 'options';
+	}
+
+	/**
+	 * Everything the plugin stores on a site, plus an option of someone else.
+	 *
+	 * @param int $site_id Site id.
+	 * @param int $key_id  Id of the plugin's REST key.
+	 */
+	private function install( int $site_id, int $key_id = 9 ): void {
+		$this->options[ $site_id ] = array(
+			SecretStore::OPTION_CONNECTION => 'v1:connection',
+			SecretStore::OPTION_ADMIN_PIN  => 'v1:pin',
+			RestKeys::OPTION_KEY_ID        => $key_id,
+			'blogname'                     => 'Shop',
+		);
+	}
+
+	/**
+	 * The query that deletes the notices of a site.
+	 *
+	 * @param string $prefix Table prefix.
+	 */
+	private static function notices_query( string $prefix ): string {
+		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\_transient\\_woonyx\\_notice\\_%' OR option_name LIKE '\\_transient\\_timeout\\_woonyx\\_notice\\_%'";
+	}
+
+	public function test_single_site_deletes_the_rest_key_options_and_transients(): void {
+		$this->install( self::MAIN_SITE );
 
 		Uninstaller::run();
+
+		self::assertSame( array( 'wp_woocommerce_api_keys:9' ), $this->deleted_keys );
+		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
+		self::assertSame( array( '1:' . StatusService::TRANSIENT ), $this->deleted_transients );
+		self::assertSame( array( self::notices_query( 'wp_' ) ), $this->queries );
+	}
+
+	public function test_database_errors_are_hidden_while_deleting_the_key_and_restored(): void {
+		$this->install( self::MAIN_SITE );
+
+		Uninstaller::run();
+
+		self::assertSame( array( true, false ), $this->suppress_calls );
+	}
+
+	public function test_without_a_remembered_key_no_key_is_deleted(): void {
+		$this->install( self::MAIN_SITE );
+		unset( $this->options[ self::MAIN_SITE ][ RestKeys::OPTION_KEY_ID ] );
+
+		Uninstaller::run();
+
+		self::assertSame( array(), $this->deleted_keys );
+		self::assertSame( array(), $this->suppress_calls );
+		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
+	}
+
+	public function test_a_site_that_never_connected_is_cleaned_too(): void {
+		Uninstaller::run();
+
+		self::assertSame( array(), $this->deleted_keys );
+		self::assertSame( array( '1:' . StatusService::TRANSIENT ), $this->deleted_transients );
+		self::assertCount( 1, $this->queries );
+	}
+
+	public function test_every_option_and_transient_is_listed(): void {
+		self::assertSame(
+			array( SecretStore::OPTION_CONNECTION, SecretStore::OPTION_ADMIN_PIN, RestKeys::OPTION_KEY_ID ),
+			Uninstaller::OPTIONS
+		);
+		self::assertSame( array( StatusService::TRANSIENT ), Uninstaller::TRANSIENTS );
 	}
 
 	public function test_multisite_cleans_each_site(): void {
 		Functions\when( 'is_multisite' )->justReturn( true );
-		Functions\when( 'get_sites' )->justReturn( array( 1, 2 ) );
-		Functions\expect( 'switch_to_blog' )->twice();
-		Functions\expect( 'restore_current_blog' )->twice();
-		Functions\expect( 'delete_option' )->times( 2 * count( Uninstaller::OPTIONS ) );
+		Functions\when( 'get_sites' )->alias(
+			function ( array $args ): array {
+				self::assertSame( 'ids', $args['fields'] );
+				self::assertSame( 0, $args['number'] );
+				return array( '1', '2', '3' );
+			}
+		);
+		$this->install( 1, 9 );
+		$this->install( 2, 14 );
 
 		Uninstaller::run();
+
+		self::assertSame( array( 'wp_woocommerce_api_keys:9', 'wp_2_woocommerce_api_keys:14' ), $this->deleted_keys );
+		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[1] );
+		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[2] );
+		self::assertSame(
+			array( '1:' . StatusService::TRANSIENT, '2:' . StatusService::TRANSIENT, '3:' . StatusService::TRANSIENT ),
+			$this->deleted_transients
+		);
+		self::assertSame(
+			array( self::notices_query( 'wp_' ), self::notices_query( 'wp_2_' ), self::notices_query( 'wp_3_' ) ),
+			$this->queries
+		);
+		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
+		self::assertSame( 'wp_', $this->wpdb->prefix );
+	}
+
+	public function test_a_failing_site_still_restores_the_current_site(): void {
+		Functions\when( 'is_multisite' )->justReturn( true );
+		Functions\when( 'get_sites' )->justReturn( array( 2 ) );
+		Functions\when( 'delete_transient' )->alias(
+			static function (): bool {
+				throw new \RuntimeException( 'cache down' );
+			}
+		);
+
+		try {
+			Uninstaller::run();
+			self::fail( 'The exception was swallowed.' );
+		} catch ( \RuntimeException $e ) {
+			self::assertSame( 'cache down', $e->getMessage() );
+		}
+
+		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
 	}
 }

@@ -68,6 +68,12 @@ final class ErrorMessages {
 		CoreError::UNEXPECTED_REDIRECT,
 		CoreError::INVALID_RESPONSE,
 		CoreError::UNKNOWN_ERROR,
+		CoreError::LICENSE_KEY_FORMAT,
+		CoreError::SITE_NOT_HTTPS,
+		CoreError::REST_URL_MISMATCH,
+		CoreError::REST_KEY_FAILED,
+		CoreError::CONNECTION_NOT_SAVED,
+		CoreError::SECRET_NOT_SAVED,
 	);
 
 	/**
@@ -107,6 +113,12 @@ final class ErrorMessages {
 			CoreError::UNEXPECTED_REDIRECT      => __( 'The WooNyx server answered with a redirect, which is not followed. Check the server address.', 'woonyx' ),
 			CoreError::INVALID_RESPONSE         => __( 'The WooNyx server sent an unexpected answer. Try again later.', 'woonyx' ),
 			CoreError::UNKNOWN_ERROR            => __( 'Something went wrong while talking to the WooNyx server. Try again later.', 'woonyx' ),
+			CoreError::LICENSE_KEY_FORMAT       => __( 'This is not a WooNyx license key. A license key looks like WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX.', 'woonyx' ),
+			CoreError::SITE_NOT_HTTPS           => __( 'WooNyx needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again.', 'woonyx' ),
+			CoreError::REST_URL_MISMATCH        => __( 'This site’s REST API is not on the same address as the site, so WooNyx cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port.', 'woonyx' ),
+			CoreError::REST_KEY_FAILED          => __( 'The WooCommerce REST API key WooNyx needs could not be created. Try again; if it keeps failing, check the site’s database error log.', 'woonyx' ),
+			CoreError::CONNECTION_NOT_SAVED     => __( 'The store was activated on WooNyx, but the connection could not be saved on this site. Enter your license key again to activate it once more.', 'woonyx' ),
+			CoreError::SECRET_NOT_SAVED         => __( 'WooNyx issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now.', 'woonyx' ),
 
 			// Global.
 			'bad_request'                       => __( 'The WooNyx server rejected the request as invalid. Update the plugin and try again.', 'woonyx' ),

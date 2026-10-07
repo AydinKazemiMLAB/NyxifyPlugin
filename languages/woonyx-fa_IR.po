@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooNyx 0.1.0\n"
+"Project-Id-Version: WooNyx 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: Nyxon\n"
 "Language-Team: Persian\n"
@@ -8,16 +8,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-07T07:08:31+00:00\n"
+"PO-Revision-Date: 2026-10-07T10:13:03+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: woonyx\n"
 
 #. Plugin Name of the plugin
 #: woonyx.php:3
-#: src/Features/Settings/SettingsPage.php:83
-#: src/Features/Settings/SettingsPage.php:84
-#: src/Features/Settings/SettingsPage.php:139
+#: src/Features/Settings/SettingsPage.php:102
+#: src/Features/Settings/SettingsPage.php:103
+#: src/Features/Settings/SettingsPage.php:170
 msgid "WooNyx"
 msgstr "WooNyx"
 
@@ -31,52 +31,241 @@ msgstr "محصولات فروشگاه ووکامرس خود را با ربات�
 msgid "Nyxon"
 msgstr "Nyxon"
 
-#: src/Features/Settings/SettingsPage.php:111
+#: src/Features/Settings/DeactivationWarning.php:62
+msgid "Deactivating WooNyx stops your shop’s bots. To connect again you will need your license key."
+msgstr "غیرفعال کردن WooNyx ربات‌های فروشگاه شما را متوقف می‌کند. برای اتصال دوباره به کلید لایسنس خود نیاز خواهید داشت."
+
+#: src/Features/Settings/DeactivationWarning.php:69
+msgid "When the plugin is deactivated, WooNyx is told and this site’s connection and WooCommerce REST API key are removed. If the WooNyx server can’t be reached, or your subscription has expired, WooNyx keeps the store connected and both stay on this site until you delete the plugin."
+msgstr "وقتی افزونه غیرفعال شود، به WooNyx خبر داده می‌شود و اتصال این سایت و کلید REST API ووکامرس آن حذف می‌شوند. اگر سرور WooNyx در دسترس نباشد یا اشتراک شما منقضی شده باشد، WooNyx فروشگاه را متصل نگه می‌دارد و هر دو تا زمانی که افزونه را حذف کنید روی این سایت می‌مانند."
+
+#: src/Features/Settings/SettingsPage.php:130
 msgid "Settings"
 msgstr "تنظیمات"
 
-#: src/Features/Settings/SettingsPage.php:134
+#: src/Features/Settings/SettingsPage.php:163
 msgid "Sorry, you are not allowed to access this page."
 msgstr "متأسفانه اجازهٔ دسترسی به این صفحه را ندارید."
 
-#: src/Features/Settings/SettingsPage.php:141
+#: src/Features/Settings/SettingsPage.php:174
 msgid "Connection"
 msgstr "اتصال"
 
-#: src/Features/Settings/SettingsPage.php:145
+#: src/Features/Settings/SettingsPage.php:178
 msgid "Status"
 msgstr "وضعیت"
 
-#: src/Features/Settings/SettingsPage.php:149
+#: src/Features/Settings/SettingsPage.php:182
 msgid "WooNyx server"
 msgstr "سرور WooNyx"
 
-#: src/Features/Settings/SettingsPage.php:153
+#: src/Features/Settings/SettingsPage.php:186
 msgid "Set by WOONYX_API_BASE_URL in wp-config.php."
 msgstr "با WOONYX_API_BASE_URL در wp-config.php تعیین شده است."
 
-#: src/Features/Settings/SettingsPage.php:160
+#: src/Features/Settings/SettingsPage.php:197
+#: src/Features/Settings/SettingsPage.php:254
+msgid "Activate again"
+msgstr "فعال‌سازی دوباره"
+
+#: src/Features/Settings/SettingsPage.php:198
+msgid "Use this if the connection stops working. This site keeps its store ID and gets a new shared secret."
+msgstr "اگر اتصال از کار افتاد از این استفاده کنید. شناسه‌ی فروشگاه این سایت همان می‌ماند و یک کلید مشترک تازه می‌گیرد."
+
+#: src/Features/Settings/SettingsPage.php:206
+#: src/Features/Settings/SettingsPage.php:254
+msgid "Activate"
+msgstr "فعال‌سازی"
+
+#: src/Features/Settings/SettingsPage.php:208
 msgid "Nothing is sent to the WooNyx server until you enter a license key."
 msgstr "تا وقتی کلید لایسنس را وارد نکنید، هیچ داده‌ای به سرور WooNyx فرستاده نمی‌شود."
 
-#: src/Features/Settings/SettingsPage.php:174
+#: src/Features/Settings/SettingsPage.php:219
+msgid "Shared secret"
+msgstr "کلید مشترک"
+
+#: src/Features/Settings/SettingsPage.php:220
+msgid "This site signs every request to WooNyx with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
+msgstr "این سایت هر درخواست به WooNyx را با یک کلید مشترک امضا می‌کند که رمزنگاری‌شده همین‌جا نگه داشته می‌شود و هیچ‌وقت نمایش داده نمی‌شود. اگر فکر می‌کنید ممکن است لو رفته باشد، آن را عوض کنید؛ فروشگاه متصل می‌ماند."
+
+#: src/Features/Settings/SettingsPage.php:221
+msgid "Replace the shared secret with a new one now? The store stays connected."
+msgstr "کلید مشترک همین حالا با یک کلید تازه عوض شود؟ فروشگاه متصل می‌ماند."
+
+#: src/Features/Settings/SettingsPage.php:224
+msgid "Rotate secret"
+msgstr "تعویض کلید مشترک"
+
+#: src/Features/Settings/SettingsPage.php:242
+msgid "License key"
+msgstr "کلید لایسنس"
+
+#: src/Features/Settings/SettingsPage.php:246
+msgid "The key is sent once to the WooNyx server and is not stored on this site."
+msgstr "کلید فقط یک بار به سرور WooNyx فرستاده می‌شود و در این سایت ذخیره نمی‌شود."
+
+#: src/Features/Settings/SettingsPage.php:247
+msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; WooNyx uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
+msgstr "فعال‌سازی برای حساب کاربری شما یک کلید REST API ووکامرس (خواندن/نوشتن) می‌سازد؛ WooNyx با آن کاتالوگ شما را می‌خواند و سفارش ثبت می‌کند. اگر این کاربر یا این کلید حذف شود، اتصال فروشگاه قطع می‌شود."
+
+#: src/Features/Settings/SettingsPage.php:282
+msgid "Invalid fields:"
+msgstr "فیلدهای نامعتبر:"
+
+#: src/Features/Settings/SettingsPage.php:289
+#: src/Features/Settings/StatusSection.php:87
+msgid "Request ID (for WooNyx support):"
+msgstr "شناسه‌ی درخواست (برای پشتیبانی WooNyx):"
+
+#: src/Features/Settings/SettingsPage.php:303
+msgid "The store is connected to WooNyx."
+msgstr "فروشگاه به WooNyx متصل شد."
+
+#: src/Features/Settings/SettingsPage.php:304
+msgid "The shared secret was replaced with a new one. The store stays connected."
+msgstr "کلید مشترک با یک کلید تازه عوض شد. فروشگاه متصل می‌ماند."
+
+#: src/Features/Settings/SettingsPage.php:319
 msgid "Connected"
 msgstr "متصل"
 
-#: src/Features/Settings/SettingsPage.php:175
+#: src/Features/Settings/SettingsPage.php:320
 msgid "Store ID:"
 msgstr "شناسهٔ فروشگاه:"
 
-#: src/Features/Settings/SettingsPage.php:186
+#: src/Features/Settings/SettingsPage.php:331
 msgid "Connection lost"
 msgstr "اتصال از دست رفته"
 
-#: src/Features/Settings/SettingsPage.php:186
+#: src/Features/Settings/SettingsPage.php:331
 msgid "Not connected"
 msgstr "متصل نیست"
 
+#: src/Features/Settings/StatusSection.php:48
+msgid "Store on WooNyx"
+msgstr "فروشگاه در WooNyx"
+
+#: src/Features/Settings/StatusSection.php:59
+msgid "Check connection"
+msgstr "بررسی اتصال"
+
+#. translators: %s: date and time
+#: src/Features/Settings/StatusSection.php:64
+#, php-format
+msgid "Checked %s"
+msgstr "بررسی‌شده در %s"
+
+#: src/Features/Settings/StatusSection.php:104
+msgid "Store"
+msgstr "فروشگاه"
+
+#: src/Features/Settings/StatusSection.php:114
+msgid "License"
+msgstr "لایسنس"
+
+#. translators: %s: date and time
+#: src/Features/Settings/StatusSection.php:124
+#, php-format
+msgid "Activated %s"
+msgstr "فعال‌شده در %s"
+
+#: src/Features/Settings/StatusSection.php:132
+msgid "Plan"
+msgstr "پلن"
+
+#. translators: %s: date and time
+#: src/Features/Settings/StatusSection.php:138
+#, php-format
+msgid "Expires %s"
+msgstr "انقضا: %s"
+
+#: src/Features/Settings/StatusSection.php:144
+msgid "Messengers"
+msgstr "پیام‌رسان‌ها"
+
+#: src/Features/Settings/StatusSection.php:148
+msgid "Products"
+msgstr "محصولات"
+
+#: src/Features/Settings/StatusSection.php:152
+msgid "Catalog sync"
+msgstr "همگام‌سازی کاتالوگ"
+
+#. translators: %s: date and time
+#: src/Features/Settings/StatusSection.php:159
+#, php-format
+msgid "Last synced %s"
+msgstr "آخرین همگام‌سازی: %s"
+
+#: src/Features/Settings/StatusSection.php:167
+msgid "Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them."
+msgstr "سقف محصولات پلن شما پر شده و برخی محصولات در ربات‌ها نیستند. برای افزودن آن‌ها پلن خود را ارتقا دهید."
+
+#: src/Features/Settings/StatusSection.php:183
+msgid "Active"
+msgstr "فعال"
+
+#: src/Features/Settings/StatusSection.php:184
+msgid "Deactivated"
+msgstr "غیرفعال"
+
+#: src/Features/Settings/StatusSection.php:185
+msgid "Suspended"
+msgstr "معلق"
+
+#: src/Features/Settings/StatusSection.php:196
+msgid "Not synced yet"
+msgstr "هنوز همگام نشده"
+
+#: src/Features/Settings/StatusSection.php:197
+msgid "Syncing…"
+msgstr "در حال همگام‌سازی…"
+
+#: src/Features/Settings/StatusSection.php:198
+msgid "Synced"
+msgstr "همگام شد"
+
+#: src/Features/Settings/StatusSection.php:199
+msgid "Failed"
+msgstr "ناموفق"
+
+#: src/Features/Settings/StatusSection.php:220
+msgid "None"
+msgstr "هیچ‌کدام"
+
+#: src/Features/Settings/StatusSection.php:224
+msgid "Telegram"
+msgstr "تلگرام"
+
+#: src/Features/Settings/StatusSection.php:225
+msgid "Bale"
+msgstr "بله"
+
+#: src/Features/Settings/StatusSection.php:226
+msgid "Rubika"
+msgstr "روبیکا"
+
+#. translators: separator between the items of a list
+#: src/Features/Settings/StatusSection.php:231
+msgctxt "list separator"
+msgid ", "
+msgstr "، "
+
+#. translators: %s: number of products
+#: src/Features/Settings/StatusSection.php:244
+#, php-format
+msgid "%s (no limit)"
+msgstr "%s (بدون سقف)"
+
+#. translators: 1: number of products, 2: the plan's limit
+#: src/Features/Settings/StatusSection.php:249
+#, php-format
+msgid "%1$s of %2$s"
+msgstr "%1$s از %2$s"
+
 #. translators: %s: the oldest supported WooCommerce version, e.g. 9.0
-#: src/Plugin.php:103
+#: src/Plugin.php:137
 #, php-format
 msgid "WooNyx needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
 msgstr "WooNyx به ووکامرس %s یا جدیدتر نیاز دارد. برای استفاده از آن، ووکامرس را نصب، فعال یا به‌روزرسانی کنید."
@@ -85,147 +274,171 @@ msgstr "WooNyx به ووکامرس %s یا جدیدتر نیاز دارد. بر�
 msgid "Sorry, you are not allowed to do that."
 msgstr "متأسفانه اجازهٔ انجام این کار را ندارید."
 
-#: src/Shared/Http/ErrorMessages.php:102
+#: src/Shared/Http/ErrorMessages.php:108
 msgid "This store is not connected to WooNyx yet. Enter your license key to activate it."
 msgstr "این فروشگاه هنوز به WooNyx وصل نشده است. برای فعال‌سازی، کلید لایسنس خود را وارد کنید."
 
-#: src/Shared/Http/ErrorMessages.php:103
+#: src/Shared/Http/ErrorMessages.php:109
 msgid "The saved connection to WooNyx can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect."
 msgstr "اتصال ذخیره‌شده به WooNyx دیگر خوانده نمی‌شود؛ احتمالاً کلیدهای امنیتی سایت (salt) تغییر کرده‌اند. برای اتصال دوباره، کلید لایسنس را دوباره وارد کنید."
 
-#: src/Shared/Http/ErrorMessages.php:104
+#: src/Shared/Http/ErrorMessages.php:110
 msgid "The WooNyx server address is invalid. Check WOONYX_API_BASE_URL in wp-config.php: it must be an https address."
 msgstr "نشانی سرور WooNyx نامعتبر است. مقدار WOONYX_API_BASE_URL را در wp-config.php بررسی کنید؛ باید یک نشانی https باشد."
 
-#: src/Shared/Http/ErrorMessages.php:105
+#: src/Shared/Http/ErrorMessages.php:111
 msgid "The data could not be prepared for sending to WooNyx."
 msgstr "داده‌ها برای ارسال به WooNyx آماده نشدند."
 
-#: src/Shared/Http/ErrorMessages.php:106
+#: src/Shared/Http/ErrorMessages.php:112
 msgid "Could not reach the WooNyx server. Check this site’s internet connection and try again in a few minutes."
 msgstr "دسترسی به سرور WooNyx ممکن نشد. اتصال اینترنت این سایت را بررسی کنید و چند دقیقهٔ دیگر دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:107
+#: src/Shared/Http/ErrorMessages.php:113
 msgid "The WooNyx server answered with a redirect, which is not followed. Check the server address."
 msgstr "سرور WooNyx با تغییر مسیر (redirect) پاسخ داد که دنبال نمی‌شود. نشانی سرور را بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:108
+#: src/Shared/Http/ErrorMessages.php:114
 msgid "The WooNyx server sent an unexpected answer. Try again later."
 msgstr "سرور WooNyx پاسخ غیرمنتظره‌ای فرستاد. بعداً دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:109
+#: src/Shared/Http/ErrorMessages.php:115
 msgid "Something went wrong while talking to the WooNyx server. Try again later."
 msgstr "در ارتباط با سرور WooNyx مشکلی پیش آمد. بعداً دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:112
+#: src/Shared/Http/ErrorMessages.php:116
+msgid "This is not a WooNyx license key. A license key looks like WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
+msgstr "این کلید لایسنس WooNyx نیست. کلید لایسنس به این شکل است: WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
+
+#: src/Shared/Http/ErrorMessages.php:117
+msgid "WooNyx needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again."
+msgstr "WooNyx به https نیاز دارد. نشانی وردپرس و نشانی سایت را در تنظیمات ← همگانی به https تغییر دهید و دوباره تلاش کنید."
+
+#: src/Shared/Http/ErrorMessages.php:118
+msgid "This site’s REST API is not on the same address as the site, so WooNyx cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port."
+msgstr "REST API این سایت روی نشانی خود سایت نیست، پس WooNyx نمی‌تواند از آن استفاده کند. نشانی وردپرس و نشانی سایت را در تنظیمات ← همگانی با پروتکل، دامنه و پورت یکسان تنظیم کنید."
+
+#: src/Shared/Http/ErrorMessages.php:119
+msgid "The WooCommerce REST API key WooNyx needs could not be created. Try again; if it keeps failing, check the site’s database error log."
+msgstr "کلید REST API ووکامرس که WooNyx به آن نیاز دارد ساخته نشد. دوباره تلاش کنید؛ اگر باز هم نشد، گزارش خطاهای پایگاه داده‌ی سایت را بررسی کنید."
+
+#: src/Shared/Http/ErrorMessages.php:120
+msgid "The store was activated on WooNyx, but the connection could not be saved on this site. Enter your license key again to activate it once more."
+msgstr "فروشگاه در WooNyx فعال شد، اما اتصال در این سایت ذخیره نشد. کلید لایسنس را دوباره وارد کنید تا یک بار دیگر فعال شود."
+
+#: src/Shared/Http/ErrorMessages.php:121
+msgid "WooNyx issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now."
+msgstr "WooNyx یک کلید مشترک تازه صادر کرد، اما در این سایت ذخیره نشد. کلید فعلی هنوز کار می‌کند: همین حالا دوباره آن را عوض کنید."
+
+#: src/Shared/Http/ErrorMessages.php:124
 msgid "The WooNyx server rejected the request as invalid. Update the plugin and try again."
 msgstr "سرور WooNyx درخواست را نامعتبر دانست و رد کرد. افزونه را به‌روز کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:113
+#: src/Shared/Http/ErrorMessages.php:125
 msgid "The WooNyx server did not accept this store’s credentials. Activate the store again with your license key."
 msgstr "سرور WooNyx اعتبارنامهٔ این فروشگاه را نپذیرفت. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:114
+#: src/Shared/Http/ErrorMessages.php:126
 msgid "The WooNyx server does not accept this request. Update the plugin."
 msgstr "سرور WooNyx این درخواست را نمی‌پذیرد. افزونه را به‌روز کنید."
 
-#: src/Shared/Http/ErrorMessages.php:115
+#: src/Shared/Http/ErrorMessages.php:127
 msgid "Some of the data sent to WooNyx is invalid. Check it and try again."
 msgstr "بخشی از داده‌های ارسال‌شده به WooNyx نامعتبر است. آن را بررسی کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:116
+#: src/Shared/Http/ErrorMessages.php:128
 msgid "The data is too large for the WooNyx server."
 msgstr "حجم داده‌ها برای سرور WooNyx بیش از حد است."
 
-#: src/Shared/Http/ErrorMessages.php:117
+#: src/Shared/Http/ErrorMessages.php:129
 msgid "The WooNyx server had an internal error. Try again later."
 msgstr "سرور WooNyx با خطای داخلی روبه‌رو شد. بعداً دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:118
+#: src/Shared/Http/ErrorMessages.php:130
 msgid "The WooNyx server could not read this store’s saved credentials. Activate the store again with your license key."
 msgstr "سرور WooNyx نتوانست اعتبارنامهٔ ذخیره‌شدهٔ این فروشگاه را بخواند. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:119
+#: src/Shared/Http/ErrorMessages.php:131
 msgid "Too many attempts. Wait a few minutes and try again."
 msgstr "تعداد تلاش‌ها بیش از حد است. چند دقیقه صبر کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:122
+#: src/Shared/Http/ErrorMessages.php:134
 msgid "The request’s signature was missing or malformed. Activate the store again with your license key."
 msgstr "امضای درخواست وجود نداشت یا نادرست بود. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:123
+#: src/Shared/Http/ErrorMessages.php:135
 msgid "The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again."
 msgstr "درخواست رد شد، چون ساعت این سرور بیش از پنج دقیقه اختلاف دارد. ساعت سرور را درست کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:124
+#: src/Shared/Http/ErrorMessages.php:136
 msgid "The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key."
 msgstr "امضای درخواست مطابقت نداشت؛ ممکن است کلید مشترک قدیمی شده باشد. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:125
+#: src/Shared/Http/ErrorMessages.php:137
 msgid "The same request reached the WooNyx server twice and was rejected. Try again."
 msgstr "همین درخواست دو بار به سرور WooNyx رسید و رد شد. دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:128
+#: src/Shared/Http/ErrorMessages.php:140
 msgid "This license key is not valid. Check it and try again."
 msgstr "این کلید لایسنس معتبر نیست. آن را بررسی کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:129
+#: src/Shared/Http/ErrorMessages.php:141
 msgid "This license key has been revoked. Contact WooNyx support."
 msgstr "این کلید لایسنس باطل شده است. با پشتیبانی WooNyx تماس بگیرید."
 
-#: src/Shared/Http/ErrorMessages.php:130
+#: src/Shared/Http/ErrorMessages.php:142
 msgid "This license key is already used by another website."
 msgstr "این کلید لایسنس پیش‌تر برای وب‌سایت دیگری به کار رفته است."
 
-#: src/Shared/Http/ErrorMessages.php:131
+#: src/Shared/Http/ErrorMessages.php:143
 msgid "This website is already activated with another license key."
 msgstr "این وب‌سایت پیش‌تر با کلید لایسنس دیگری فعال شده است."
 
-#: src/Shared/Http/ErrorMessages.php:132
+#: src/Shared/Http/ErrorMessages.php:144
 msgid "This store is deactivated or suspended on WooNyx. Activate it again with your license key; if the license was revoked, contact WooNyx support."
 msgstr "این فروشگاه در WooNyx غیرفعال یا معلق است. آن را با کلید لایسنس دوباره فعال کنید؛ اگر لایسنس باطل شده، با پشتیبانی WooNyx تماس بگیرید."
 
-#: src/Shared/Http/ErrorMessages.php:133
+#: src/Shared/Http/ErrorMessages.php:145
 msgid "Your WooNyx subscription is not active or has expired. Renew it to continue."
 msgstr "اشتراک WooNyx شما فعال نیست یا منقضی شده است. برای ادامه، آن را تمدید کنید."
 
-#: src/Shared/Http/ErrorMessages.php:134
+#: src/Shared/Http/ErrorMessages.php:146
 msgid "Your WooNyx plan does not include this messenger. Upgrade your plan to use it."
 msgstr "طرح WooNyx شما این پیام‌رسان را شامل نمی‌شود. برای استفاده از آن، طرح خود را ارتقا دهید."
 
-#: src/Shared/Http/ErrorMessages.php:135
+#: src/Shared/Http/ErrorMessages.php:147
 msgid "The WooNyx server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again."
 msgstr "سرور WooNyx نتوانست با کلید تازه به REST API ووکامرس این فروشگاه وارد شود. مطمئن شوید هیچ افزونهٔ امنیتی جلوی REST API را نگرفته است، سپس دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:136
+#: src/Shared/Http/ErrorMessages.php:148
 msgid "The WooNyx server could not reach this store. The site must be public, use https, and its REST API must not redirect."
 msgstr "سرور WooNyx به این فروشگاه دسترسی پیدا نکرد. سایت باید عمومی باشد، از https استفاده کند و REST API آن نباید تغییر مسیر (redirect) بدهد."
 
-#: src/Shared/Http/ErrorMessages.php:137
+#: src/Shared/Http/ErrorMessages.php:149
 msgid "This store’s WooCommerce REST API rejected the WooNyx server’s request. Check the firewall and security plugins."
 msgstr "REST API ووکامرس این فروشگاه درخواست سرور WooNyx را رد کرد. فایروال و افزونه‌های امنیتی را بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:138
+#: src/Shared/Http/ErrorMessages.php:150
 msgid "This store’s WooCommerce REST API sent the WooNyx server an unexpected answer. Check for plugins that change REST API responses."
 msgstr "REST API ووکامرس این فروشگاه پاسخ غیرمنتظره‌ای به سرور WooNyx داد. افزونه‌هایی را که پاسخ‌های REST API را تغییر می‌دهند بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:141
+#: src/Shared/Http/ErrorMessages.php:153
 msgid "A bot is already connected for this messenger. Remove it first to connect another one."
 msgstr "برای این پیام‌رسان از قبل یک ربات وصل است. برای وصل کردن ربات دیگر، اول آن را حذف کنید."
 
-#: src/Shared/Http/ErrorMessages.php:142
+#: src/Shared/Http/ErrorMessages.php:154
 msgid "No bot is connected for this messenger."
 msgstr "هیچ رباتی برای این پیام‌رسان وصل نیست."
 
-#: src/Shared/Http/ErrorMessages.php:143
+#: src/Shared/Http/ErrorMessages.php:155
 msgid "This bot admin no longer exists."
 msgstr "این مدیر ربات دیگر وجود ندارد."
 
-#: src/Shared/Http/ErrorMessages.php:144
+#: src/Shared/Http/ErrorMessages.php:156
 msgid "The messenger rejected this bot token. Check it and try again."
 msgstr "پیام‌رسان این توکن ربات را نپذیرفت. آن را بررسی کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:145
+#: src/Shared/Http/ErrorMessages.php:157
 msgid "The messenger’s servers did not respond. Try again in a few minutes."
 msgstr "سرورهای پیام‌رسان پاسخ ندادند. چند دقیقهٔ دیگر دوباره تلاش کنید."
 

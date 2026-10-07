@@ -37,3 +37,30 @@
 .woonyx-settings .form-table + .description {
 	margin-block-start: 1em;
 }
+
+.woonyx-reactivate {
+	margin-block-start: 1.5em;
+}
+
+.woonyx-reactivate > summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.woonyx-reactivate > .description {
+	margin-block-start: 0.75em;
+}
+
+.woonyx-license-form input[dir="ltr"] {
+	text-align: start;
+	unicode-bidi: isolate;
+}
+
+.woonyx-rotate-form .submit {
+	margin-block-start: 0;
+	padding-block-start: 0.5em;
+}
+
+.woonyx-settings .woonyx-deactivation-note {
+	margin-block-start: 2em;
+}
