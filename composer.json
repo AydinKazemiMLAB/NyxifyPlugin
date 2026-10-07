@@ -1,0 +1,72 @@
+{
+    "name": "nyxon/woonyx",
+    "description": "WordPress/WooCommerce plugin of WooNyx: sell a WooCommerce shop's products through Telegram, Bale and Rubika bots.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "WooNyx\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WooNyx\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf",
+        "analyse": "phpstan analyse --memory-limit=1G --no-progress",
+        "test": "phpunit",
+        "i18n:pot": "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-pot . languages/woonyx.pot --slug=woonyx --domain=woonyx --exclude=vendor,tests,docs,graft,build,dist,bin",
+        "i18n:compile": [
+            "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n update-po languages/woonyx.pot languages",
+            "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-mo languages",
+            "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-php languages"
+        ],
+        "check": [
+            "@lint",
+            "@analyse",
+            "@test"
+        ],
+        "build": "@php bin/build-zip.php"
+    },
+    "scripts-descriptions": {
+        "lint": "PHPCS: WordPress Coding Standards, PHP 8.1+ compatibility, prefixes and text domain.",
+        "lint:fix": "PHPCBF: fix what PHPCS can fix by itself.",
+        "analyse": "PHPStan level 8 with the WordPress and WooCommerce stubs.",
+        "test": "PHPUnit unit tests (Brain Monkey, no WordPress needed).",
+        "i18n:pot": "Regenerate languages/woonyx.pot from the code.",
+        "i18n:compile": "Merge the .pot into every .po, then build the .mo and .l10n.php files WordPress loads.",
+        "check": "Every check: lint, analyse, test.",
+        "build": "Build dist/woonyx-<version>.zip (export-ignore honoured, production autoloader only)."
+    },
+    "config": {
+        "process-timeout": 0,
+        "platform": {
+            "php": "8.1.0"
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "require-dev": {
+        "brain/monkey": "^2.7",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+        "php-stubs/woocommerce-stubs": "^11.1",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.3",
+        "phpstan/phpstan-mockery": "2.0",
+        "phpunit/phpunit": "^10.5",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "wp-cli/i18n-command": "^2.7",
+        "wp-coding-standards/wpcs": "^3.4"
+    }
+}

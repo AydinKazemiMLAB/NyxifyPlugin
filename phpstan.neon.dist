@@ -1,0 +1,14 @@
+# WordPress and WooCommerce functions come from szepeviktor/phpstan-wordpress (loaded by the extension installer)
+# and php-stubs/woocommerce-stubs.
+parameters:
+    level: 8
+    phpVersion: 80100
+    paths:
+        - woonyx.php
+        - uninstall.php
+        - src
+        - tests
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+    scanFiles:
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php

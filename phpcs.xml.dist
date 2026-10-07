@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<ruleset name="WooNyx">
+	<description>WordPress Coding Standards for the WooNyx plugin.</description>
+
+	<file>woonyx.php</file>
+	<file>uninstall.php</file>
+	<file>src</file>
+	<file>tests</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="cache" value=".phpcs-cache"/>
+	<arg name="parallel" value="8"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress"/>
+
+	<!-- PHP 8.1 is the oldest PHP the plugin runs on; WordPress 6.5 the oldest WordPress. -->
+	<config name="testVersion" value="8.1-"/>
+	<config name="minimum_wp_version" value="6.5"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Every global name (functions, constants, hooks, options, classes) carries the plugin's prefix. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="woonyx"/>
+				<element value="WooNyx"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- One text domain for every translated string (temporary until the public name is chosen). -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="woonyx"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Classes follow PSR-4 file names (src/Plugin.php), not class-plugin.php. -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>/src/*</exclude-pattern>
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+
+	<!-- Tests: PHPUnit's camelCase API and test method names. -->
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+	<rule ref="Generic.Commenting.DocComment.MissingShort">
+		<exclude-pattern>/tests/*</exclude-pattern>
+	</rule>
+</ruleset>

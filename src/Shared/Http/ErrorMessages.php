@@ -1,0 +1,169 @@
+<?php
+/**
+ * Owner-facing messages of the core's and the client's error codes.
+ *
+ * @package WooNyx
+ */
+
+declare(strict_types=1);
+
+namespace WooNyx\Shared\Http;
+
+/**
+ * A translated message for every `error_code` the plugin can get, so the raw response is never shown.
+ *
+ * CORE_CODES lists what the core can answer on the plugin's endpoints: the `error_code` enums of
+ * `docs/core-api/openapi.json` plus the global codes the spec leaves out (422, 413, 500 from decryption, 401). A test
+ * fails when the spec has a code missing here, or when any code has no message.
+ */
+final class ErrorMessages {
+
+	/**
+	 * Error codes of the core on the plugin's endpoints.
+	 */
+	public const CORE_CODES = array(
+		// Global.
+		'bad_request',
+		'unauthorized',
+		'method_not_allowed',
+		'validation_error',
+		'request_too_large',
+		'internal_server_error',
+		'decryption_failed',
+		'too_many_attempts',
+		// HMAC.
+		'invalid_signature_headers',
+		'request_timestamp_expired',
+		'invalid_request_signature',
+		'replayed_request',
+		// Activation, store and subscription.
+		'invalid_license_key',
+		'license_revoked',
+		'license_already_used',
+		'store_already_registered',
+		'store_not_active',
+		'no_active_subscription',
+		'platform_not_in_plan',
+		'woocommerce_authentication_failed',
+		'woocommerce_unreachable',
+		'woocommerce_request_rejected',
+		'woocommerce_bad_response',
+		// Bots.
+		'bot_already_registered',
+		'bot_not_found',
+		'customer_not_found',
+		'invalid_bot_token',
+		'messenger_api_unavailable',
+	);
+
+	/**
+	 * The client's own codes (CoreError constants).
+	 */
+	public const PLUGIN_CODES = array(
+		CoreError::NOT_ACTIVATED,
+		CoreError::CONNECTION_UNREADABLE,
+		CoreError::INVALID_BASE_URL,
+		CoreError::INVALID_PAYLOAD,
+		CoreError::NETWORK_ERROR,
+		CoreError::UNEXPECTED_REDIRECT,
+		CoreError::INVALID_RESPONSE,
+		CoreError::UNKNOWN_ERROR,
+	);
+
+	/**
+	 * The message for a failed call.
+	 *
+	 * @param CoreError $error The failure.
+	 */
+	public static function for_error( CoreError $error ): string {
+		return self::message( $error->code, $error->status );
+	}
+
+	/**
+	 * The message for a code; a code without one (e.g. added to the core later) falls back on the HTTP status.
+	 *
+	 * @param string $code   Error code.
+	 * @param int    $status HTTP status, or 0.
+	 */
+	public static function message( string $code, int $status = 0 ): string {
+		$messages = self::messages();
+
+		return $messages[ $code ] ?? $messages[ self::fallback_code( $status ) ];
+	}
+
+	/**
+	 * Every message, by code.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function messages(): array {
+		return array(
+			// The client's own codes.
+			CoreError::NOT_ACTIVATED            => __( 'This store is not connected to WooNyx yet. Enter your license key to activate it.', 'woonyx' ),
+			CoreError::CONNECTION_UNREADABLE    => __( 'The saved connection to WooNyx can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect.', 'woonyx' ),
+			CoreError::INVALID_BASE_URL         => __( 'The WooNyx server address is invalid. Check WOONYX_API_BASE_URL in wp-config.php: it must be an https address.', 'woonyx' ),
+			CoreError::INVALID_PAYLOAD          => __( 'The data could not be prepared for sending to WooNyx.', 'woonyx' ),
+			CoreError::NETWORK_ERROR            => __( 'Could not reach the WooNyx server. Check this site’s internet connection and try again in a few minutes.', 'woonyx' ),
+			CoreError::UNEXPECTED_REDIRECT      => __( 'The WooNyx server answered with a redirect, which is not followed. Check the server address.', 'woonyx' ),
+			CoreError::INVALID_RESPONSE         => __( 'The WooNyx server sent an unexpected answer. Try again later.', 'woonyx' ),
+			CoreError::UNKNOWN_ERROR            => __( 'Something went wrong while talking to the WooNyx server. Try again later.', 'woonyx' ),
+
+			// Global.
+			'bad_request'                       => __( 'The WooNyx server rejected the request as invalid. Update the plugin and try again.', 'woonyx' ),
+			'unauthorized'                      => __( 'The WooNyx server did not accept this store’s credentials. Activate the store again with your license key.', 'woonyx' ),
+			'method_not_allowed'                => __( 'The WooNyx server does not accept this request. Update the plugin.', 'woonyx' ),
+			'validation_error'                  => __( 'Some of the data sent to WooNyx is invalid. Check it and try again.', 'woonyx' ),
+			'request_too_large'                 => __( 'The data is too large for the WooNyx server.', 'woonyx' ),
+			'internal_server_error'             => __( 'The WooNyx server had an internal error. Try again later.', 'woonyx' ),
+			'decryption_failed'                 => __( 'The WooNyx server could not read this store’s saved credentials. Activate the store again with your license key.', 'woonyx' ),
+			'too_many_attempts'                 => __( 'Too many attempts. Wait a few minutes and try again.', 'woonyx' ),
+
+			// HMAC.
+			'invalid_signature_headers'         => __( 'The request’s signature was missing or malformed. Activate the store again with your license key.', 'woonyx' ),
+			'request_timestamp_expired'         => __( 'The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again.', 'woonyx' ),
+			'invalid_request_signature'         => __( 'The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key.', 'woonyx' ),
+			'replayed_request'                  => __( 'The same request reached the WooNyx server twice and was rejected. Try again.', 'woonyx' ),
+
+			// Activation, store and subscription.
+			'invalid_license_key'               => __( 'This license key is not valid. Check it and try again.', 'woonyx' ),
+			'license_revoked'                   => __( 'This license key has been revoked. Contact WooNyx support.', 'woonyx' ),
+			'license_already_used'              => __( 'This license key is already used by another website.', 'woonyx' ),
+			'store_already_registered'          => __( 'This website is already activated with another license key.', 'woonyx' ),
+			'store_not_active'                  => __( 'This store is deactivated or suspended on WooNyx. Activate it again with your license key; if the license was revoked, contact WooNyx support.', 'woonyx' ),
+			'no_active_subscription'            => __( 'Your WooNyx subscription is not active or has expired. Renew it to continue.', 'woonyx' ),
+			'platform_not_in_plan'              => __( 'Your WooNyx plan does not include this messenger. Upgrade your plan to use it.', 'woonyx' ),
+			'woocommerce_authentication_failed' => __( 'The WooNyx server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again.', 'woonyx' ),
+			'woocommerce_unreachable'           => __( 'The WooNyx server could not reach this store. The site must be public, use https, and its REST API must not redirect.', 'woonyx' ),
+			'woocommerce_request_rejected'      => __( 'This store’s WooCommerce REST API rejected the WooNyx server’s request. Check the firewall and security plugins.', 'woonyx' ),
+			'woocommerce_bad_response'          => __( 'This store’s WooCommerce REST API sent the WooNyx server an unexpected answer. Check for plugins that change REST API responses.', 'woonyx' ),
+
+			// Bots.
+			'bot_already_registered'            => __( 'A bot is already connected for this messenger. Remove it first to connect another one.', 'woonyx' ),
+			'bot_not_found'                     => __( 'No bot is connected for this messenger.', 'woonyx' ),
+			'customer_not_found'                => __( 'This bot admin no longer exists.', 'woonyx' ),
+			'invalid_bot_token'                 => __( 'The messenger rejected this bot token. Check it and try again.', 'woonyx' ),
+			'messenger_api_unavailable'         => __( 'The messenger’s servers did not respond. Try again in a few minutes.', 'woonyx' ),
+		);
+	}
+
+	/**
+	 * The code whose message stands in for an unknown code with this HTTP status.
+	 *
+	 * @param int $status HTTP status, or 0.
+	 */
+	private static function fallback_code( int $status ): string {
+		if ( 0 === $status ) {
+			return CoreError::NETWORK_ERROR;
+		}
+
+		if ( 413 === $status ) {
+			return 'request_too_large';
+		}
+
+		if ( 429 === $status ) {
+			return 'too_many_attempts';
+		}
+
+		return $status >= 500 ? 'internal_server_error' : CoreError::UNKNOWN_ERROR;
+	}
+}

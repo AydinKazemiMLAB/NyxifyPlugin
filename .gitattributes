@@ -1,0 +1,23 @@
+# LF everywhere (PHPCS refuses CRLF), whatever core.autocrlf says on Windows.
+* text=auto eol=lf
+*.mo binary
+*.png binary
+*.jpg binary
+
+# Development files stay out of `git archive` (the release zip is built from it).
+/.agents             export-ignore
+/bin                 export-ignore
+/.claude             export-ignore
+/.editorconfig       export-ignore
+/.gitattributes      export-ignore
+/.gitignore          export-ignore
+/.ignore             export-ignore
+/.mcp.json           export-ignore
+/CLAUDE.md           export-ignore
+/README.md           export-ignore
+/docs                export-ignore
+/graft               export-ignore
+/phpcs.xml.dist      export-ignore
+/phpstan.neon.dist   export-ignore
+/phpunit.xml.dist    export-ignore
+/tests               export-ignore

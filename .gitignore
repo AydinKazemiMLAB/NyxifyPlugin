@@ -1,0 +1,11 @@
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
+
+# Composer: installed per checkout; the release zip gets its own `composer install --no-dev`.
+/vendor/
+
+# Tool caches and build output.
+/.phpunit.cache/
+/.phpcs-cache
+/build/
+/dist/

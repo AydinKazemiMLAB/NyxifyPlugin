@@ -1,0 +1,39 @@
+/**
+ * WooNyx settings page. Logical properties only, so the same rules work in RTL (e.g. Persian) and LTR admins.
+ */
+
+.woonyx-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	font-weight: 600;
+}
+
+.woonyx-status::before {
+	content: "";
+	inline-size: 0.6em;
+	block-size: 0.6em;
+	border-radius: 50%;
+	background-color: currentColor;
+}
+
+.woonyx-status--connected {
+	color: #008a20;
+}
+
+.woonyx-status--disconnected {
+	color: #646970;
+}
+
+.woonyx-status--error {
+	color: #d63638;
+}
+
+.woonyx-settings code[dir="ltr"] {
+	display: inline-block;
+	unicode-bidi: isolate;
+}
+
+.woonyx-settings .form-table + .description {
+	margin-block-start: 1em;
+}
