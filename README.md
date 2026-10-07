@@ -5,10 +5,12 @@ store's products through Telegram, Bale and Rubika bots. The plugin activates th
 catalog and order changes to the core, and gives the store owner a settings page for the bots, the admin PIN and the
 bot admins.
 
-> Status: phase 2 (activation and connection), version 0.2.0. On **WooCommerce > WooNyx** the owner enters a license
-> key and the store is connected to the core; the page shows the store's status, checks the connection and rotates
-> the shared secret; deactivating the plugin tells the core, and uninstalling removes everything the plugin stored.
-> Bots, catalog and order sync come in the next phases. Plans and progress: `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
+> Status: phase 3 (bots, admin PIN and bot admins), version 0.3.0. On **WooCommerce > WooNyx** the owner enters a
+> license key and the store is connected to the core; the page shows the store's status, checks the connection and
+> rotates the shared secret, connects, replaces and removes the store's Telegram, Bale and Rubika bots, issues the
+> bots' admin PIN and lists and removes the bot admins; deactivating the plugin tells the core, and uninstalling
+> removes everything the plugin stored. Catalog and order sync come in the next phases. Plans and progress:
+> `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
 > WordPress.org doesn't accept slugs starting with `woo`, so the public name, slug and text domain change before the
 > first release.
 
@@ -54,6 +56,21 @@ On Windows run Composer from PowerShell or cmd (Git Bash may not find `php`).
    can't be reached or the subscription has expired, both stay until the plugin is deleted. Connecting again needs
    the license key. On a network, each site is activated on its own.
 
+## Bots, admin PIN and bot admins
+
+Shown while the store is connected and `active`, fetched from the core on every page load (not cached).
+
+- **Bots:** one block per messenger the plan allows (plus any bot the core still has on a messenger the plan no longer
+  allows: it doesn't work and can only be removed). Enter the token the messenger gave you (e.g. BotFather) to connect
+  a bot; it is sent once to the core, which checks it with the messenger, and is never stored, logged or shown again.
+  The core sets the webhook in the background: the bot shows "Setting up…" with a "Check again" link until it is
+  active (or failed, with the core's reason). "Replace with another bot" and "Remove bot" ask for confirmation.
+- **Admin PIN:** anyone who sends it to one of the store's bots becomes a bot admin. "New PIN" replaces it; "New PIN
+  and log out every admin" also removes every admin. The PIN is kept encrypted and shown only on this page, folded
+  under "Show PIN".
+- **Bot admins:** messenger, name and username (the messenger user id only when both are missing); "Remove" takes the
+  admin access away, but the current PIN still works for that person until a new one is issued.
+
 ## Layout
 
 ```
@@ -62,10 +79,12 @@ uninstall.php         removes the plugin's REST key, options and transients (eve
 src/Plugin.php        hooks: WooCommerce check, HPOS compatibility, translations, deactivation, features
 src/Shared/           Security (Encryptor, HmacSigner), Options (SecretStore), Http (CoreClient, errors),
                       Logging (Logger), Admin (AdminAction: nonce and capability checks; Notices: one-time results)
-src/Features/         Settings (the admin page, status section, deactivation warning), Store (license key, REST key,
-                      activation, status, secret rotation, deactivation); later Bots, Catalog, Orders, Sync
+src/Features/         Settings (the admin page and its sections: status, bots, admin PIN, bot admins; deactivation
+                      warning), Store (license key, REST key, activation, status, secret rotation, deactivation),
+                      Bots (platforms, token input, bots, admin PIN, bot admins: services and form handlers);
+                      later Catalog, Orders, Sync
 assets/css/           admin styles (logical CSS properties, RTL-safe)
-assets/js/            confirmations: secret rotation (settings page), deactivation (plugins list)
+assets/js/            confirmations: forms with `data-woonyx-confirm` (settings page), deactivation (plugins list)
 languages/            woonyx.pot and the Persian translation
 tests/Unit/           PHPUnit + Brain Monkey
 bin/build-zip.php     the zip builder behind `composer build`
@@ -81,6 +100,8 @@ docs/                 handoff, phase plans, the core's OpenAPI spec
   core's raw responses are never shown: every `error_code` has a translated message.
 - Secrets (shared secret, admin PIN) are stored encrypted with libsodium and never autoloaded, logged or displayed;
   the license key and bot tokens are not stored at all. The logger redacts secret-looking values as a safety net.
+- Bot admins' names, usernames and messenger ids are personal data: shown on the settings page only, never logged,
+  cached or put in a notice or URL.
 - The WooCommerce REST key the core uses is created by the plugin for the admin who activates; its consumer key and
   secret exist only in memory for the activation request. The plugin only ever deletes the key it created (its id is
   kept in `woonyx_rest_key_id`), never a key made by hand.
