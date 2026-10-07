@@ -74,6 +74,8 @@ final class ErrorMessages {
 		CoreError::REST_KEY_FAILED,
 		CoreError::CONNECTION_NOT_SAVED,
 		CoreError::SECRET_NOT_SAVED,
+		CoreError::BOT_TOKEN_FORMAT,
+		CoreError::PIN_NOT_SAVED,
 	);
 
 	/**
@@ -119,6 +121,8 @@ final class ErrorMessages {
 			CoreError::REST_KEY_FAILED          => __( 'The WooCommerce REST API key WooNyx needs could not be created. Try again; if it keeps failing, check the site’s database error log.', 'woonyx' ),
 			CoreError::CONNECTION_NOT_SAVED     => __( 'The store was activated on WooNyx, but the connection could not be saved on this site. Enter your license key again to activate it once more.', 'woonyx' ),
 			CoreError::SECRET_NOT_SAVED         => __( 'WooNyx issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now.', 'woonyx' ),
+			CoreError::BOT_TOKEN_FORMAT         => __( 'This does not look like a bot token. Paste the token the messenger gave you when you created the bot, without spaces.', 'woonyx' ),
+			CoreError::PIN_NOT_SAVED            => __( 'WooNyx issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now.', 'woonyx' ),
 
 			// Global.
 			'bad_request'                       => __( 'The WooNyx server rejected the request as invalid. Update the plugin and try again.', 'woonyx' ),
@@ -150,9 +154,9 @@ final class ErrorMessages {
 			'woocommerce_bad_response'          => __( 'This store’s WooCommerce REST API sent the WooNyx server an unexpected answer. Check for plugins that change REST API responses.', 'woonyx' ),
 
 			// Bots.
-			'bot_already_registered'            => __( 'A bot is already connected for this messenger. Remove it first to connect another one.', 'woonyx' ),
+			'bot_already_registered'            => __( 'This bot is already connected to another WooNyx store. Create a new bot for this shop, or remove this one from the other store first.', 'woonyx' ),
 			'bot_not_found'                     => __( 'No bot is connected for this messenger.', 'woonyx' ),
-			'customer_not_found'                => __( 'This bot admin no longer exists.', 'woonyx' ),
+			'customer_not_found'                => __( 'This person is no longer a bot admin of this store.', 'woonyx' ),
 			'invalid_bot_token'                 => __( 'The messenger rejected this bot token. Check it and try again.', 'woonyx' ),
 			'messenger_api_unavailable'         => __( 'The messenger’s servers did not respond. Try again in a few minutes.', 'woonyx' ),
 		);

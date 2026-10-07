@@ -10,6 +10,14 @@ declare(strict_types=1);
 namespace WooNyx;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use WooNyx\Features\Bots\AdminPinHandler;
+use WooNyx\Features\Bots\AdminPinIssuer;
+use WooNyx\Features\Bots\AdminRemovalHandler;
+use WooNyx\Features\Bots\AdminService;
+use WooNyx\Features\Bots\BotRegistrationHandler;
+use WooNyx\Features\Bots\BotRemovalHandler;
+use WooNyx\Features\Bots\BotService;
+use WooNyx\Features\Bots\BotToken;
 use WooNyx\Features\Settings\DeactivationWarning;
 use WooNyx\Features\Settings\SettingsPage;
 use WooNyx\Features\Store\ActivationHandler;
@@ -105,13 +113,18 @@ final class Plugin {
 		if ( is_admin() ) {
 			$store    = new SecretStore( Encryptor::for_site() );
 			$core_url = CoreClient::configured_base_url();
-			$status   = new StatusService( new CoreClient( $store, $core_url ), new Logger() );
+			$client   = new CoreClient( $store, $core_url );
+			$logger   = new Logger();
 
-			( new SettingsPage( $this->plugin_file, $store, $core_url, $status ) )->register();
+			( new SettingsPage( $this->plugin_file, $store, $core_url, new StatusService( $client, $logger ), new BotService( $client, $logger ), new AdminService( $client, $logger ) ) )->register();
 			( new StatusRefreshHandler() )->register();
-			// The activator and the rotator are built only when their form is posted.
+			// The services behind the forms are built only when a form is posted.
 			( new ActivationHandler( static fn( LicenseKey $license, int $user_id ) => Activator::for_site()->activate( $license, $user_id ) ) )->register();
 			( new SecretRotationHandler( static fn() => SecretRotator::for_site()->rotate() ) )->register();
+			( new BotRegistrationHandler( static fn( string $platform, BotToken $token ) => BotService::for_site()->register( $platform, $token ) ) )->register();
+			( new BotRemovalHandler( static fn( string $platform ) => BotService::for_site()->remove( $platform ) ) )->register();
+			( new AdminPinHandler( static fn( bool $revoke_admins ) => AdminPinIssuer::for_site()->issue( $revoke_admins ) ) )->register();
+			( new AdminRemovalHandler( static fn( int $id ) => AdminService::for_site()->revoke( $id ) ) )->register();
 		}
 	}
 

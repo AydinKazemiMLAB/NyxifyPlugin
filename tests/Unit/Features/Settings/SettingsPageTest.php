@@ -12,6 +12,8 @@ namespace WooNyx\Tests\Unit\Features\Settings;
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use WooNyx\Features\Bots\AdminService;
+use WooNyx\Features\Bots\BotService;
 use WooNyx\Features\Settings\SettingsPage;
 use WooNyx\Features\Store\StatusService;
 use WooNyx\Shared\Http\CoreClient;
@@ -65,6 +67,20 @@ final class SettingsPageTest extends TestCase {
 	 */
 	private $next_response;
 
+	/**
+	 * What `GET /bots` returns.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private $bots_response;
+
+	/**
+	 * What `GET /bots/admins` returns.
+	 *
+	 * @var array<string, mixed>
+	 */
+	private $admins_response;
+
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -111,7 +127,9 @@ final class SettingsPageTest extends TestCase {
 		Functions\when( 'wp_date' )->alias( fn( string $format, int $timestamp ): string => gmdate( $format, $timestamp ) );
 
 		// The core: only reached for the status, and only while connected.
-		$this->next_response = self::response( 200, self::json( self::status_answer() ) );
+		$this->next_response   = self::response( 200, self::json( self::status_answer() ) );
+		$this->bots_response   = self::response( 200, '[]' );
+		$this->admins_response = self::response( 200, '[]' );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
 		Functions\when( 'wp_get_environment_type' )->justReturn( 'production' );
 		Functions\when( 'wp_remote_request' )->alias(
@@ -120,7 +138,10 @@ final class SettingsPageTest extends TestCase {
 					'url'  => $url,
 					'args' => $args,
 				);
-				return $this->next_response;
+				if ( str_ends_with( $url, '/api/v1/bots' ) ) {
+					return $this->bots_response;
+				}
+				return str_ends_with( $url, '/api/v1/bots/admins' ) ? $this->admins_response : $this->next_response;
 			}
 		);
 		Functions\when( 'is_wp_error' )->alias( fn( $thing ): bool => $thing instanceof \stdClass );
@@ -203,7 +224,19 @@ final class SettingsPageTest extends TestCase {
 		$wc_logger = Mockery::mock( 'WC_Logger_Interface' );
 		$wc_logger->shouldReceive( 'log' );
 
-		return new SettingsPage( self::PLUGIN_FILE, $store, $core_url, new StatusService( new CoreClient( $store, $core_url ), new Logger( $wc_logger ) ) );
+		$client = new CoreClient( $store, $core_url );
+		$logger = new Logger( $wc_logger );
+
+		return new SettingsPage( self::PLUGIN_FILE, $store, $core_url, new StatusService( $client, $logger ), new BotService( $client, $logger ), new AdminService( $client, $logger ) );
+	}
+
+	/**
+	 * The paths requested from the core, in order.
+	 *
+	 * @return list<string>
+	 */
+	private function requested_paths(): array {
+		return array_map( fn( array $request ): string => substr( $request['url'], strlen( self::CORE_URL ) ), $this->requests );
 	}
 
 	private function rendered( SettingsPage $page ): string {
@@ -499,8 +532,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertCount( 1, $this->requests );
-		self::assertSame( self::CORE_URL . '/api/v1/store/status', $this->requests[0]['url'] );
+		self::assertSame( array( '/api/v1/store/status', '/api/v1/bots', '/api/v1/bots/admins' ), $this->requested_paths() );
 		self::assertSame( 'GET', $this->requests[0]['args']['method'] );
 		self::assertArrayHasKey( 'X-WooNyx-Signature', $this->requests[0]['args']['headers'] );
 
@@ -530,7 +562,11 @@ final class SettingsPageTest extends TestCase {
 		$this->rendered( $this->page() );
 		$html = $this->rendered( $this->page() );
 
-		self::assertCount( 1, $this->requests );
+		// The status once; the bots and the admins on every page load.
+		self::assertSame(
+			array( '/api/v1/store/status', '/api/v1/bots', '/api/v1/bots/admins', '/api/v1/bots', '/api/v1/bots/admins' ),
+			$this->requested_paths()
+		);
 		self::assertStringContainsString( '<td>42 of 50</td>', $html );
 	}
 
@@ -638,6 +674,147 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertStringContainsString( 'Could not reach the WooNyx server.', $html );
+	}
+
+	public function test_the_bots_come_after_the_status_and_before_the_shared_secret(): void {
+		$this->connect();
+
+		$html = $this->rendered( $this->page() );
+
+		$status = (int) strpos( $html, '<h2>Store on WooNyx</h2>' );
+		$bots   = (int) strpos( $html, '<h2>Bots</h2>' );
+		$pin    = (int) strpos( $html, '<h2>Admin PIN</h2>' );
+		$admins = (int) strpos( $html, '<h2>Bot admins</h2>' );
+		$secret = (int) strpos( $html, '<h2>Shared secret</h2>' );
+		self::assertGreaterThan( 0, $status );
+		self::assertGreaterThan( $status, $bots );
+		self::assertGreaterThan( $bots, $pin );
+		self::assertGreaterThan( $pin, $admins );
+		self::assertGreaterThan( $admins, $secret );
+	}
+
+	public function test_no_pin_section_while_not_connected(): void {
+		$this->store()->save_admin_pin( '042917' );
+
+		$html = $this->rendered( $this->page() );
+
+		self::assertStringNotContainsString( 'Admin PIN', $html );
+		self::assertStringNotContainsString( '042917', $html );
+	}
+
+	/**
+	 * @return array<string, array{string, string}>
+	 */
+	public static function pin_notices(): array {
+		return array(
+			'issued'  => array( 'admin_pin_issued', 'A new admin PIN was issued; the previous one no longer works. Bot admins stay admins.' ),
+			'revoked' => array( 'admin_pin_issued_revoked', 'A new admin PIN was issued and every bot admin was logged out.' ),
+		);
+	}
+
+	#[DataProvider( 'pin_notices' )]
+	public function test_pin_success_notices( string $code, string $message ): void {
+		$this->transients['woonyx_notice_5'] = array(
+			'type'       => 'success',
+			'code'       => $code,
+			'status'     => 0,
+			'request_id' => '',
+			'fields'     => array(),
+		);
+
+		self::assertStringContainsString( '<div class="notice notice-success"><p>' . $message . '</p></div>', $this->rendered( $this->page() ) );
+	}
+
+	public function test_no_bots_or_admins_section_while_not_connected(): void {
+		$html = $this->rendered( $this->page() );
+
+		self::assertStringNotContainsString( '<h2>Bots</h2>', $html );
+		self::assertStringNotContainsString( '<h2>Bot admins</h2>', $html );
+		self::assertSame( array(), $this->requests );
+	}
+
+	public function test_a_status_error_sends_no_bots_or_admins_request(): void {
+		$this->connect();
+		$this->next_response = self::response(
+			403,
+			self::json(
+				array(
+					'message'    => 'raw core message',
+					'error_code' => 'no_active_subscription',
+				)
+			)
+		);
+
+		$html = $this->rendered( $this->page() );
+
+		self::assertSame( array( '/api/v1/store/status' ), $this->requested_paths() );
+		self::assertStringContainsString( 'The bots can be managed here once the store’s status above can be read.', $html );
+		self::assertStringContainsString( 'The bot admins can be managed here once the store’s status above can be read.', $html );
+	}
+
+	public function test_an_admin_removed_notice(): void {
+		$this->transients['woonyx_notice_5'] = array(
+			'type'       => 'success',
+			'code'       => 'admin_revoked',
+			'status'     => 0,
+			'request_id' => '',
+			'fields'     => array(),
+		);
+
+		self::assertStringContainsString(
+			'<div class="notice notice-success"><p>The bot admin was removed. The current PIN still works for them until you issue a new one.</p></div>',
+			$this->rendered( $this->page() )
+		);
+	}
+
+	public function test_an_admin_already_removed_notice(): void {
+		$this->transients['woonyx_notice_5'] = array(
+			'type'       => 'error',
+			'code'       => 'customer_not_found',
+			'status'     => 404,
+			'request_id' => 'req-core-0009',
+			'fields'     => array(),
+		);
+
+		$html = $this->rendered( $this->page() );
+
+		self::assertStringContainsString( '<p>This person is no longer a bot admin of this store.</p>', $html );
+		self::assertStringContainsString( '<code dir="ltr">req-core-0009</code>', $html );
+	}
+
+	/**
+	 * @return array<string, array{string, string}>
+	 */
+	public static function bot_notices(): array {
+		return array(
+			'registered' => array( 'bot_registered', 'The bot token was accepted. WooNyx is setting the bot up; check its status below.' ),
+			'removed'    => array( 'bot_removed', 'The bot was removed. It no longer answers your customers.' ),
+		);
+	}
+
+	#[DataProvider( 'bot_notices' )]
+	public function test_bot_success_notices( string $code, string $message ): void {
+		$this->transients['woonyx_notice_5'] = array(
+			'type'       => 'success',
+			'code'       => $code,
+			'status'     => 0,
+			'request_id' => '',
+			'fields'     => array(),
+		);
+
+		self::assertStringContainsString( '<div class="notice notice-success"><p>' . $message . '</p></div>', $this->rendered( $this->page() ) );
+	}
+
+	public function test_a_malformed_token_notice(): void {
+		$this->transients['woonyx_notice_5'] = array(
+			'type'       => 'error',
+			'code'       => 'bot_token_format',
+			'status'     => 0,
+			'request_id' => '',
+			'fields'     => array(),
+		);
+
+		self::assertStringContainsString( 'This does not look like a bot token.', $this->rendered( $this->page() ) );
 	}
 
 	public function test_an_unknown_success_code_shows_nothing(): void {

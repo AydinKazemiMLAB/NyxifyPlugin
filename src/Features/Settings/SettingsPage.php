@@ -9,6 +9,12 @@ declare(strict_types=1);
 
 namespace WooNyx\Features\Settings;
 
+use WooNyx\Features\Bots\AdminPinHandler;
+use WooNyx\Features\Bots\AdminRemovalHandler;
+use WooNyx\Features\Bots\AdminService;
+use WooNyx\Features\Bots\BotRegistrationHandler;
+use WooNyx\Features\Bots\BotRemovalHandler;
+use WooNyx\Features\Bots\BotService;
 use WooNyx\Features\Store\ActivationHandler;
 use WooNyx\Features\Store\SecretRotationHandler;
 use WooNyx\Features\Store\StatusService;
@@ -21,10 +27,11 @@ use WooNyx\Shared\Options\SecretStore;
 
 /**
  * WooCommerce > WooNyx: the connection status from the stored options, the core address, the result of the last
- * action, the store's status on the core (only while connected: nothing is sent before a license key is entered) and
- * the "Rotate secret" button, the license form (open while not connected, folded into "Activate again" once
- * connected) and, while connected, the deactivation warning. Later phases add the
- * bots, PIN and admins forms (see AdminAction).
+ * action, and only while connected (nothing is sent before a license key is entered): the store's status on the core
+ * (fetched once per page load and shared by the sections), the bots, the admin PIN, the bot admins, the "Rotate secret"
+ * button; then the license
+ * form (open while not connected, folded into "Activate again" once connected) and, while connected, the deactivation
+ * warning.
  */
 final class SettingsPage {
 
@@ -56,11 +63,39 @@ final class SettingsPage {
 	private string $core_url;
 
 	/**
+	 * Where the store's status comes from.
+	 *
+	 * @var StatusService
+	 */
+	private StatusService $status_service;
+
+	/**
 	 * The store's status on the core.
 	 *
 	 * @var StatusSection
 	 */
 	private StatusSection $status_section;
+
+	/**
+	 * The store's bots.
+	 *
+	 * @var BotsSection
+	 */
+	private BotsSection $bots_section;
+
+	/**
+	 * The bots' admin PIN.
+	 *
+	 * @var AdminPinSection
+	 */
+	private AdminPinSection $pin_section;
+
+	/**
+	 * The bots' admins.
+	 *
+	 * @var AdminsSection
+	 */
+	private AdminsSection $admins_section;
 
 	/**
 	 * Hook suffix of the page, once the menu is registered.
@@ -76,12 +111,18 @@ final class SettingsPage {
 	 * @param SecretStore   $store       Where the connection is kept.
 	 * @param string        $core_url       The core address.
 	 * @param StatusService $status_service The store's status on the core.
+	 * @param BotService    $bot_service    The store's bots on the core.
+	 * @param AdminService  $admin_service  The store's bot admins on the core.
 	 */
-	public function __construct( string $plugin_file, SecretStore $store, string $core_url, StatusService $status_service ) {
+	public function __construct( string $plugin_file, SecretStore $store, string $core_url, StatusService $status_service, BotService $bot_service, AdminService $admin_service ) {
 		$this->plugin_file    = $plugin_file;
 		$this->store          = $store;
 		$this->core_url       = $core_url;
-		$this->status_section = new StatusSection( $status_service );
+		$this->status_service = $status_service;
+		$this->status_section = new StatusSection();
+		$this->bots_section   = new BotsSection( $bot_service );
+		$this->pin_section    = new AdminPinSection( $store );
+		$this->admins_section = new AdminsSection( $admin_service );
 	}
 
 	/**
@@ -191,7 +232,11 @@ final class SettingsPage {
 			</table>
 
 			<?php if ( $connected ) : ?>
-				<?php $this->status_section->render(); ?>
+				<?php $status = $this->status_service->get(); ?>
+				<?php $this->status_section->render( $status ); ?>
+				<?php $this->bots_section->render( $status ); ?>
+				<?php $this->pin_section->render( $status ); ?>
+				<?php $this->admins_section->render( $status ); ?>
 				<?php $this->render_rotation_form(); ?>
 				<details class="woonyx-reactivate">
 					<summary><?php esc_html_e( 'Activate again', 'woonyx' ); ?></summary>
@@ -300,8 +345,13 @@ final class SettingsPage {
 	 */
 	private static function success_message( string $code ): ?string {
 		$messages = array(
-			ActivationHandler::ACTIVATED   => __( 'The store is connected to WooNyx.', 'woonyx' ),
-			SecretRotationHandler::ROTATED => __( 'The shared secret was replaced with a new one. The store stays connected.', 'woonyx' ),
+			ActivationHandler::ACTIVATED       => __( 'The store is connected to WooNyx.', 'woonyx' ),
+			SecretRotationHandler::ROTATED     => __( 'The shared secret was replaced with a new one. The store stays connected.', 'woonyx' ),
+			BotRegistrationHandler::REGISTERED => __( 'The bot token was accepted. WooNyx is setting the bot up; check its status below.', 'woonyx' ),
+			BotRemovalHandler::REMOVED         => __( 'The bot was removed. It no longer answers your customers.', 'woonyx' ),
+			AdminPinHandler::ISSUED            => __( 'A new admin PIN was issued; the previous one no longer works. Bot admins stay admins.', 'woonyx' ),
+			AdminPinHandler::ISSUED_REVOKED    => __( 'A new admin PIN was issued and every bot admin was logged out.', 'woonyx' ),
+			AdminRemovalHandler::REVOKED       => __( 'The bot admin was removed. The current PIN still works for them until you issue a new one.', 'woonyx' ),
 		);
 
 		return $messages[ $code ] ?? null;

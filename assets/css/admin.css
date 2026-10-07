@@ -64,3 +64,64 @@
 .woonyx-settings .woonyx-deactivation-note {
 	margin-block-start: 2em;
 }
+
+.woonyx-bot {
+	margin-block-end: 1.5em;
+	padding-block-end: 0.5em;
+	border-block-end: 1px solid #dcdcde;
+}
+
+.woonyx-bot > h3 {
+	margin-block-end: 0.5em;
+}
+
+.woonyx-bot .form-table th,
+.woonyx-bot .form-table td {
+	padding-block: 0.5em;
+}
+
+.woonyx-replace-bot > summary {
+	cursor: pointer;
+}
+
+.woonyx-bot-token-form input[dir="ltr"] {
+	text-align: start;
+	unicode-bidi: isolate;
+}
+
+.woonyx-bot-token-form .submit,
+.woonyx-bot-remove-form p {
+	margin-block: 0.5em;
+	padding-block: 0;
+}
+
+.woonyx-admin-pin > summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.woonyx-settings .woonyx-pin {
+	font-size: 1.5em;
+	letter-spacing: 0.15em;
+	padding: 0.25em 0.5em;
+}
+
+.woonyx-admin-pin-form {
+	display: inline-block;
+	margin-block: 0.5em;
+	margin-inline-end: 0.5em;
+}
+
+.woonyx-settings .woonyx-admins {
+	max-width: 50em;
+}
+
+.woonyx-admins td,
+.woonyx-admins th {
+	vertical-align: middle;
+}
+
+.woonyx-admin-remove-form {
+	margin: 0;
+	text-align: end;
+}

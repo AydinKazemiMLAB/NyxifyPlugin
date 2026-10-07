@@ -88,6 +88,16 @@ final class CoreError {
 	 */
 	public const SECRET_NOT_SAVED = 'secret_not_saved';
 
+	/**
+	 * The entered bot token isn't printable ASCII without spaces, up to 300 characters; nothing was sent.
+	 */
+	public const BOT_TOKEN_FORMAT = 'bot_token_format';
+
+	/**
+	 * The core issued a new admin PIN (the previous one stopped working), but it could not be saved: issue another.
+	 */
+	public const PIN_NOT_SAVED = 'pin_not_saved';
+
 	private const CODE_PATTERN = '/^[a-z][a-z0-9_]{0,63}$/D';
 
 	/**

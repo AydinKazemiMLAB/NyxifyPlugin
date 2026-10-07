@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace WooNyx\Features\Settings;
 
 use WooNyx\Features\Store\StatusRefreshHandler;
-use WooNyx\Features\Store\StatusService;
 use WooNyx\Features\Store\StoreStatus;
 use WooNyx\Shared\Admin\AdminAction;
 use WooNyx\Shared\Http\CoreError;
@@ -23,32 +22,16 @@ use WooNyx\Shared\Http\ErrorMessages;
 final class StatusSection {
 
 	/**
-	 * Where the status comes from.
-	 *
-	 * @var StatusService
-	 */
-	private StatusService $service;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param StatusService $service Where the status comes from.
-	 */
-	public function __construct( StatusService $service ) {
-		$this->service = $service;
-	}
-
-	/**
 	 * Prints the section.
+	 *
+	 * @param StoreStatus|CoreError $result The status (StatusService::get()), fetched once by the page.
 	 */
-	public function render(): void {
-		$result = $this->service->get();
-
+	public function render( StoreStatus|CoreError $result ): void {
 		?>
 		<h2><?php esc_html_e( 'Store on WooNyx', 'woonyx' ); ?></h2>
 		<?php
 		if ( $result instanceof CoreError ) {
-			self::render_error( $result );
+			ErrorNotice::render( $result );
 		} else {
 			self::render_status( $result );
 		}
@@ -61,34 +44,13 @@ final class StatusSection {
 					<span class="description">
 						<?php
 						/* translators: %s: date and time */
-						echo esc_html( sprintf( __( 'Checked %s', 'woonyx' ), self::format_time( $result->checked_at ) ) );
+						echo esc_html( sprintf( __( 'Checked %s', 'woonyx' ), DateFormat::timestamp( $result->checked_at ) ) );
 						?>
 					</span>
 				<?php endif; ?>
 			</p>
 		</form>
 		<?php
-	}
-
-	/**
-	 * Why the status couldn't be read; a lapsed subscription is a warning, the rest errors.
-	 *
-	 * @param CoreError $error The failure.
-	 */
-	private static function render_error( CoreError $error ): void {
-		printf(
-			'<div class="notice %s inline"><p>%s</p>',
-			esc_attr( 'no_active_subscription' === $error->code ? 'notice-warning' : 'notice-error' ),
-			esc_html( ErrorMessages::for_error( $error ) )
-		);
-		if ( '' !== $error->request_id ) {
-			printf(
-				'<p class="description">%s <code dir="ltr">%s</code></p>',
-				esc_html__( 'Request ID (for WooNyx support):', 'woonyx' ),
-				esc_html( $error->request_id )
-			);
-		}
-		echo '</div>';
 	}
 
 	/**
@@ -121,7 +83,7 @@ final class StatusSection {
 								<p class="description">
 									<?php
 									/* translators: %s: date and time */
-									echo esc_html( sprintf( __( 'Activated %s', 'woonyx' ), self::format_date( $status->license_activated_at ) ) );
+									echo esc_html( sprintf( __( 'Activated %s', 'woonyx' ), DateFormat::core_date( $status->license_activated_at ) ) );
 									?>
 								</p>
 							<?php endif; ?>
@@ -135,7 +97,7 @@ final class StatusSection {
 						<p class="description">
 							<?php
 							/* translators: %s: date and time */
-							echo esc_html( sprintf( __( 'Expires %s', 'woonyx' ), self::format_date( $status->expires_at ) ) );
+							echo esc_html( sprintf( __( 'Expires %s', 'woonyx' ), DateFormat::core_date( $status->expires_at ) ) );
 							?>
 						</p>
 					</td>
@@ -156,7 +118,7 @@ final class StatusSection {
 							<p class="description">
 								<?php
 								/* translators: %s: date and time */
-								echo esc_html( sprintf( __( 'Last synced %s', 'woonyx' ), self::format_date( $status->catalog_last_synced_at ) ) );
+								echo esc_html( sprintf( __( 'Last synced %s', 'woonyx' ), DateFormat::core_date( $status->catalog_last_synced_at ) ) );
 								?>
 							</p>
 						<?php endif; ?>
@@ -250,35 +212,5 @@ final class StatusSection {
 			number_format_i18n( $status->active_products ),
 			number_format_i18n( $status->max_products )
 		);
-	}
-
-	/**
-	 * A date of the core (naive UTC) in the site's format and time zone; anything unreadable is shown as it is.
-	 *
-	 * @param string $value ISO date and time.
-	 */
-	private static function format_date( string $value ): string {
-		try {
-			$time = new \DateTimeImmutable( $value, new \DateTimeZone( 'UTC' ) );
-		} catch ( \Exception $e ) {
-			return $value;
-		}
-
-		return self::format_time( $time->getTimestamp() );
-	}
-
-	/**
-	 * A Unix time in the site's date and time format and time zone.
-	 *
-	 * @param int $timestamp Unix time.
-	 */
-	private static function format_time( int $timestamp ): string {
-		$date_format = get_option( 'date_format' );
-		$time_format = get_option( 'time_format' );
-		$format      = ( is_string( $date_format ) && '' !== $date_format ? $date_format : 'Y-m-d' )
-			. ' ' . ( is_string( $time_format ) && '' !== $time_format ? $time_format : 'H:i' );
-		$formatted   = wp_date( $format, $timestamp );
-
-		return is_string( $formatted ) ? $formatted : '';
 	}
 }
