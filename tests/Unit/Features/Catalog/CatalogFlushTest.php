@@ -17,6 +17,8 @@ use WooNyx\Features\Catalog\CatalogQueue;
 use WooNyx\Features\Catalog\CatalogSender;
 use WooNyx\Features\Catalog\FlushScheduler;
 use WooNyx\Features\Catalog\PayloadBuilder;
+use WooNyx\Features\Orders\OrderPayloadBuilder;
+use WooNyx\Features\Orders\OrderSender;
 use WooNyx\Features\Store\StatusService;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Logging\Logger;
@@ -26,8 +28,9 @@ use WooNyx\Shared\Security\Encryptor;
 use WooNyx\Tests\Unit\TestCase;
 
 /**
- * The flush over an in-memory queue, the real builder (fake WooCommerce controllers), sender and client (a mocked
- * wp_remote_request()), the real scheduler (Action Scheduler functions and options in memory) and a recording logger.
+ * The flush over an in-memory queue, the real builders (fake WooCommerce controllers and orders), senders and client (a
+ * mocked wp_remote_request()), the real scheduler (Action Scheduler functions and options in memory) and a recording
+ * logger.
  */
 final class CatalogFlushTest extends TestCase {
 
@@ -90,6 +93,13 @@ final class CatalogFlushTest extends TestCase {
 	 * @var list<int>
 	 */
 	private array $missing = array();
+
+	/**
+	 * Orders that exist but weren't created by WooNyx (no marker).
+	 *
+	 * @var list<int>
+	 */
+	private array $foreign = array();
 
 	/**
 	 * Whether the site has a readable connection.
@@ -196,6 +206,13 @@ final class CatalogFlushTest extends TestCase {
 			}
 		);
 
+		Functions\when( 'wc_get_order' )->alias( fn( int $id ) => in_array( $id, $this->missing, true ) ? false : $this->order( $id ) );
+		Functions\when( 'wc_get_price_decimals' )->justReturn( 0 );
+		Functions\when( 'wc_format_decimal' )->alias( static fn( $number, $dp ): string => number_format( (float) $number, (int) $dp, '.', '' ) );
+		Functions\when( 'wc_rest_prepare_date_response' )->alias(
+			static fn( $date ) => $date instanceof \DateTimeInterface ? $date->format( 'Y-m-d\TH:i:s' ) : null
+		);
+
 		( new SecretStore( Encryptor::from_secret( 'site secret' ) ) )->save_connection( new Connection( 'shop_8f2a0c1d3e4b5a69', 'sec_' . str_repeat( 'ab', 32 ) ) );
 	}
 
@@ -285,6 +302,64 @@ final class CatalogFlushTest extends TestCase {
 		return $controller;
 	}
 
+	/**
+	 * A strict order mock: the whitelisted getters only, one product line whose name the logs must never show.
+	 *
+	 * @param int $id Order id.
+	 * @return Mockery\MockInterface&\WC_Order
+	 */
+	private function order( int $id ) {
+		$line = Mockery::mock( 'WC_Order_Item_Product' );
+		$line->allows( 'get_name' )->andReturn( self::SECRET );
+		$line->allows( 'get_product_id' )->andReturn( 5 );
+		$line->allows( 'get_variation_id' )->andReturn( 0 );
+		$line->allows( 'get_quantity' )->andReturn( 1 );
+		$line->allows( 'get_total' )->andReturn( '2400000' );
+
+		$order = Mockery::mock( 'WC_Order' );
+		$order->allows( 'get_id' )->andReturn( $id );
+		$order->allows( 'get_type' )->andReturn( 'shop_order' );
+		$order->allows( 'get_meta' )->with( '_woonyx_order' )->andReturn( in_array( $id, $this->foreign, true ) ? '' : '1' );
+		$order->allows( 'get_status' )->andReturn( 'processing' );
+		$order->allows( 'get_order_number' )->andReturn( $id );
+		$order->allows( 'get_currency' )->andReturn( 'IRT' );
+		$order->allows( 'get_total' )->andReturn( '2400000' );
+		$order->allows( 'get_date_created' )->andReturn( new \DateTimeImmutable( '2026-10-12 06:00:00' ) );
+		$order->allows( 'get_date_modified' )->andReturn( new \DateTimeImmutable( '2026-10-12 06:30:00' ) );
+		$order->allows( 'get_date_paid' )->andReturn( null );
+		$order->allows( 'get_items' )->with( 'line_item' )->andReturn( array( 9 => $line ) );
+
+		return $order;
+	}
+
+	/**
+	 * The order the core receives for an order() mock.
+	 *
+	 * @param int $id Order id.
+	 * @return array<string, mixed>
+	 */
+	private static function order_body( int $id ): array {
+		return array(
+			'id'                => $id,
+			'status'            => 'processing',
+			'number'            => (string) $id,
+			'currency'          => 'IRT',
+			'total'             => '2400000',
+			'date_created_gmt'  => '2026-10-12T06:00:00',
+			'date_modified_gmt' => '2026-10-12T06:30:00',
+			'date_paid_gmt'     => null,
+			'line_items'        => array(
+				array(
+					'name'         => self::SECRET,
+					'product_id'   => 5,
+					'variation_id' => 0,
+					'quantity'     => 1,
+					'total'        => '2400000',
+				),
+			),
+		);
+	}
+
 	private function flush(): CatalogFlush {
 		$wc_logger = Mockery::mock( 'WC_Logger_Interface' );
 		$wc_logger->shouldReceive( 'log' )->andReturnUsing(
@@ -297,11 +372,14 @@ final class CatalogFlushTest extends TestCase {
 			}
 		);
 		$logger = new Logger( $wc_logger );
+		$client = new CoreClient( new SecretStore( Encryptor::from_secret( 'site secret' ) ), self::BASE_URL );
 
 		return new CatalogFlush(
 			$this->queue,
 			new PayloadBuilder( $logger, fn( string $class_name ): object => $this->controller( $class_name ), static fn(): \WP_REST_Request => Mockery::mock( 'WP_REST_Request' ) ),
-			new CatalogSender( new CoreClient( new SecretStore( Encryptor::from_secret( 'site secret' ) ), self::BASE_URL ) ),
+			new CatalogSender( $client ),
+			new OrderPayloadBuilder( $logger ),
+			new OrderSender( $client ),
 			new FlushScheduler( fn(): int => $this->now ),
 			$logger,
 			fn(): bool => $this->connected,
@@ -335,6 +413,9 @@ final class CatalogFlushTest extends TestCase {
 		if ( isset( $body['category_ids'] ) ) {
 			return $body['category_ids'];
 		}
+		if ( isset( $body['orders'] ) ) {
+			return array_column( $body['orders'], 'id' );
+		}
 
 		return array_map( static fn( array $item ): int => $item['product']['id'] ?? $item['id'], $body['items'] );
 	}
@@ -349,12 +430,15 @@ final class CatalogFlushTest extends TestCase {
 	}
 
 	/**
-	 * No object content in any log entry.
+	 * No object content in any log entry: no name, status, currency or total.
 	 */
 	private function assert_logs_hold_no_content(): void {
 		$logged = (string) json_encode( $this->entries ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 		self::assertStringNotContainsString( self::SECRET, $logged );
 		self::assertStringNotContainsString( 'sec_', $logged );
+		self::assertStringNotContainsString( 'processing', $logged );
+		self::assertStringNotContainsString( 'IRT', $logged );
+		self::assertStringNotContainsString( '2400000', $logged );
 	}
 
 	public function test_sends_every_kind_in_order_with_exact_bodies(): void {
@@ -399,7 +483,7 @@ final class CatalogFlushTest extends TestCase {
 		self::assertSame( array(), $this->pending );
 		self::assertSame( array( 0 ), $this->plan_limits );
 		self::assertSame( 0, $this->status_cleared );
-		self::assertSame( array_fill( 0, 4, 'info:Catalog changes sent.' ), $this->logged() );
+		self::assertSame( array_fill( 0, 4, 'info:Changes sent.' ), $this->logged() );
 		self::assertSame(
 			array(
 				'kind'               => 'product',
@@ -474,7 +558,7 @@ final class CatalogFlushTest extends TestCase {
 		$this->flush()->run();
 
 		self::assertSame( array(), $this->queue->rows );
-		self::assertSame( array( 'warning:The core accepted catalog changes, but its answer was unexpected.' ), $this->logged() );
+		self::assertSame( array( 'warning:The core accepted changes, but its answer was unexpected.' ), $this->logged() );
 	}
 
 	/**
@@ -560,7 +644,7 @@ final class CatalogFlushTest extends TestCase {
 		self::assertSame( array( 60, 300, 900, 3600, 3600 ), $waits );
 		self::assertCount( 5, $this->sent );
 		self::assertSame( array(), $this->queue->rows );
-		self::assertContains( 'warning:Catalog changes were dropped after repeated failures.', $this->logged() );
+		self::assertContains( 'warning:Changes were dropped after repeated failures.', $this->logged() );
 		self::assertSame(
 			array(
 				'kind'   => 'product',
@@ -676,7 +760,7 @@ final class CatalogFlushTest extends TestCase {
 
 		$this->flush()->run();
 
-		self::assertSame( array( 'error:The catalog flush failed.' ), $this->logged() );
+		self::assertSame( array( 'error:The flush failed.' ), $this->logged() );
 		self::assertSame( 'RuntimeException', $this->entries[0]['context']['exception'] );
 		self::assertSame( array( 'product:5' => array( false, 0, 1 ) ), $this->queue->state() );
 		self::assertSame( array( self::NOW + 60 ), $this->pending );
@@ -775,6 +859,326 @@ final class CatalogFlushTest extends TestCase {
 		$this->flush()->run();
 
 		self::assertSame( array( 5 ), $this->sent_ids( 0 ) );
+		self::assertSame( array(), $this->queue->rows );
+	}
+
+	public function test_orders_go_first_each_kind_in_its_own_request_with_exact_bodies(): void {
+		$this->queue->enqueue( CatalogQueue::CATEGORY, array( 22 ) );
+		$this->queue->enqueue( CatalogQueue::PRODUCT, array( 5 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, array( 70 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 61, 59 ) );
+
+		$this->flush()->run();
+
+		self::assertSame(
+			array( OrderSender::PATH_STATUS, OrderSender::PATH_STATUS, CatalogSender::PATH_CATEGORIES, CatalogSender::PATH_PRODUCTS ),
+			$this->paths()
+		);
+		self::assertSame( array( 'orders' => array( self::order_body( 61 ), self::order_body( 59 ) ) ), $this->sent[0]['body'] );
+		self::assertSame(
+			array(
+				'orders' => array(
+					array(
+						'id'     => 70,
+						'status' => 'trash',
+					),
+				),
+			),
+			$this->sent[1]['body']
+		);
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame( array(), $this->pending );
+		self::assertSame( array_fill( 0, 4, 'info:Changes sent.' ), $this->logged() );
+		self::assertSame(
+			array(
+				'kind'       => 'order',
+				'count'      => 2,
+				'ids'        => '61,59',
+				'request_id' => 'req-core-0001',
+				'affected'   => 1,
+				'source'     => 'woonyx',
+			),
+			$this->entries[0]['context']
+		);
+		self::assertSame(
+			array(
+				'kind'       => 'order_delete',
+				'count'      => 1,
+				'ids'        => '70',
+				'request_id' => 'req-core-0001',
+				'affected'   => 1,
+				'source'     => 'woonyx',
+			),
+			$this->entries[1]['context']
+		);
+		self::assertArrayNotHasKey( 'ids', $this->entries[2]['context'] );
+		self::assertArrayNotHasKey( 'ids', $this->entries[3]['context'] );
+		$this->assert_logs_hold_no_content();
+	}
+
+	public function test_orders_with_nothing_to_send_complete_without_a_request(): void {
+		$this->missing = array( 59 );
+		$this->foreign = array( 61 );
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59, 61 ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array(), $this->sent );
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame( array(), $this->entries );
+	}
+
+	public function test_only_the_orders_with_something_to_send_are_sent_and_logged(): void {
+		$this->foreign = array( 61 );
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59, 61, 68 ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array( 59, 68 ), $this->sent_ids( 0 ) );
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame( '59,68', $this->entries[0]['context']['ids'] );
+		self::assertSame( 2, $this->entries[0]['context']['count'] );
+	}
+
+	public function test_orders_and_order_deletes_go_100_a_request(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, range( 1, 120 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, range( 1001, 1150 ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array_fill( 0, 4, OrderSender::PATH_STATUS ), $this->paths() );
+		self::assertSame( range( 1, 100 ), $this->sent_ids( 0 ) );
+		self::assertSame( range( 101, 120 ), $this->sent_ids( 1 ) );
+		self::assertSame( range( 1001, 1100 ), $this->sent_ids( 2 ) );
+		self::assertSame( range( 1101, 1150 ), $this->sent_ids( 3 ) );
+		self::assertSame( array(), $this->queue->rows );
+	}
+
+	/**
+	 * A retryable failure of an order batch: back with one more attempt, the backoff set, the catalog not sent.
+	 *
+	 * @param array<string, mixed>|\stdClass $answer The core's answer.
+	 * @param int                            $delay  Expected delay.
+	 */
+	#[DataProvider( 'retryable_failures' )]
+	public function test_a_retryable_failure_of_an_order_batch_backs_off( $answer, int $delay ): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59, 61 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, array( 70 ) );
+		$this->queue->enqueue( CatalogQueue::CATEGORY, array( 22 ) );
+		$this->answer( OrderSender::PATH_STATUS, $answer );
+
+		$this->flush()->run();
+
+		self::assertSame( array( OrderSender::PATH_STATUS ), $this->paths() );
+		self::assertSame(
+			array(
+				'category:22'     => array( false, 0, 0 ),
+				'order:59'        => array( false, 0, 1 ),
+				'order:61'        => array( false, 0, 1 ),
+				'order_delete:70' => array( false, 0, 0 ),
+			),
+			$this->queue->state()
+		);
+		self::assertSame( self::NOW + $delay, $this->options[ FlushScheduler::OPTION_RETRY_AT ] );
+		self::assertSame( array( self::NOW + $delay ), $this->pending );
+		self::assertSame( 'orders/status', $this->entries[0]['context']['operation'] );
+		$this->assert_logs_hold_no_content();
+	}
+
+	public function test_an_order_delete_batch_is_retried_and_then_sent(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, array( 70 ) );
+		$this->answer( OrderSender::PATH_STATUS, self::response( 503, '' ) );
+
+		$this->flush()->run();
+		self::assertSame( array( 'order_delete:70' => array( false, 0, 1 ) ), $this->queue->state() );
+
+		$this->now = (int) $this->options[ FlushScheduler::OPTION_RETRY_AT ];
+		$this->flush()->run();
+
+		self::assertSame( array( OrderSender::PATH_STATUS, OrderSender::PATH_STATUS ), $this->paths() );
+		self::assertSame( $this->sent[0]['body'], $this->sent[1]['body'] );
+		self::assertSame( array(), $this->queue->rows );
+		self::assertArrayNotHasKey( FlushScheduler::OPTION_RETRY_AT, $this->options );
+	}
+
+	public function test_an_order_batch_is_dropped_after_its_fifth_failure(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59 ) );
+
+		for ( $attempt = 1; $attempt <= 5; $attempt++ ) {
+			$this->answer( OrderSender::PATH_STATUS, self::response( 503, '' ) );
+			$this->now = (int) ( $this->options[ FlushScheduler::OPTION_RETRY_AT ] ?? self::NOW );
+			$this->flush()->run();
+		}
+
+		self::assertCount( 5, $this->sent );
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame(
+			array(
+				'kind'   => 'order',
+				'count'  => 1,
+				'source' => 'woonyx',
+			),
+			$this->entries[ count( $this->entries ) - 1 ]['context']
+		);
+	}
+
+	/**
+	 * A refusal of the store on an order batch drops the whole queue, the catalog included.
+	 *
+	 * @param int    $status HTTP status.
+	 * @param string $code   Error code.
+	 */
+	#[DataProvider( 'stopping_refusals' )]
+	public function test_a_refused_store_on_an_order_batch_drops_the_whole_queue( int $status, string $code ): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, array( 70 ) );
+		$this->queue->enqueue( CatalogQueue::PRODUCT, array( 5 ) );
+		$this->answer( OrderSender::PATH_STATUS, self::response( $status, '{"message":"No.","error_code":"' . $code . '"}' ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array( OrderSender::PATH_STATUS ), $this->paths() );
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame( 1, $this->status_cleared );
+		self::assertSame( array(), $this->pending );
+		self::assertSame( 'warning:The core refuses the store; every queued change was dropped.', $this->logged()[1] );
+	}
+
+	public function test_a_refused_store_on_a_catalog_batch_drops_the_orders_queued_meanwhile(): void {
+		$this->queue->enqueue( CatalogQueue::PRODUCT, array( 5 ) );
+		$this->during_send[] = function (): void {
+			$this->queue->enqueue( CatalogQueue::ORDER, array( 59 ) );
+		};
+		$this->answer( CatalogSender::PATH_PRODUCTS, self::response( 402, '{"message":"No.","error_code":"no_active_subscription"}' ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array( CatalogSender::PATH_PRODUCTS ), $this->paths() );
+		self::assertSame( array(), $this->queue->rows );
+	}
+
+	public function test_a_refused_order_batch_is_dropped_with_field_names_only_and_the_catalog_goes_on(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, array( 70 ) );
+		$this->queue->enqueue( CatalogQueue::CATEGORY, array( 22 ) );
+		$this->answer(
+			OrderSender::PATH_STATUS,
+			self::response( 422, '{"message":"Validation error","error_code":"validation_error","details":[{"field":"body.orders.0.line_items.0.name","message":"' . self::SECRET . ' too long"}]}' )
+		);
+
+		$this->flush()->run();
+
+		self::assertSame( array( OrderSender::PATH_STATUS, OrderSender::PATH_STATUS, CatalogSender::PATH_CATEGORIES ), $this->paths() );
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame(
+			array(
+				'warning:WooNyx core call failed.',
+				'warning:The core refused a batch of changes; it was dropped.',
+				'info:Changes sent.',
+				'info:Changes sent.',
+			),
+			$this->logged()
+		);
+		self::assertSame(
+			array(
+				'kind'   => 'order',
+				'count'  => 1,
+				'ids'    => '59',
+				'fields' => 'body.orders.0.line_items.0.name',
+				'source' => 'woonyx',
+			),
+			$this->entries[1]['context']
+		);
+		$this->assert_logs_hold_no_content();
+	}
+
+	public function test_an_unexpected_2xx_answer_to_an_order_batch_counts_as_delivered(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59 ) );
+		$this->answer( OrderSender::PATH_STATUS, self::response( 200, '{"applied":1}' ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array(), $this->queue->rows );
+		self::assertSame( array( 'warning:The core accepted changes, but its answer was unexpected.' ), $this->logged() );
+		self::assertSame(
+			array(
+				'kind'       => 'order',
+				'count'      => 1,
+				'ids'        => '59',
+				'request_id' => 'req-core-0001',
+				'source'     => 'woonyx',
+			),
+			$this->entries[0]['context']
+		);
+	}
+
+	/**
+	 * Race 2 for orders, success: 59 and 61 are claimed; 61 (changed again) and 68 are queued while the batch is being
+	 * sent. Afterwards 59 is gone, 61 and 68 wait with no attempt, and a flush is scheduled for them.
+	 */
+	public function test_race_orders_queued_during_a_send_survive_its_success(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59, 61 ) );
+		$this->request_seconds = 25;
+		$this->during_send[]   = function (): void {
+			$this->queue->enqueue( CatalogQueue::ORDER, array( 61, 68 ) );
+		};
+
+		$this->flush()->run();
+
+		self::assertSame( array( 59, 61 ), $this->sent_ids( 0 ) );
+		self::assertSame(
+			array(
+				'order:61' => array( false, 0, 0 ),
+				'order:68' => array( false, 0, 0 ),
+			),
+			$this->queue->state()
+		);
+		self::assertSame( array( self::NOW + 25 ), $this->pending );
+	}
+
+	/**
+	 * Race 2 for orders, retry: the same with a retryable failure: 59, 61 and 68 stay queued, 59 and 61 with one more
+	 * attempt.
+	 */
+	public function test_race_orders_queued_during_a_send_survive_its_failure(): void {
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 59, 61 ) );
+		$this->during_send[] = function (): void {
+			$this->queue->enqueue( CatalogQueue::ORDER, array( 61, 68 ) );
+		};
+		$this->answer( OrderSender::PATH_STATUS, new \stdClass() );
+
+		$this->flush()->run();
+
+		self::assertSame(
+			array(
+				'order:59' => array( false, 0, 1 ),
+				'order:61' => array( false, 0, 1 ),
+				'order:68' => array( false, 0, 0 ),
+			),
+			$this->queue->state()
+		);
+		self::assertSame( array( self::NOW + 60 ), $this->pending );
+	}
+
+	public function test_a_deleted_order_queued_as_both_kinds_is_sent_once_as_trash(): void {
+		$this->missing = array( 70 );
+		$this->queue->enqueue( CatalogQueue::ORDER_DELETE, array( 70 ) );
+		$this->queue->enqueue( CatalogQueue::ORDER, array( 70 ) );
+
+		$this->flush()->run();
+
+		self::assertSame( array( OrderSender::PATH_STATUS ), $this->paths() );
+		self::assertSame(
+			array(
+				'orders' => array(
+					array(
+						'id'     => 70,
+						'status' => 'trash',
+					),
+				),
+			),
+			$this->sent[0]['body']
+		);
 		self::assertSame( array(), $this->queue->rows );
 	}
 }

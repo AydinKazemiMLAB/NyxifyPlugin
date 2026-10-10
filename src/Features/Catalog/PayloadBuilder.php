@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace WooNyx\Features\Catalog;
 
-use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Logging\Logger;
 
 /**
@@ -54,7 +53,7 @@ final class PayloadBuilder {
 	/**
 	 * Objects per batch (the core accepts 1–100 items).
 	 */
-	public const MAX_ITEMS = 100;
+	public const MAX_ITEMS = Batch::MAX_ITEMS;
 
 	/**
 	 * Variations per product the core accepts (more fail the whole batch).
@@ -64,17 +63,12 @@ final class PayloadBuilder {
 	/**
 	 * A batch stops before its body passes this size (the core accepts 10 MB).
 	 */
-	public const BATCH_BYTES = 4 * 1024 * 1024;
+	public const BATCH_BYTES = Batch::BATCH_BYTES;
 
 	/**
 	 * An object over this size is skipped.
 	 */
-	public const MAX_ITEM_BYTES = 9 * 1024 * 1024;
-
-	/**
-	 * Size of an empty body, `{"items":[]}`.
-	 */
-	private const EMPTY_BODY_BYTES = 12;
+	public const MAX_ITEM_BYTES = Batch::MAX_ITEM_BYTES;
 
 	private const CATEGORY_TAXONOMY = 'product_cat';
 
@@ -159,7 +153,7 @@ final class PayloadBuilder {
 	}
 
 	/**
-	 * Builds objects in order until the batch is full.
+	 * Builds objects in order until the batch is full (Batch::collect()).
 	 *
 	 * @param string                                     $kind  Queue kind, for the logs.
 	 * @param int[]                                      $ids   Ids.
@@ -168,57 +162,7 @@ final class PayloadBuilder {
 	 * @phpstan-param list<int> $ids
 	 */
 	private function batch( string $kind, array $ids, callable $build ): Batch {
-		$items   = array();
-		$built   = array();
-		$skipped = array();
-		$left    = array();
-		$bytes   = self::EMPTY_BODY_BYTES;
-
-		foreach ( $ids as $index => $id ) {
-			if ( count( $items ) >= self::MAX_ITEMS || $bytes > self::BATCH_BYTES ) {
-				$left = array_slice( $ids, $index );
-				break;
-			}
-
-			try {
-				$item = $build( $id );
-			} catch ( \Throwable $e ) {
-				$this->skip( 'A catalog object could not be built; it is skipped.', $kind, $id, array( 'exception' => get_class( $e ) ) );
-				$skipped[] = $id;
-				continue;
-			}
-
-			if ( null === $item ) {
-				$skipped[] = $id;
-				continue;
-			}
-
-			$json = wp_json_encode( $item, CoreClient::JSON_FLAGS );
-			if ( ! is_string( $json ) ) {
-				$this->skip( 'A catalog object could not be encoded; it is skipped.', $kind, $id );
-				$skipped[] = $id;
-				continue;
-			}
-
-			$size = strlen( $json );
-			if ( $size > self::MAX_ITEM_BYTES ) {
-				$this->skip( 'A catalog object is too large to send; it is skipped.', $kind, $id, array( 'bytes' => $size ) );
-				$skipped[] = $id;
-				continue;
-			}
-
-			$size += array() === $items ? 0 : 1;
-			if ( array() !== $items && $bytes + $size > self::BATCH_BYTES ) {
-				$left = array_slice( $ids, $index );
-				break;
-			}
-
-			$items[] = $item;
-			$built[] = $id;
-			$bytes  += $size;
-		}//end foreach
-
-		return new Batch( $items, $built, $skipped, $left, $bytes );
+		return Batch::collect( 'items', $kind, $ids, $build, $this->logger );
 	}
 
 	/**
@@ -376,23 +320,5 @@ final class PayloadBuilder {
 		}
 
 		return $item;
-	}
-
-	/**
-	 * Logs a skipped object by kind and id.
-	 *
-	 * @param string               $message Message.
-	 * @param string               $kind    Queue kind.
-	 * @param int                  $id      Object id.
-	 * @param array<string, mixed> $context More context.
-	 */
-	private function skip( string $message, string $kind, int $id, array $context = array() ): void {
-		$this->logger->warning(
-			$message,
-			array(
-				'kind' => $kind,
-				'id'   => $id,
-			) + $context
-		);
 	}
 }

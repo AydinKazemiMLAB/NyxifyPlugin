@@ -23,8 +23,10 @@ use WooNyx\Features\Catalog\CatalogSender;
 use WooNyx\Features\Catalog\CatalogSyncHandler;
 use WooNyx\Features\Catalog\ChangeCollector;
 use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PendingChanges;
 use WooNyx\Features\Catalog\PlanLimitNotice;
 use WooNyx\Features\Catalog\Schema;
+use WooNyx\Features\Orders\OrderCollector;
 use WooNyx\Features\Settings\DeactivationWarning;
 use WooNyx\Features\Settings\SettingsPage;
 use WooNyx\Features\Store\ActivationHandler;
@@ -127,8 +129,11 @@ final class Plugin {
 		}
 
 		Schema::maybe_install();
-		// Catalog changes come from every kind of request: the admin, REST, checkout (stock), cron and WP-CLI.
-		( new ChangeCollector( new FlushScheduler(), new Logger() ) )->register();
+		// Order and catalog changes come from every kind of request: the admin, REST, checkout, cron and WP-CLI.
+		$changes = new PendingChanges( new FlushScheduler(), new Logger() );
+		$changes->register();
+		( new OrderCollector( $changes ) )->register();
+		( new ChangeCollector( $changes ) )->register();
 		add_action( FlushScheduler::HOOK, array( CatalogFlush::class, 'run_for_site' ) );
 
 		if ( is_admin() ) {

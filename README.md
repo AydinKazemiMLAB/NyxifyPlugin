@@ -5,13 +5,13 @@ store's products through Telegram, Bale and Rubika bots. The plugin activates th
 catalog and order changes to the core, and gives the store owner a settings page for the bots, the admin PIN and the
 bot admins.
 
-> Status: phase 4 (catalog webhooks), version 0.4.0. On **WooCommerce > WooNyx** the owner enters a license key and
-> the store is connected to the core; the page shows the store's status, checks the connection and rotates the
+> Status: phase 5 (order status webhook), version 0.5.0. On **WooCommerce > WooNyx** the owner enters a license key
+> and the store is connected to the core; the page shows the store's status, checks the connection and rotates the
 > shared secret, connects, replaces and removes the store's Telegram, Bale and Rubika bots, issues the bots' admin PIN
 > and lists and removes the bot admins. While connected, every change to a product, a variation, its stock or a
-> product category reaches the core within seconds in the background, and "Sync now" starts a full catalog sync.
-> Deactivating the plugin tells the core, and uninstalling removes everything the plugin stored. Order status
-> webhooks and the pull fallback come in the next phases. Plans and progress:
+> product category, and every change to an order placed through a bot, reaches the core within seconds in the
+> background, and "Sync now" starts a full catalog sync. Deactivating the plugin tells the core, and uninstalling
+> removes everything the plugin stored. The pull fallback comes in the next phase. Plans and progress:
 > `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
 > WordPress.org doesn't accept slugs starting with `woo`, so the public name, slug and text domain change before the
 > first release.
@@ -98,6 +98,30 @@ Runs only while the store is connected; nothing is queued before.
 - **Logs** (WooCommerce > Status > Logs, source `woonyx`): kinds, counts, ids, error codes and request ids; never a
   product's or category's content.
 
+## Order status
+
+Runs only while the store is connected, and only for orders the core created through a bot's checkout (marked with
+the `_woonyx_order` meta). Orders made any other way (the shop's own checkout, wp-admin, other plugins) are never
+queued or sent.
+
+- **What is sent** (`POST /orders/webhooks/status`): `id`, `status`, `number`, `currency`, `total`,
+  `date_created_gmt`, `date_modified_gmt`, `date_paid_gmt` and the line items' `name`, `product_id`, `variation_id`,
+  `quantity` and `total`, read with the order's getters at sending time in the REST v3 formats. A permanently deleted
+  order is sent as `{"id", "status": "trash"}`.
+- **What never leaves the shop:** billing and shipping addresses, the customer, e-mail and phone, IP address and user
+  agent, notes, the payment method and transaction id, the payment link, coupons, fees, shipping and tax lines, and
+  `meta_data`. These fields are never even read.
+- **When:** every save of such an order (status changes from wp-admin, bulk actions, payments, the core's own REST
+  calls, item or total edits), trash and restore, refunds (the parent order is sent) and permanent deletes. Both order
+  storages are covered (HPOS and the legacy posts). Changes go through the catalog's queue and flush action, sent
+  before the catalog changes, up to 100 orders a request, with the same retries and the same stop on a lapsed
+  subscription, an inactive store or a rejected signature. The core keeps the newest data (`date_modified_gmt`), so
+  repeats and echoes of its own writes are harmless.
+- **Not sent:** orders changed before 0.5.0 or while the store wasn't connected (no backfill; the core reads unpaid
+  orders itself and the bot refreshes an order when it is opened).
+- **Logs:** kinds, counts, order ids, request ids, error codes and the core's `affected` count; never an order's
+  status, number, total, items or any customer data.
+
 ## Layout
 
 ```
@@ -110,8 +134,9 @@ src/Shared/           Security (Encryptor, HmacSigner), Options (SecretStore), H
 src/Features/         Settings (the admin page and its sections: status, bots, admin PIN, bot admins; deactivation
                       warning), Store (license key, REST key, activation, status, secret rotation, deactivation),
                       Bots (platforms, token input, bots, admin PIN, bot admins: services and form handlers),
-                      Catalog (queue table, change collector, flush action, payload builder, sender, retry policy,
-                      "Sync now", plan-limit notice); later Orders, Sync
+                      Catalog (queue table, the request's pending changes, change collector, flush action for
+                      catalog and orders, payload builder, sender, retry policy, "Sync now", plan-limit notice),
+                      Orders (order collector, whitelisted order payloads, status sender); later Sync
 assets/css/           admin styles (logical CSS properties, RTL-safe)
 assets/js/            confirmations: forms with `data-woonyx-confirm` (settings page), deactivation (plugins list)
 languages/            woonyx.pot and the Persian translation
@@ -133,6 +158,8 @@ docs/                 handoff, phase plans, the core's OpenAPI spec
   cached or put in a notice or URL.
 - Catalog objects carry only the fields the core reads (no `meta_data`); logs name kinds, counts and ids, never an
   object's content.
+- Orders are personal data: only orders the core created are sent, built from a short whitelist of getters (no
+  customer, address, contact, note, payment or meta field is read), and logged by id only.
 - The WooCommerce REST key the core uses is created by the plugin for the admin who activates; its consumer key and
   secret exist only in memory for the activation request. The plugin only ever deletes the key it created (its id is
   kept in `woonyx_rest_key_id`), never a key made by hand.

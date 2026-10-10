@@ -106,10 +106,12 @@ final class CatalogQueueTest extends TestCase {
 	}
 
 	public function test_kinds_are_in_sending_order(): void {
-		self::assertSame( array( 'category', 'product', 'product_delete', 'category_delete' ), CatalogQueue::KINDS );
+		self::assertSame( array( 'order', 'order_delete', 'category', 'product', 'product_delete', 'category_delete' ), CatalogQueue::KINDS );
 		self::assertTrue( CatalogQueue::is_kind( 'product' ) );
+		self::assertTrue( CatalogQueue::is_kind( 'order' ) );
+		self::assertTrue( CatalogQueue::is_kind( 'order_delete' ) );
 		self::assertFalse( CatalogQueue::is_kind( 'Product' ) );
-		self::assertFalse( CatalogQueue::is_kind( 'order' ) );
+		self::assertFalse( CatalogQueue::is_kind( 'orders' ) );
 	}
 
 	public function test_enqueue_is_one_insert_that_marks_claimed_rows_dirty_and_reads_nothing(): void {
@@ -162,7 +164,7 @@ final class CatalogQueueTest extends TestCase {
 	public function test_enqueue_refuses_an_unknown_kind(): void {
 		$this->expectException( \InvalidArgumentException::class );
 
-		$this->queue()->enqueue( 'order', array( 1 ) );
+		$this->queue()->enqueue( 'orders', array( 1 ) );
 	}
 
 	public function test_claim_releases_abandoned_claims_then_claims_the_oldest_rows_and_reads_them(): void {

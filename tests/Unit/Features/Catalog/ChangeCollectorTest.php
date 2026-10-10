@@ -16,12 +16,13 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use WooNyx\Features\Catalog\CatalogQueue;
 use WooNyx\Features\Catalog\ChangeCollector;
 use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PendingChanges;
 use WooNyx\Shared\Logging\Logger;
 use WooNyx\Tests\Unit\EmulatesPrepare;
 use WooNyx\Tests\Unit\TestCase;
 
 /**
- * The collector over in-memory posts, a mocked $wpdb that applies the queue's INSERT … ON DUPLICATE KEY UPDATE to
+ * The collector and the request's PendingChanges over in-memory posts, a mocked $wpdb that applies the queue's INSERT … ON DUPLICATE KEY UPDATE to
  * in-memory tables (one per site), Action Scheduler functions that keep pending actions in memory, and a logger that
  * records its entries.
  */
@@ -105,6 +106,13 @@ final class ChangeCollectorTest extends TestCase {
 	 * @var list<array{level: string, message: string, context: array<string, mixed>}>
 	 */
 	private array $entries = array();
+
+	/**
+	 * Each collector's PendingChanges, by the collector's object id.
+	 *
+	 * @var array<int, PendingChanges>
+	 */
+	private array $pending = array();
 
 	/**
 	 * Mocked database.
@@ -222,12 +230,26 @@ final class ChangeCollectorTest extends TestCase {
 	}
 
 	private function collector(): ChangeCollector {
-		return new ChangeCollector(
+		$pending   = new PendingChanges(
 			new FlushScheduler( static fn(): int => self::NOW ),
 			new Logger( $this->recording_logger() ),
 			fn(): bool => $this->connected[ $this->site() ] ?? false,
 			fn(): CatalogQueue => new CatalogQueue( $this->wpdb, $this->wpdb->prefix . 'woonyx_catalog_queue', static fn(): int => self::NOW )
 		);
+		$collector = new ChangeCollector( $pending );
+
+		$this->pending[ spl_object_id( $collector ) ] = $pending;
+
+		return $collector;
+	}
+
+	/**
+	 * The end of the request a collector belongs to: its PendingChanges writes.
+	 *
+	 * @param ChangeCollector $collector A collector made by collector().
+	 */
+	private function write( ChangeCollector $collector ): void {
+		$this->pending[ spl_object_id( $collector ) ]->write();
 	}
 
 	/**
@@ -257,7 +279,7 @@ final class ChangeCollectorTest extends TestCase {
 		self::assertSame( 10, has_action( 'edited_product_cat', array( $collector, 'category_changed' ) ) );
 		self::assertSame( 10, has_action( 'pre_delete_term', array( $collector, 'category_deleting' ) ) );
 		self::assertSame( 10, has_action( 'delete_product_cat', array( $collector, 'category_deleted' ) ) );
-		self::assertSame( 0, has_action( 'shutdown', array( $collector, 'write' ) ) );
+		self::assertFalse( has_action( 'shutdown' ) );
 	}
 
 	/**
@@ -298,7 +320,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 
 		$collector->post_changed( $post_id );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( $expected, $this->queued() );
 	}
@@ -340,7 +362,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 
 		$collector->stock_changed( $product );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( $expected, $this->queued() );
 	}
@@ -350,7 +372,7 @@ final class ChangeCollectorTest extends TestCase {
 
 		$collector->stock_changed( 5 );
 		$collector->stock_changed( new \stdClass() );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array(), $this->queries );
 	}
@@ -386,7 +408,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 
 		$collector->post_deleting( $post_id );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( $expected, $this->queued() );
 	}
@@ -397,7 +419,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector->category_changed( 22 );
 		$collector->category_changed( '31' );
 		$collector->category_changed( 0 );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array( 'category:22', 'category:31' ), $this->queued() );
 	}
@@ -406,7 +428,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 
 		$collector->category_deleted( 22, 40, null, array( 5, '6', 0, 'x' ) );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array( 'category_delete:22', 'product:5', 'product:6' ), $this->queued() );
 	}
@@ -415,7 +437,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 
 		$collector->category_deleted( 22, 40, null, null );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array( 'category_delete:22' ), $this->queued() );
 	}
@@ -424,7 +446,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 
 		$collector->category_deleting( 22, 'product_cat' );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame(
 			array(
@@ -445,7 +467,7 @@ final class ChangeCollectorTest extends TestCase {
 
 		$collector->category_deleting( 22, 'category' );
 		$collector->category_deleting( 0, 'product_cat' );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array(), $this->term_queries );
 		self::assertSame( array(), $this->queries );
@@ -460,7 +482,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector->post_changed( 7 );
 		$collector->post_changed( 6 );
 		$collector->category_changed( 22 );
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertCount( 4, $this->queries );
 		self::assertStringContainsString( "VALUES ('category', 22, '2026-10-13 12:00:00') ON", $this->queries[0] );
@@ -472,7 +494,7 @@ final class ChangeCollectorTest extends TestCase {
 	}
 
 	public function test_nothing_collected_writes_and_schedules_nothing(): void {
-		$this->collector()->write();
+		$this->write( $this->collector() );
 
 		self::assertSame( array(), $this->queries );
 		self::assertSame( array(), $this->pending_queries );
@@ -481,9 +503,9 @@ final class ChangeCollectorTest extends TestCase {
 	public function test_a_second_write_sends_nothing_again(): void {
 		$collector = $this->collector();
 		$collector->post_changed( 5 );
-		$collector->write();
+		$this->write( $collector );
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertCount( 1, $this->queries );
 	}
@@ -492,10 +514,10 @@ final class ChangeCollectorTest extends TestCase {
 		$this->connected[1] = false;
 		$collector          = $this->collector();
 		$collector->post_changed( 5 );
-		$collector->write();
+		$this->write( $collector );
 
 		$this->connected[1] = true;
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array(), $this->queries );
 		self::assertSame( array(), $this->scheduled );
@@ -508,13 +530,13 @@ final class ChangeCollectorTest extends TestCase {
 		$collector->post_changed( 6 );
 		$collector->category_changed( 22 );
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame(
 			array(
 				array(
 					'level'   => 'warning',
-					'message' => 'Catalog changes could not be queued.',
+					'message' => 'Changes could not be queued.',
 					'context' => array(
 						'kind'   => 'category',
 						'count'  => 1,
@@ -523,7 +545,7 @@ final class ChangeCollectorTest extends TestCase {
 				),
 				array(
 					'level'   => 'warning',
-					'message' => 'Catalog changes could not be queued.',
+					'message' => 'Changes could not be queued.',
 					'context' => array(
 						'kind'   => 'product',
 						'count'  => 2,
@@ -537,7 +559,7 @@ final class ChangeCollectorTest extends TestCase {
 	}
 
 	public function test_a_failure_is_logged_by_class_and_never_thrown(): void {
-		$collector = new ChangeCollector(
+		$pending = new PendingChanges(
 			new FlushScheduler(),
 			new Logger( $this->recording_logger() ),
 			static fn(): bool => true,
@@ -546,9 +568,9 @@ final class ChangeCollectorTest extends TestCase {
 				throw new \RuntimeException( 'Shop secret 1234' );
 			}
 		);
-		$collector->post_changed( 5 );
+		( new ChangeCollector( $pending ) )->post_changed( 5 );
 
-		$collector->write();
+		$pending->write();
 
 		self::assertCount( 1, $this->entries );
 		self::assertSame( 'error', $this->entries[0]['level'] );
@@ -564,7 +586,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector->category_changed( 22 );
 		restore_current_blog();
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array( 'product:5' ), $this->queued( 'wp_' ) );
 		self::assertSame( array( 'category:22', 'product:6' ), $this->queued( 'wp_2_' ) );
@@ -582,7 +604,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector->post_changed( 6 );
 		restore_current_blog();
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array(), $this->queued( 'wp_' ) );
 		self::assertSame( array( 'product:6' ), $this->queued( 'wp_2_' ) );
@@ -594,7 +616,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector = $this->collector();
 		$collector->post_changed( 5 );
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array( 'product:5' ), $this->queued() );
 	}
@@ -604,7 +626,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector          = $this->collector();
 		$collector->post_changed( 5 );
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame( array( 'product:5' ), $this->queued() );
 		self::assertCount( 1, $this->scheduled[1] );
@@ -644,7 +666,7 @@ final class ChangeCollectorTest extends TestCase {
 
 		$writers = $reverse ? array( $second, $first ) : array( $first, $second );
 		foreach ( $writers as $writer ) {
-			$writer->write();
+			$this->write( $writer );
 		}
 
 		self::assertSame( array( 'category:22', 'category:31', 'product:5', 'product:6', 'product:8' ), $this->queued() );
@@ -667,7 +689,7 @@ final class ChangeCollectorTest extends TestCase {
 		$collector->post_changed( 5 );
 		$collector->post_changed( 6 );
 
-		$collector->write();
+		$this->write( $collector );
 
 		self::assertSame(
 			array(

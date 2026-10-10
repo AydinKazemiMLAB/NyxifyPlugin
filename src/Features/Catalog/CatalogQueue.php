@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace WooNyx\Features\Catalog;
 
 /**
- * Ids of changed products and categories, one row per kind and id, in the table of Schema. Every operation is a
+ * Ids of changed orders, products and categories, one row per kind and id, in the table of Schema. Every operation is a
  * single SQL statement (or a short sequence on rows only the caller has claimed), atomic per row, so concurrent
  * requests and flushes never lose an id:
  *
@@ -27,13 +27,16 @@ final class CatalogQueue implements Queue {
 	public const PRODUCT_DELETE  = 'product_delete';
 	public const CATEGORY        = 'category';
 	public const CATEGORY_DELETE = 'category_delete';
+	public const ORDER           = 'order';
+	public const ORDER_DELETE    = 'order_delete';
 
 	/**
-	 * Every kind, in the order a flush sends them.
+	 * Every kind, in the order a flush sends them: orders first (a status is time-sensitive and small, while a catalog
+	 * import can fill a run), then the catalog.
 	 *
 	 * @var list<string>
 	 */
-	public const KINDS = array( self::CATEGORY, self::PRODUCT, self::PRODUCT_DELETE, self::CATEGORY_DELETE );
+	public const KINDS = array( self::ORDER, self::ORDER_DELETE, self::CATEGORY, self::PRODUCT, self::PRODUCT_DELETE, self::CATEGORY_DELETE );
 
 	/**
 	 * Rows per INSERT statement.

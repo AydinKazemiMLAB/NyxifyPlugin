@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooNyx 0.4.0\n"
+"Project-Id-Version: WooNyx 0.5.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: Nyxon\n"
 "Language-Team: Persian\n"
@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-10T08:47:40+00:00\n"
+"PO-Revision-Date: 2026-10-10T13:20:07+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: woonyx\n"
@@ -527,7 +527,7 @@ msgid "%1$s of %2$s"
 msgstr "%1$s از %2$s"
 
 #. translators: %s: the oldest supported WooCommerce version, e.g. 9.0
-#: src/Plugin.php:173
+#: src/Plugin.php:178
 #, php-format
 msgid "WooNyx needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
 msgstr "WooNyx به ووکامرس %s یا جدیدتر نیاز دارد. برای استفاده از آن، ووکامرس را نصب، فعال یا به‌روزرسانی کنید."

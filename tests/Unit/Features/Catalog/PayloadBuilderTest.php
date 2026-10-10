@@ -646,7 +646,7 @@ final class PayloadBuilderTest extends TestCase {
 			array(
 				array(
 					'level'   => 'warning',
-					'message' => 'A catalog object could not be built; it is skipped.',
+					'message' => 'An object could not be built; it is skipped.',
 					'context' => array(
 						'kind'      => 'product',
 						'id'        => 5,
@@ -723,7 +723,7 @@ final class PayloadBuilderTest extends TestCase {
 
 		self::assertSame( array( 6 ), $batch->built );
 		self::assertSame( array( 5 ), $batch->skipped );
-		self::assertSame( 'A catalog object could not be encoded; it is skipped.', $this->entries[0]['message'] );
+		self::assertSame( 'An object could not be encoded; it is skipped.', $this->entries[0]['message'] );
 		self::assertSame( 5, $this->entries[0]['context']['id'] );
 	}
 
@@ -834,7 +834,7 @@ final class PayloadBuilderTest extends TestCase {
 
 		self::assertSame( array( 2 ), $batch->built );
 		self::assertSame( array( 1 ), $batch->skipped );
-		self::assertSame( 'A catalog object is too large to send; it is skipped.', $this->entries[0]['message'] );
+		self::assertSame( 'An object is too large to send; it is skipped.', $this->entries[0]['message'] );
 		self::assertSame( 'product', $this->entries[0]['context']['kind'] );
 		self::assertSame( 1, $this->entries[0]['context']['id'] );
 		self::assertGreaterThan( PayloadBuilder::MAX_ITEM_BYTES, $this->entries[0]['context']['bytes'] );
