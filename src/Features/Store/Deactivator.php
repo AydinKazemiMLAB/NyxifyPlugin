@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace WooNyx\Features\Store;
 
+use WooNyx\Features\Catalog\CatalogQueue;
+use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PlanLimitNotice;
+use WooNyx\Features\Catalog\Schema;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Logging\Logger;
 use WooNyx\Shared\Options\SecretStore;
@@ -25,6 +29,8 @@ use WooNyx\Shared\Security\Encryptor;
  *   plugins only after this hook, so a request that outlived PHP's time limit would leave the plugin active.
  * - Network deactivation: every site that is connected and doesn't keep the plugin active on its own, within a time
  *   budget; sites left over keep their connection (logged).
+ * - Catalog changes still queued, and the pending flushes, are dropped on every site where the plugin stops, whatever
+ *   the core answers: the plugin no longer sends them, and the core's full sync after the next activation catches up.
  */
 final class Deactivator {
 
@@ -81,22 +87,46 @@ final class Deactivator {
 	private $clock;
 
 	/**
+	 * Drops the current site's queued catalog changes.
+	 *
+	 * @var callable(): void
+	 */
+	private $stop_catalog;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param CoreClient    $client    Core client.
-	 * @param SecretStore   $store     Where the connection is kept.
-	 * @param RestKeys      $rest_keys The plugin's REST keys.
-	 * @param Logger        $logger    Safe logger.
-	 * @param callable|null $clock     Current time in seconds; microtime( true ) by default.
+	 * @param CoreClient    $client       Core client.
+	 * @param SecretStore   $store        Where the connection is kept.
+	 * @param RestKeys      $rest_keys    The plugin's REST keys.
+	 * @param Logger        $logger       Safe logger.
+	 * @param callable|null $clock        Current time in seconds; microtime( true ) by default.
+	 * @param callable|null $stop_catalog Drops the current site's queued catalog changes; stop_site_catalog() by default.
 	 *
 	 * @phpstan-param (callable(): float)|null $clock
+	 * @phpstan-param (callable(): void)|null $stop_catalog
 	 */
-	public function __construct( CoreClient $client, SecretStore $store, RestKeys $rest_keys, Logger $logger, ?callable $clock = null ) {
-		$this->client    = $client;
-		$this->store     = $store;
-		$this->rest_keys = $rest_keys;
-		$this->logger    = $logger;
-		$this->clock     = $clock ?? static fn(): float => microtime( true );
+	public function __construct( CoreClient $client, SecretStore $store, RestKeys $rest_keys, Logger $logger, ?callable $clock = null, ?callable $stop_catalog = null ) {
+		$this->client       = $client;
+		$this->store        = $store;
+		$this->rest_keys    = $rest_keys;
+		$this->logger       = $logger;
+		$this->clock        = $clock ?? static fn(): float => microtime( true );
+		$this->stop_catalog = $stop_catalog ?? array( self::class, 'stop_site_catalog' );
+	}
+
+	/**
+	 * Cancels the current site's pending catalog flushes, forgets its backoff and plan-limit notice and empties its
+	 * queue, if its table was ever created.
+	 */
+	public static function stop_site_catalog(): void {
+		FlushScheduler::unschedule_all();
+		( new FlushScheduler() )->clear_retry_at();
+		PlanLimitNotice::clear();
+
+		if ( Schema::is_installed() ) {
+			CatalogQueue::for_site()->clear();
+		}
 	}
 
 	/**
@@ -129,14 +159,22 @@ final class Deactivator {
 	 * @param string $plugin_basename The plugin's basename.
 	 */
 	public function handle( bool $network_wide, string $plugin_basename ): void {
+		$network = false;
+
 		try {
-			if ( $network_wide && is_multisite() ) {
+			$network = $network_wide && is_multisite();
+			if ( $network ) {
 				$this->deactivate_network( $plugin_basename );
 			} else {
 				$this->deactivate();
 			}
 		} catch ( \Throwable $e ) {
 			self::log_exception( $this->logger, $e );
+		}
+
+		// A network deactivation stops each site's catalog inside its loop.
+		if ( ! $network ) {
+			$this->stop_catalog();
 		}
 	}
 
@@ -192,7 +230,13 @@ final class Deactivator {
 			switch_to_blog( $site_id );
 
 			try {
-				if ( ! $this->site_needs_deactivation( $plugin_basename ) ) {
+				if ( self::keeps_plugin_active( $plugin_basename ) ) {
+					continue;
+				}
+
+				$this->stop_catalog();
+
+				if ( null === $this->store->get_connection() ) {
 					continue;
 				}
 
@@ -205,23 +249,31 @@ final class Deactivator {
 				$this->deactivate( min( self::TIMEOUT_SECONDS, $remaining ) );
 			} finally {
 				restore_current_blog();
-			}
-		}
+			}//end try
+		}//end foreach
 	}
 
 	/**
-	 * Whether the current site is connected and doesn't keep the plugin active on its own (a plugin activated on a
-	 * site before it was network-activated stays active there after a network deactivation).
+	 * Whether the current site keeps the plugin active on its own (a plugin activated on a site before it was
+	 * network-activated stays active there after a network deactivation).
 	 *
 	 * @param string $plugin_basename The plugin's basename.
 	 */
-	private function site_needs_deactivation( string $plugin_basename ): bool {
+	private static function keeps_plugin_active( string $plugin_basename ): bool {
 		$active = get_option( 'active_plugins', array() );
-		if ( is_array( $active ) && in_array( $plugin_basename, $active, true ) ) {
-			return false;
-		}
 
-		return null !== $this->store->get_connection();
+		return is_array( $active ) && in_array( $plugin_basename, $active, true );
+	}
+
+	/**
+	 * Drops the current site's queued catalog changes; a failure is logged and never stops the deactivation.
+	 */
+	private function stop_catalog(): void {
+		try {
+			( $this->stop_catalog )();
+		} catch ( \Throwable $e ) {
+			self::log_exception( $this->logger, $e );
+		}
 	}
 
 	/**

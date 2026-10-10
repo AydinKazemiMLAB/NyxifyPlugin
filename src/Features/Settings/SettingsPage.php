@@ -15,6 +15,8 @@ use WooNyx\Features\Bots\AdminService;
 use WooNyx\Features\Bots\BotRegistrationHandler;
 use WooNyx\Features\Bots\BotRemovalHandler;
 use WooNyx\Features\Bots\BotService;
+use WooNyx\Features\Catalog\CatalogSyncHandler;
+use WooNyx\Features\Catalog\PlanLimitNotice;
 use WooNyx\Features\Store\ActivationHandler;
 use WooNyx\Features\Store\SecretRotationHandler;
 use WooNyx\Features\Store\StatusService;
@@ -29,7 +31,7 @@ use WooNyx\Shared\Options\SecretStore;
  * WooCommerce > WooNyx: the connection status from the stored options, the core address, the result of the last
  * action, and only while connected (nothing is sent before a license key is entered): the store's status on the core
  * (fetched once per page load and shared by the sections), the bots, the admin PIN, the bot admins, the "Rotate secret"
- * button; then the license
+ * button; the plan-limit notice whenever one is stored; then the license
  * form (open while not connected, folded into "Activate again" once connected) and, while connected, the deactivation
  * warning.
  */
@@ -211,6 +213,7 @@ final class SettingsPage {
 			<h1><?php esc_html_e( 'WooNyx', 'woonyx' ); ?></h1>
 			<hr class="wp-header-end" />
 			<?php $this->render_notice(); ?>
+			<?php PlanLimitNotice::render( false ); ?>
 
 			<h2><?php esc_html_e( 'Connection', 'woonyx' ); ?></h2>
 			<table class="form-table" role="presentation">
@@ -352,6 +355,8 @@ final class SettingsPage {
 			AdminPinHandler::ISSUED            => __( 'A new admin PIN was issued; the previous one no longer works. Bot admins stay admins.', 'woonyx' ),
 			AdminPinHandler::ISSUED_REVOKED    => __( 'A new admin PIN was issued and every bot admin was logged out.', 'woonyx' ),
 			AdminRemovalHandler::REVOKED       => __( 'The bot admin was removed. The current PIN still works for them until you issue a new one.', 'woonyx' ),
+			CatalogSyncHandler::STARTED        => __( 'WooNyx is reading your catalog again. Check the catalog sync below in a few minutes.', 'woonyx' ),
+			CatalogSyncHandler::RUNNING        => __( 'A catalog sync is already running. Check the catalog sync below in a few minutes.', 'woonyx' ),
 		);
 
 		return $messages[ $code ] ?? null;

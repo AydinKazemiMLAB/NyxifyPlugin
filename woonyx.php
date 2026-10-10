@@ -2,7 +2,7 @@
 /**
  * Plugin Name:          WooNyx
  * Description:          Sell your WooCommerce products through Telegram, Bale and Rubika bots.
- * Version:              0.3.0
+ * Version:              0.4.0
  * Requires at least:    6.5
  * Requires PHP:         8.1
  * Requires Plugins:     woocommerce
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WOONYX_VERSION', '0.3.0' );
+define( 'WOONYX_VERSION', '0.4.0' );
 define( 'WOONYX_PLUGIN_FILE', __FILE__ );
 
 if ( ! is_readable( __DIR__ . '/vendor/autoload.php' ) ) {

@@ -11,6 +11,8 @@ namespace WooNyx\Tests\Unit;
 
 use Brain\Monkey\Actions;
 use Brain\Monkey\Functions;
+use Mockery;
+use WooNyx\Features\Catalog\Schema;
 use WooNyx\Plugin;
 
 /**
@@ -20,6 +22,7 @@ final class PluginTest extends TestCase {
 
 	public function test_register_hooks_compatibility_declaration_and_boot(): void {
 		$plugin = new Plugin( '/plugins/woonyx/woonyx.php' );
+		Functions\expect( 'register_activation_hook' )->once()->with( '/plugins/woonyx/woonyx.php', array( $plugin, 'activate' ) );
 		Functions\expect( 'register_deactivation_hook' )->once()->with( '/plugins/woonyx/woonyx.php', array( $plugin, 'deactivate' ) );
 
 		$plugin->register();
@@ -34,6 +37,32 @@ final class PluginTest extends TestCase {
 		Functions\expect( 'load_plugin_textdomain' )->once()->with( 'woonyx', false, 'woonyx/languages' );
 
 		( new Plugin( '/plugins/woonyx/woonyx.php' ) )->load_textdomain();
+	}
+
+	public function test_activation_creates_the_catalog_queue_table_when_missing(): void {
+		$wpdb         = Mockery::mock( \wpdb::class );
+		$wpdb->prefix = 'wp_';
+		$wpdb->shouldReceive( 'get_charset_collate' )->andReturn( '' );
+		$wpdb->shouldReceive( 'esc_like' )->andReturnArg( 0 );
+		$wpdb->shouldReceive( 'prepare' )->andReturn( 'SHOW TABLES' );
+		$wpdb->shouldReceive( 'get_var' )->andReturn( 'wp_woonyx_catalog_queue' );
+		$GLOBALS['wpdb'] = $wpdb; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The test's database.
+		Functions\when( 'get_option' )->justReturn( false );
+		Functions\expect( 'dbDelta' )->once();
+		Functions\expect( 'update_option' )->once()->with( Schema::OPTION_VERSION, Schema::VERSION, true );
+
+		try {
+			( new Plugin( '/plugins/woonyx/woonyx.php' ) )->activate();
+		} finally {
+			unset( $GLOBALS['wpdb'] );
+		}
+	}
+
+	public function test_activation_with_the_current_table_does_nothing(): void {
+		Functions\when( 'get_option' )->justReturn( Schema::VERSION );
+		Functions\expect( 'dbDelta' )->never();
+
+		( new Plugin( '/plugins/woonyx/woonyx.php' ) )->activate();
 	}
 
 	public function test_deactivation_without_a_connection_sends_nothing(): void {

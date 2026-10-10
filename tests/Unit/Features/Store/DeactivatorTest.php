@@ -13,6 +13,9 @@ use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PlanLimitNotice;
+use WooNyx\Features\Catalog\Schema;
 use WooNyx\Features\Store\Deactivator;
 use WooNyx\Features\Store\RestKeys;
 use WooNyx\Features\Store\StatusService;
@@ -23,6 +26,7 @@ use WooNyx\Shared\Options\Connection;
 use WooNyx\Shared\Options\SecretStore;
 use WooNyx\Shared\Security\Encryptor;
 use WooNyx\Shared\Security\HmacSigner;
+use WooNyx\Tests\Unit\EmulatesPrepare;
 use WooNyx\Tests\Unit\TestCase;
 
 /**
@@ -33,6 +37,8 @@ use WooNyx\Tests\Unit\TestCase;
  * treats as a WP_Error.
  */
 final class DeactivatorTest extends TestCase {
+
+	use EmulatesPrepare;
 
 	private const BASE_URL  = 'https://core.example.com';
 	private const STORE_ID  = 'shop_8f2a0c1d3e4b5a69';
@@ -118,6 +124,27 @@ final class DeactivatorTest extends TestCase {
 	private bool $key_delete_fails = false;
 
 	/**
+	 * Sites whose catalog queue was stopped, in order.
+	 *
+	 * @var list<int>
+	 */
+	private array $stopped = array();
+
+	/**
+	 * Whether stopping the catalog queue throws.
+	 *
+	 * @var bool
+	 */
+	private bool $stop_fails = false;
+
+	/**
+	 * Sites whose pending catalog flushes were cancelled, in order.
+	 *
+	 * @var list<int>
+	 */
+	private array $unscheduled = array();
+
+	/**
 	 * Log entries.
 	 *
 	 * @var list<array{level: string, message: string, context: array<string, mixed>}>
@@ -161,6 +188,12 @@ final class DeactivatorTest extends TestCase {
 		);
 
 		Functions\when( 'is_multisite' )->alias( fn(): bool => $this->multisite );
+		Functions\when( 'as_unschedule_all_actions' )->alias(
+			function ( string $hook, array $args, string $group ): void {
+				self::assertSame( array( FlushScheduler::HOOK, array(), FlushScheduler::GROUP ), array( $hook, $args, $group ) );
+				$this->unscheduled[] = $this->site();
+			}
+		);
 		Functions\when( 'get_sites' )->alias(
 			function ( array $args ): array {
 				self::assertSame( 'ids', $args['fields'] );
@@ -323,7 +356,13 @@ final class DeactivatorTest extends TestCase {
 			$store,
 			new RestKeys(),
 			new Logger( $wc_logger ),
-			fn(): float => $this->now
+			fn(): float => $this->now,
+			function (): void {
+				if ( $this->stop_fails ) {
+					throw new \RuntimeException( 'Queue table locked' );
+				}
+				$this->stopped[] = $this->site();
+			}
 		);
 	}
 
@@ -496,6 +535,95 @@ final class DeactivatorTest extends TestCase {
 		self::assertSame( array( 'error:The deactivation cleanup failed.' ), $this->logged() );
 		self::assertSame( \RuntimeException::class, $this->entries[0]['context']['exception'] );
 		self::assertStringNotContainsString( 'Boom', self::json( $this->entries ) );
+		self::assertSame( array( self::MAIN_SITE ), $this->stopped );
+	}
+
+	public function test_a_single_site_deactivation_stops_the_catalog_even_without_a_connection(): void {
+		$this->deactivator()->handle( false, self::BASENAME );
+
+		self::assertSame( array(), $this->requests );
+		self::assertSame( array( self::MAIN_SITE ), $this->stopped );
+	}
+
+	public function test_a_failed_deactivation_still_stops_the_catalog(): void {
+		$this->connect();
+		$this->next_response = new \stdClass();
+
+		$this->deactivator()->handle( false, self::BASENAME );
+
+		$this->assert_site_kept( self::MAIN_SITE );
+		self::assertSame( array( self::MAIN_SITE ), $this->stopped );
+	}
+
+	public function test_deactivate_alone_does_not_stop_the_catalog(): void {
+		$this->connect();
+
+		self::assertTrue( $this->deactivator()->deactivate() );
+
+		self::assertSame( array(), $this->stopped );
+	}
+
+	public function test_a_failure_to_stop_the_catalog_is_logged_and_never_stops_the_deactivation(): void {
+		$this->multisite  = true;
+		$this->sites      = array( 1, 2 );
+		$this->stop_fails = true;
+		$this->connect();
+		$this->connect_site( 2 );
+
+		$this->deactivator()->handle( true, self::BASENAME );
+
+		$this->assert_site_cleaned( 1 );
+		$this->assert_site_cleaned( 2 );
+		self::assertSame(
+			array( 'error:The deactivation cleanup failed.', 'info:Store deactivated.', 'error:The deactivation cleanup failed.', 'info:Store deactivated.' ),
+			$this->logged()
+		);
+		self::assertStringNotContainsString( 'locked', self::json( $this->entries ) );
+	}
+
+	public function test_stopping_the_catalog_of_a_site_without_the_table_cancels_its_flushes_and_forgets_its_options(): void {
+		$this->wpdb->shouldNotReceive( 'query' );
+		$this->options[ self::MAIN_SITE ] = array(
+			FlushScheduler::OPTION_RETRY_AT => 1_791_000_000,
+			PlanLimitNotice::OPTION         => array(
+				'count' => 3,
+				'time'  => 1_791_000_000,
+			),
+			'blogname'                      => 'Shop',
+		);
+
+		Deactivator::stop_site_catalog();
+
+		self::assertFalse( Schema::is_installed() );
+		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
+		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
+	}
+
+	public function test_stopping_the_catalog_empties_the_current_sites_queue(): void {
+		$queries = array();
+		$this->wpdb->shouldReceive( 'prepare' )->andReturnUsing( fn( string $query, ...$args ): string => self::prepare_query( $query, ...$args ) );
+		$this->wpdb->shouldReceive( 'query' )->andReturnUsing(
+			function ( string $query ) use ( &$queries ): int {
+				$queries[] = $query;
+				return 3;
+			}
+		);
+		$this->site_stack[] = 2;
+		$this->wpdb->prefix = $this->prefix();
+		$this->options[2]   = array(
+			Schema::OPTION_VERSION          => Schema::VERSION,
+			FlushScheduler::OPTION_RETRY_AT => 1_791_000_000,
+			PlanLimitNotice::OPTION         => array(
+				'count' => 3,
+				'time'  => 1_791_000_000,
+			),
+		);
+
+		Deactivator::stop_site_catalog();
+
+		self::assertSame( array( 'DELETE FROM `wp_2_woonyx_catalog_queue`' ), $queries );
+		self::assertSame( array( 2 ), $this->unscheduled );
+		self::assertSame( array( Schema::OPTION_VERSION => Schema::VERSION ), $this->options[2] );
 	}
 
 	public function test_a_single_site_deactivation_on_a_network_only_touches_that_site(): void {
@@ -537,6 +665,8 @@ final class DeactivatorTest extends TestCase {
 		$this->assert_site_kept( 4 );
 		self::assertSame( array( 'wp_woocommerce_api_keys:9', 'wp_3_woocommerce_api_keys:9' ), $this->deleted_keys );
 		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
+		// Every site where the plugin stops, connected or not; not site 4.
+		self::assertSame( array( 1, 2, 3 ), $this->stopped );
 	}
 
 	public function test_a_failed_site_does_not_stop_the_others(): void {

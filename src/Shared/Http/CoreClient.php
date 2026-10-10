@@ -20,6 +20,8 @@ use WooNyx\Shared\Security\HmacSigner;
  * - The JSON body is encoded once, and exactly those bytes are signed and sent.
  * - Redirects are never followed, https is required outside `local`/`development` environments, and every request
  *   carries its own X-Request-ID to match the core's logs.
+ * - Every call is signed anew (a new timestamp and nonce), so a retry is never a replay.
+ * - A failure keeps the core's `Retry-After` (seconds or an HTTP date), clamped to 0–MAX_RETRY_AFTER_SECONDS.
  *
  * `wp_safe_remote_request()` isn't used: it only allows ports 80, 443 and 8080, and the test core listens on 88. The
  * address comes from the code or from wp-config.php, never from a request.
@@ -36,6 +38,11 @@ final class CoreClient {
 	public const HEADER_REQUEST_ID = 'X-Request-ID';
 
 	/**
+	 * The longest `Retry-After` honoured, in seconds.
+	 */
+	public const MAX_RETRY_AFTER_SECONDS = 3600;
+
+	/**
 	 * Timeout of an ordinary call, in seconds.
 	 */
 	public const TIMEOUT_SECONDS = 20;
@@ -46,9 +53,14 @@ final class CoreClient {
 	 */
 	public const LONG_TIMEOUT_SECONDS = 45;
 
+	/**
+	 * Flags of every JSON body (callers measuring a body's size use them too).
+	 */
+	public const JSON_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+
 	private const REQUEST_ID_PATTERN = '/^[A-Za-z0-9._-]{8,128}$/D';
 	private const PATH_PATTERN       = '#^(?:/[A-Za-z0-9._~-]+)+$#D';
-	private const JSON_FLAGS         = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+	private const HTTP_DATE_PATTERN  = '/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT$/D';
 
 	/**
 	 * Where the connection (store id and shared secret) is kept.
@@ -218,8 +230,38 @@ final class CoreClient {
 		return self::read_response(
 			(int) wp_remote_retrieve_response_code( $response ),
 			wp_remote_retrieve_body( $response ),
-			self::response_request_id( wp_remote_retrieve_header( $response, self::HEADER_REQUEST_ID ), $request_id )
+			self::response_request_id( wp_remote_retrieve_header( $response, self::HEADER_REQUEST_ID ), $request_id ),
+			self::retry_after( wp_remote_retrieve_header( $response, 'Retry-After' ), time() )
 		);
+	}
+
+	/**
+	 * Seconds of a `Retry-After` header (delta-seconds or an IMF-fixdate HTTP date), clamped to
+	 * 0–MAX_RETRY_AFTER_SECONDS; null when absent or malformed.
+	 *
+	 * @param string|array<string> $header Retry-After of the response.
+	 * @param int                  $now    Current Unix time.
+	 */
+	public static function retry_after( $header, int $now ): ?int {
+		if ( ! is_string( $header ) ) {
+			return null;
+		}
+
+		$header = trim( $header );
+		if ( 1 === preg_match( '/^\d{1,10}$/D', $header ) ) {
+			$seconds = (int) $header;
+		} elseif ( 1 === preg_match( self::HTTP_DATE_PATTERN, $header ) ) {
+			$date = \DateTimeImmutable::createFromFormat( '!D, d M Y H:i:s \G\M\T', $header, new \DateTimeZone( 'UTC' ) );
+			// A date that doesn't exist (31 Feb) or a wrong weekday doesn't read back the same.
+			if ( false === $date || $date->format( 'D, d M Y H:i:s' ) . ' GMT' !== $header ) {
+				return null;
+			}
+			$seconds = $date->getTimestamp() - $now;
+		} else {
+			return null;
+		}
+
+		return max( 0, min( self::MAX_RETRY_AFTER_SECONDS, $seconds ) );
 	}
 
 	/**
@@ -287,11 +329,12 @@ final class CoreClient {
 	/**
 	 * Turns a status and a body into a CoreResponse; the body is never kept on failure.
 	 *
-	 * @param int    $status     HTTP status.
-	 * @param string $body       Raw body.
-	 * @param string $request_id Request id.
+	 * @param int      $status      HTTP status.
+	 * @param string   $body        Raw body.
+	 * @param string   $request_id  Request id.
+	 * @param int|null $retry_after Seconds of the response's Retry-After, or null.
 	 */
-	private static function read_response( int $status, string $body, string $request_id ): CoreResponse {
+	private static function read_response( int $status, string $body, string $request_id, ?int $retry_after ): CoreResponse {
 		if ( $status >= 200 && $status < 300 ) {
 			if ( 204 === $status && '' === trim( $body ) ) {
 				return CoreResponse::success( $status, array(), $request_id );
@@ -305,13 +348,13 @@ final class CoreClient {
 		}
 
 		if ( $status >= 300 && $status < 400 ) {
-			return CoreResponse::failure( new CoreError( CoreError::UNEXPECTED_REDIRECT, $status, $request_id ) );
+			return CoreResponse::failure( new CoreError( CoreError::UNEXPECTED_REDIRECT, $status, $request_id, array(), $retry_after ) );
 		}
 
 		$data = json_decode( $body, true );
 		$code = is_array( $data ) && is_string( $data['error_code'] ?? null ) ? $data['error_code'] : CoreError::UNKNOWN_ERROR;
 
-		return CoreResponse::failure( new CoreError( $code, $status, $request_id, self::invalid_fields( $data ) ) );
+		return CoreResponse::failure( new CoreError( $code, $status, $request_id, self::invalid_fields( $data ), $retry_after ) );
 	}
 
 	/**

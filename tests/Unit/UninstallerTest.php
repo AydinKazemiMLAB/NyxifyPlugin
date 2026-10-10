@@ -12,6 +12,9 @@ namespace WooNyx\Tests\Unit;
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
+use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PlanLimitNotice;
+use WooNyx\Features\Catalog\Schema;
 use WooNyx\Features\Store\RestKeys;
 use WooNyx\Features\Store\StatusService;
 use WooNyx\Shared\Options\SecretStore;
@@ -22,6 +25,8 @@ use WooNyx\Uninstaller;
  * sent to the core. Options and transients are kept per site; $wpdb is mocked.
  */
 final class UninstallerTest extends TestCase {
+
+	use EmulatesPrepare;
 
 	private const MAIN_SITE = 1;
 
@@ -59,6 +64,13 @@ final class UninstallerTest extends TestCase {
 	 * @var list<bool>
 	 */
 	private array $suppress_calls = array();
+
+	/**
+	 * Sites whose pending catalog flushes were cancelled, in order.
+	 *
+	 * @var list<int>
+	 */
+	private array $unscheduled = array();
 
 	/**
 	 * The current site, and the sites switched from.
@@ -108,6 +120,12 @@ final class UninstallerTest extends TestCase {
 			}
 		);
 		Functions\expect( 'wp_remote_request' )->never();
+		Functions\when( 'as_unschedule_all_actions' )->alias(
+			function ( string $hook, array $args, string $group ): void {
+				self::assertSame( array( FlushScheduler::HOOK, array(), FlushScheduler::GROUP ), array( $hook, $args, $group ) );
+				$this->unscheduled[] = $this->site();
+			}
+		);
 
 		$this->wpdb = Mockery::mock( \wpdb::class );
 		$this->set_prefix();
@@ -124,9 +142,7 @@ final class UninstallerTest extends TestCase {
 			}
 		);
 		$this->wpdb->shouldReceive( 'esc_like' )->andReturnUsing( fn( string $text ): string => addcslashes( $text, '_%\\' ) );
-		$this->wpdb->shouldReceive( 'prepare' )->andReturnUsing(
-			fn( string $query, string ...$args ): string => vsprintf( str_replace( '%s', "'%s'", $query ), $args )
-		);
+		$this->wpdb->shouldReceive( 'prepare' )->andReturnUsing( fn( string $query, ...$args ): string => self::prepare_query( $query, ...$args ) );
 		$this->wpdb->shouldReceive( 'query' )->andReturnUsing(
 			function ( string $query ): int {
 				$this->queries[] = $query;
@@ -161,10 +177,12 @@ final class UninstallerTest extends TestCase {
 	 */
 	private function install( int $site_id, int $key_id = 9 ): void {
 		$this->options[ $site_id ] = array(
-			SecretStore::OPTION_CONNECTION => 'v1:connection',
-			SecretStore::OPTION_ADMIN_PIN  => 'v1:pin',
-			RestKeys::OPTION_KEY_ID        => $key_id,
-			'blogname'                     => 'Shop',
+			SecretStore::OPTION_CONNECTION  => 'v1:connection',
+			SecretStore::OPTION_ADMIN_PIN   => 'v1:pin',
+			RestKeys::OPTION_KEY_ID         => $key_id,
+			Schema::OPTION_VERSION          => Schema::VERSION,
+			FlushScheduler::OPTION_RETRY_AT => 1791892800,
+			'blogname'                      => 'Shop',
 		);
 	}
 
@@ -174,7 +192,17 @@ final class UninstallerTest extends TestCase {
 	 * @param string $prefix Table prefix.
 	 */
 	private static function notices_query( string $prefix ): string {
-		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\_transient\\_woonyx\\_notice\\_%' OR option_name LIKE '\\_transient\\_timeout\\_woonyx\\_notice\\_%'";
+		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\\\_transient\\\\_woonyx\\\\_notice\\\\_%' OR option_name LIKE '\\\\_transient\\\\_timeout\\\\_woonyx\\\\_notice\\\\_%'";
+	}
+
+	/**
+	 * The queries that clean a site: its queue table, then its notices.
+	 *
+	 * @param string $prefix Table prefix.
+	 * @return list<string>
+	 */
+	private static function site_queries( string $prefix ): array {
+		return array( "DROP TABLE IF EXISTS `{$prefix}woonyx_catalog_queue`", self::notices_query( $prefix ) );
 	}
 
 	public function test_single_site_deletes_the_rest_key_options_and_transients(): void {
@@ -185,7 +213,8 @@ final class UninstallerTest extends TestCase {
 		self::assertSame( array( 'wp_woocommerce_api_keys:9' ), $this->deleted_keys );
 		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
 		self::assertSame( array( '1:' . StatusService::TRANSIENT ), $this->deleted_transients );
-		self::assertSame( array( self::notices_query( 'wp_' ) ), $this->queries );
+		self::assertSame( self::site_queries( 'wp_' ), $this->queries );
+		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
 	}
 
 	public function test_database_errors_are_hidden_while_deleting_the_key_and_restored(): void {
@@ -212,12 +241,12 @@ final class UninstallerTest extends TestCase {
 
 		self::assertSame( array(), $this->deleted_keys );
 		self::assertSame( array( '1:' . StatusService::TRANSIENT ), $this->deleted_transients );
-		self::assertCount( 1, $this->queries );
+		self::assertSame( self::site_queries( 'wp_' ), $this->queries );
 	}
 
 	public function test_every_option_and_transient_is_listed(): void {
 		self::assertSame(
-			array( SecretStore::OPTION_CONNECTION, SecretStore::OPTION_ADMIN_PIN, RestKeys::OPTION_KEY_ID ),
+			array( SecretStore::OPTION_CONNECTION, SecretStore::OPTION_ADMIN_PIN, RestKeys::OPTION_KEY_ID, Schema::OPTION_VERSION, FlushScheduler::OPTION_RETRY_AT, PlanLimitNotice::OPTION ),
 			Uninstaller::OPTIONS
 		);
 		self::assertSame( array( StatusService::TRANSIENT ), Uninstaller::TRANSIENTS );
@@ -245,9 +274,10 @@ final class UninstallerTest extends TestCase {
 			$this->deleted_transients
 		);
 		self::assertSame(
-			array( self::notices_query( 'wp_' ), self::notices_query( 'wp_2_' ), self::notices_query( 'wp_3_' ) ),
+			array_merge( self::site_queries( 'wp_' ), self::site_queries( 'wp_2_' ), self::site_queries( 'wp_3_' ) ),
 			$this->queries
 		);
+		self::assertSame( array( 1, 2, 3 ), $this->unscheduled );
 		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
 		self::assertSame( 'wp_', $this->wpdb->prefix );
 	}

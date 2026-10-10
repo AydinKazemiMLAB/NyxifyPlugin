@@ -129,19 +129,28 @@ final class CoreError {
 	public readonly array $fields;
 
 	/**
+	 * Seconds the core asked to wait before trying again (its `Retry-After`, 0–3600), or null when it didn't.
+	 *
+	 * @var int|null
+	 */
+	public readonly ?int $retry_after;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param string   $code       Error code; anything unexpected becomes UNKNOWN_ERROR.
-	 * @param int      $status     HTTP status or 0.
-	 * @param string   $request_id Request id.
-	 * @param string[] $fields     Invalid fields of a validation error.
+	 * @param string   $code        Error code; anything unexpected becomes UNKNOWN_ERROR.
+	 * @param int      $status      HTTP status or 0.
+	 * @param string   $request_id  Request id.
+	 * @param string[] $fields      Invalid fields of a validation error.
+	 * @param int|null $retry_after Seconds to wait before trying again, or null.
 	 *
 	 * @phpstan-param list<string> $fields
 	 */
-	public function __construct( string $code, int $status = 0, string $request_id = '', array $fields = array() ) {
-		$this->code       = 1 === preg_match( self::CODE_PATTERN, $code ) ? $code : self::UNKNOWN_ERROR;
-		$this->status     = $status;
-		$this->request_id = $request_id;
-		$this->fields     = $fields;
+	public function __construct( string $code, int $status = 0, string $request_id = '', array $fields = array(), ?int $retry_after = null ) {
+		$this->code        = 1 === preg_match( self::CODE_PATTERN, $code ) ? $code : self::UNKNOWN_ERROR;
+		$this->status      = $status;
+		$this->request_id  = $request_id;
+		$this->fields      = $fields;
+		$this->retry_after = $retry_after;
 	}
 }

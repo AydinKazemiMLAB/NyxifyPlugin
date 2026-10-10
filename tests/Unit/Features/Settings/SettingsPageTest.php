@@ -825,4 +825,112 @@ final class SettingsPageTest extends TestCase {
 
 		self::assertStringNotContainsString( 'notice', $this->rendered( $this->page() ) );
 	}
+
+	public function test_an_active_store_has_the_sync_button_in_the_catalog_row(): void {
+		$this->connect();
+
+		$html = $this->rendered( $this->page() );
+
+		$row = (string) strstr( (string) strstr( $html, '<th scope="row">Catalog sync</th>' ), '</tr>', true );
+		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php" class="woonyx-sync-form">', $row );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_catalog_sync" />', $row );
+		self::assertStringContainsString( '<input type="hidden" name="_woonyx_nonce" value="nonce-for-woonyx_catalog_sync" />', $row );
+		self::assertStringContainsString( '>Sync now</button>', $row );
+		self::assertStringContainsString( 'WooNyx reads every product and category of this store again.', $row );
+		// Only the status was read: the button itself sends nothing.
+		self::assertNotContains( '/api/v1/catalog/sync', $this->requested_paths() );
+	}
+
+	/**
+	 * Store states other than active.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public static function inactive_states(): array {
+		return array(
+			'deactivated'   => array( 'deactivated' ),
+			'suspended'     => array( 'suspended' ),
+			'unknown state' => array( 'archived' ),
+		);
+	}
+
+	#[DataProvider( 'inactive_states' )]
+	public function test_no_sync_button_unless_the_store_is_active( string $state ): void {
+		$this->connect();
+		$this->next_response = self::response( 200, self::json( self::status_answer( array( 'status' => $state ) ) ) );
+
+		$html = $this->rendered( $this->page() );
+
+		self::assertStringContainsString( '<th scope="row">Catalog sync</th>', $html );
+		self::assertStringNotContainsString( 'woonyx_catalog_sync', $html );
+		self::assertStringNotContainsString( 'Sync now', $html );
+	}
+
+	public function test_no_sync_button_while_the_status_cannot_be_read(): void {
+		$this->connect();
+		$this->next_response = self::response(
+			403,
+			self::json(
+				array(
+					'message'    => 'raw core message',
+					'error_code' => 'no_active_subscription',
+				)
+			)
+		);
+
+		$html = $this->rendered( $this->page() );
+
+		self::assertStringNotContainsString( 'woonyx_catalog_sync', $html );
+		self::assertStringNotContainsString( 'Sync now', $html );
+	}
+
+	public function test_no_sync_button_while_not_connected(): void {
+		self::assertStringNotContainsString( 'woonyx_catalog_sync', $this->rendered( $this->page() ) );
+	}
+
+	/**
+	 * @return array<string, array{string, string}>
+	 */
+	public static function sync_notices(): array {
+		return array(
+			'started' => array( 'catalog_sync_started', 'WooNyx is reading your catalog again. Check the catalog sync below in a few minutes.' ),
+			'running' => array( 'catalog_sync_running', 'A catalog sync is already running. Check the catalog sync below in a few minutes.' ),
+		);
+	}
+
+	#[DataProvider( 'sync_notices' )]
+	public function test_sync_success_notices( string $code, string $message ): void {
+		$this->transients['woonyx_notice_5'] = array(
+			'type'       => 'success',
+			'code'       => $code,
+			'status'     => 0,
+			'request_id' => '',
+			'fields'     => array(),
+		);
+
+		self::assertStringContainsString( '<div class="notice notice-success"><p>' . $message . '</p></div>', $this->rendered( $this->page() ) );
+	}
+
+	public function test_the_plan_limit_notice_is_shown_on_the_page_without_a_link_to_it(): void {
+		$this->connect();
+		$this->options['woonyx_catalog_plan_limit'] = array(
+			'count' => 2,
+			'time'  => 1_791_000_000,
+		);
+
+		$html = $this->rendered( $this->page() );
+
+		$notice = (int) strpos( $html, '<div class="notice notice-warning woonyx-plan-limit-notice">' );
+		self::assertGreaterThan( (int) strpos( $html, '<hr class="wp-header-end" />' ), $notice );
+		self::assertLessThan( (int) strpos( $html, '<h2>Connection</h2>' ), $notice );
+		self::assertStringContainsString( '2 products didn’t reach your bots: your plan’s product limit is reached.', $html );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_dismiss_plan_limit" />', $html );
+		self::assertStringNotContainsString( 'WooNyx settings', $html );
+	}
+
+	public function test_no_plan_limit_notice_without_stored_skips(): void {
+		$this->connect();
+
+		self::assertStringNotContainsString( 'woonyx-plan-limit-notice', $this->rendered( $this->page() ) );
+	}
 }

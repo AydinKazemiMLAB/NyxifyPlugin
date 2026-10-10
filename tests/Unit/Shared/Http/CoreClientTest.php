@@ -441,4 +441,82 @@ final class CoreClientTest extends TestCase {
 
 		self::assertSame( 'https://api.example.org', CoreClient::configured_base_url() );
 	}
+
+	/**
+	 * Retry-After values and the seconds kept, at 2026-10-13 12:00:00 UTC.
+	 *
+	 * @return array<string, array{0: mixed, 1: int|null}>
+	 */
+	public static function retry_after_headers(): array {
+		return array(
+			'seconds'                 => array( '120', 120 ),
+			'zero'                    => array( '0', 0 ),
+			'surrounding spaces'      => array( ' 30 ', 30 ),
+			'over an hour'            => array( '7200', 3600 ),
+			'HTTP date'               => array( 'Tue, 13 Oct 2026 12:01:30 GMT', 90 ),
+			'HTTP date passed'        => array( 'Tue, 13 Oct 2026 11:00:00 GMT', 0 ),
+			'HTTP date far away'      => array( 'Wed, 14 Oct 2026 12:00:00 GMT', 3600 ),
+			'absent'                  => array( '', null ),
+			'negative'                => array( '-5', null ),
+			'fraction'                => array( '1.5', null ),
+			'words'                   => array( 'soon', null ),
+			'relative date'           => array( '+1 hour', null ),
+			'obsolete RFC 850 date'   => array( 'Tuesday, 13-Oct-26 12:01:30 GMT', null ),
+			'invalid calendar date'   => array( 'Tue, 31 Feb 2026 12:00:00 GMT', null ),
+			'wrong weekday'           => array( 'Mon, 13 Oct 2026 12:01:30 GMT', null ),
+			'repeated header (array)' => array( array( '10', '20' ), null ),
+			'eleven digits'           => array( '12345678901', null ),
+		);
+	}
+
+	/**
+	 * Retry-After is read as delta-seconds or an IMF-fixdate HTTP date, clamped to 0–3600 seconds.
+	 *
+	 * @param mixed    $header   Header value.
+	 * @param int|null $expected Seconds, or null.
+	 */
+	#[DataProvider( 'retry_after_headers' )]
+	public function test_retry_after( $header, ?int $expected ): void {
+		self::assertSame( $expected, CoreClient::retry_after( $header, 1791892800 ) );
+	}
+
+	public function test_a_failure_keeps_the_cores_retry_after(): void {
+		$this->next_response = self::response( 429, '{"error_code":"rate_limited"}', array( 'retry-after' => '120' ) );
+
+		$response = $this->activated_client()->post( '/catalog/webhooks/products', array( 'items' => array() ) );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( 'rate_limited', $response->error->code );
+		self::assertSame( 120, $response->error->retry_after );
+	}
+
+	public function test_a_failure_with_an_http_date_keeps_the_seconds_until_it(): void {
+		$this->next_response = self::response( 503, 'Service Unavailable', array( 'retry-after' => gmdate( 'D, d M Y H:i:s', time() + 600 ) . ' GMT' ) );
+
+		$response = $this->activated_client()->post( '/catalog/webhooks/products', array( 'items' => array() ) );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( CoreError::UNKNOWN_ERROR, $response->error->code );
+		self::assertGreaterThanOrEqual( 598, $response->error->retry_after );
+		self::assertLessThanOrEqual( 600, $response->error->retry_after );
+	}
+
+	public function test_a_failure_without_retry_after_keeps_null(): void {
+		$this->next_response = self::response( 503, '{"error_code":"service_unavailable"}' );
+
+		$response = $this->activated_client()->get( '/store/status' );
+
+		self::assertFalse( $response->is_success() );
+		self::assertNull( $response->error->retry_after );
+	}
+
+	public function test_a_network_failure_has_no_retry_after(): void {
+		$this->next_response = new \stdClass();
+
+		$response = $this->activated_client()->get( '/store/status' );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( CoreError::NETWORK_ERROR, $response->error->code );
+		self::assertNull( $response->error->retry_after );
+	}
 }

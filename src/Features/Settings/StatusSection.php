@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace WooNyx\Features\Settings;
 
+use WooNyx\Features\Catalog\CatalogSyncHandler;
 use WooNyx\Features\Store\StatusRefreshHandler;
 use WooNyx\Features\Store\StoreStatus;
 use WooNyx\Shared\Admin\AdminAction;
@@ -17,7 +18,8 @@ use WooNyx\Shared\Http\ErrorMessages;
 
 /**
  * Shown while a connection is stored: the store's status on the core (license, plan, messengers, products, catalog
- * sync), or why it couldn't be read, and the "Check connection" button. Every value from the core is escaped.
+ * sync with its "Sync now" button while the store is active), or why it couldn't be read, and the "Check connection"
+ * button. Every value from the core is escaped.
  */
 final class StatusSection {
 
@@ -128,10 +130,28 @@ final class StatusSection {
 						<?php if ( $status->limit_reached ) : ?>
 							<div class="notice notice-warning inline"><p><?php esc_html_e( 'Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them.', 'woonyx' ); ?></p></div>
 						<?php endif; ?>
+						<?php if ( 'active' === $status->status ) : ?>
+							<?php self::render_sync_form(); ?>
+						<?php endif; ?>
 					</td>
 				</tr>
 			</tbody>
 		</table>
+		<?php
+	}
+
+	/**
+	 * The "Sync now" button: WooNyx reads the whole catalog again.
+	 */
+	private static function render_sync_form(): void {
+		?>
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-sync-form">
+			<?php AdminAction::render_fields( CatalogSyncHandler::ACTION ); ?>
+			<p>
+				<button type="submit" class="button button-small"><?php esc_html_e( 'Sync now', 'woonyx' ); ?></button>
+				<span class="description"><?php esc_html_e( 'WooNyx reads every product and category of this store again.', 'woonyx' ); ?></span>
+			</p>
+		</form>
 		<?php
 	}
 

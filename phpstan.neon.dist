@@ -1,5 +1,5 @@
 # WordPress and WooCommerce functions come from szepeviktor/phpstan-wordpress (loaded by the extension installer)
-# and php-stubs/woocommerce-stubs.
+# and php-stubs/woocommerce-stubs (its packages file holds Action Scheduler's functions).
 parameters:
     level: 8
     phpVersion: 80100
@@ -12,3 +12,4 @@ parameters:
         - tests/phpstan-bootstrap.php
     scanFiles:
         - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-packages-stubs.php

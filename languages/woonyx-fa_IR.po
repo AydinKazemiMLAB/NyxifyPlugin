@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: WooNyx 0.3.0\n"
+"Project-Id-Version: WooNyx 0.4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: Nyxon\n"
 "Language-Team: Persian\n"
@@ -8,16 +8,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-07T14:36:19+00:00\n"
+"PO-Revision-Date: 2026-10-10T08:47:40+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: woonyx\n"
 
 #. Plugin Name of the plugin
 #: woonyx.php:3
-#: src/Features/Settings/SettingsPage.php:143
-#: src/Features/Settings/SettingsPage.php:144
-#: src/Features/Settings/SettingsPage.php:211
+#: src/Features/Settings/SettingsPage.php:145
+#: src/Features/Settings/SettingsPage.php:146
+#: src/Features/Settings/SettingsPage.php:213
 msgid "WooNyx"
 msgstr "WooNyx"
 
@@ -32,19 +32,45 @@ msgid "Nyxon"
 msgstr "Nyxon"
 
 #: src/Features/Bots/BotPlatform.php:78
-#: src/Features/Settings/StatusSection.php:186
+#: src/Features/Settings/StatusSection.php:206
 msgid "Telegram"
 msgstr "تلگرام"
 
 #: src/Features/Bots/BotPlatform.php:79
-#: src/Features/Settings/StatusSection.php:187
+#: src/Features/Settings/StatusSection.php:207
 msgid "Bale"
 msgstr "بله"
 
 #: src/Features/Bots/BotPlatform.php:80
-#: src/Features/Settings/StatusSection.php:188
+#: src/Features/Settings/StatusSection.php:208
 msgid "Rubika"
 msgstr "روبیکا"
+
+#. translators: %s: number of products
+#: src/Features/Catalog/PlanLimitNotice.php:135
+#, php-format
+msgid "%s product didn’t reach your bots: your plan’s product limit is reached."
+msgid_plural "%s products didn’t reach your bots: your plan’s product limit is reached."
+msgstr[0] "%s محصول به ربات‌ها نرسید: سقف محصولات پلن شما پر شده است."
+msgstr[1] "%s محصول به ربات‌ها نرسیدند: سقف محصولات پلن شما پر شده است."
+
+#: src/Features/Catalog/PlanLimitNotice.php:148
+msgid "Upgrade your plan to include them."
+msgstr "برای افزودن آن‌ها پلن خود را ارتقا دهید."
+
+#. translators: %s: date and time
+#: src/Features/Catalog/PlanLimitNotice.php:152
+#, php-format
+msgid "Last seen %s"
+msgstr "آخرین بار: %s"
+
+#: src/Features/Catalog/PlanLimitNotice.php:160
+msgid "WooNyx settings"
+msgstr "تنظیمات WooNyx"
+
+#: src/Features/Catalog/PlanLimitNotice.php:162
+msgid "Dismiss"
+msgstr "بستن"
 
 #: src/Features/Settings/AdminPinSection.php:50
 msgid "Admin PIN"
@@ -173,7 +199,7 @@ msgid "Bot"
 msgstr "ربات"
 
 #: src/Features/Settings/BotsSection.php:168
-#: src/Features/Settings/SettingsPage.php:219
+#: src/Features/Settings/SettingsPage.php:222
 msgid "Status"
 msgstr "وضعیت"
 
@@ -246,12 +272,12 @@ msgid "Setting up…"
 msgstr "در حال راه‌اندازی…"
 
 #: src/Features/Settings/BotsSection.php:286
-#: src/Features/Settings/StatusSection.php:145
+#: src/Features/Settings/StatusSection.php:165
 msgid "Active"
 msgstr "فعال"
 
 #: src/Features/Settings/BotsSection.php:287
-#: src/Features/Settings/StatusSection.php:161
+#: src/Features/Settings/StatusSection.php:181
 msgid "Failed"
 msgstr "ناموفق"
 
@@ -264,228 +290,244 @@ msgid "When the plugin is deactivated, WooNyx is told and this site’s connecti
 msgstr "وقتی افزونه غیرفعال شود، به WooNyx خبر داده می‌شود و اتصال این سایت و کلید REST API ووکامرس آن حذف می‌شوند. اگر سرور WooNyx در دسترس نباشد یا اشتراک شما منقضی شده باشد، WooNyx فروشگاه را متصل نگه می‌دارد و هر دو تا زمانی که افزونه را حذف کنید روی این سایت می‌مانند."
 
 #: src/Features/Settings/ErrorNotice.php:35
-#: src/Features/Settings/SettingsPage.php:334
+#: src/Features/Settings/SettingsPage.php:337
 msgid "Request ID (for WooNyx support):"
 msgstr "شناسه‌ی درخواست (برای پشتیبانی WooNyx):"
 
-#: src/Features/Settings/SettingsPage.php:171
+#: src/Features/Settings/SettingsPage.php:173
 msgid "Settings"
 msgstr "تنظیمات"
 
-#: src/Features/Settings/SettingsPage.php:204
+#: src/Features/Settings/SettingsPage.php:206
 msgid "Sorry, you are not allowed to access this page."
 msgstr "متأسفانه اجازهٔ دسترسی به این صفحه را ندارید."
 
-#: src/Features/Settings/SettingsPage.php:215
+#: src/Features/Settings/SettingsPage.php:218
 msgid "Connection"
 msgstr "اتصال"
 
-#: src/Features/Settings/SettingsPage.php:223
+#: src/Features/Settings/SettingsPage.php:226
 msgid "WooNyx server"
 msgstr "سرور WooNyx"
 
-#: src/Features/Settings/SettingsPage.php:227
+#: src/Features/Settings/SettingsPage.php:230
 msgid "Set by WOONYX_API_BASE_URL in wp-config.php."
 msgstr "با WOONYX_API_BASE_URL در wp-config.php تعیین شده است."
 
-#: src/Features/Settings/SettingsPage.php:242
-#: src/Features/Settings/SettingsPage.php:299
+#: src/Features/Settings/SettingsPage.php:245
+#: src/Features/Settings/SettingsPage.php:302
 msgid "Activate again"
 msgstr "فعال‌سازی دوباره"
 
-#: src/Features/Settings/SettingsPage.php:243
+#: src/Features/Settings/SettingsPage.php:246
 msgid "Use this if the connection stops working. This site keeps its store ID and gets a new shared secret."
 msgstr "اگر اتصال از کار افتاد از این استفاده کنید. شناسه‌ی فروشگاه این سایت همان می‌ماند و یک کلید مشترک تازه می‌گیرد."
 
-#: src/Features/Settings/SettingsPage.php:251
-#: src/Features/Settings/SettingsPage.php:299
+#: src/Features/Settings/SettingsPage.php:254
+#: src/Features/Settings/SettingsPage.php:302
 msgid "Activate"
 msgstr "فعال‌سازی"
 
-#: src/Features/Settings/SettingsPage.php:253
+#: src/Features/Settings/SettingsPage.php:256
 msgid "Nothing is sent to the WooNyx server until you enter a license key."
 msgstr "تا وقتی کلید لایسنس را وارد نکنید، هیچ داده‌ای به سرور WooNyx فرستاده نمی‌شود."
 
-#: src/Features/Settings/SettingsPage.php:264
+#: src/Features/Settings/SettingsPage.php:267
 msgid "Shared secret"
 msgstr "کلید مشترک"
 
-#: src/Features/Settings/SettingsPage.php:265
+#: src/Features/Settings/SettingsPage.php:268
 msgid "This site signs every request to WooNyx with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
 msgstr "این سایت هر درخواست به WooNyx را با یک کلید مشترک امضا می‌کند که رمزنگاری‌شده همین‌جا نگه داشته می‌شود و هیچ‌وقت نمایش داده نمی‌شود. اگر فکر می‌کنید ممکن است لو رفته باشد، آن را عوض کنید؛ فروشگاه متصل می‌ماند."
 
-#: src/Features/Settings/SettingsPage.php:266
+#: src/Features/Settings/SettingsPage.php:269
 msgid "Replace the shared secret with a new one now? The store stays connected."
 msgstr "کلید مشترک همین حالا با یک کلید تازه عوض شود؟ فروشگاه متصل می‌ماند."
 
-#: src/Features/Settings/SettingsPage.php:269
+#: src/Features/Settings/SettingsPage.php:272
 msgid "Rotate secret"
 msgstr "تعویض کلید مشترک"
 
-#: src/Features/Settings/SettingsPage.php:287
+#: src/Features/Settings/SettingsPage.php:290
 msgid "License key"
 msgstr "کلید لایسنس"
 
-#: src/Features/Settings/SettingsPage.php:291
+#: src/Features/Settings/SettingsPage.php:294
 msgid "The key is sent once to the WooNyx server and is not stored on this site."
 msgstr "کلید فقط یک بار به سرور WooNyx فرستاده می‌شود و در این سایت ذخیره نمی‌شود."
 
-#: src/Features/Settings/SettingsPage.php:292
+#: src/Features/Settings/SettingsPage.php:295
 msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; WooNyx uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
 msgstr "فعال‌سازی برای حساب کاربری شما یک کلید REST API ووکامرس (خواندن/نوشتن) می‌سازد؛ WooNyx با آن کاتالوگ شما را می‌خواند و سفارش ثبت می‌کند. اگر این کاربر یا این کلید حذف شود، اتصال فروشگاه قطع می‌شود."
 
-#: src/Features/Settings/SettingsPage.php:327
+#: src/Features/Settings/SettingsPage.php:330
 msgid "Invalid fields:"
 msgstr "فیلدهای نامعتبر:"
 
-#: src/Features/Settings/SettingsPage.php:348
+#: src/Features/Settings/SettingsPage.php:351
 msgid "The store is connected to WooNyx."
 msgstr "فروشگاه به WooNyx متصل شد."
 
-#: src/Features/Settings/SettingsPage.php:349
+#: src/Features/Settings/SettingsPage.php:352
 msgid "The shared secret was replaced with a new one. The store stays connected."
 msgstr "کلید مشترک با یک کلید تازه عوض شد. فروشگاه متصل می‌ماند."
 
-#: src/Features/Settings/SettingsPage.php:350
+#: src/Features/Settings/SettingsPage.php:353
 msgid "The bot token was accepted. WooNyx is setting the bot up; check its status below."
 msgstr "توکن ربات پذیرفته شد. WooNyx در حال راه‌اندازی ربات است؛ وضعیت آن را در پایین ببینید."
 
-#: src/Features/Settings/SettingsPage.php:351
+#: src/Features/Settings/SettingsPage.php:354
 msgid "The bot was removed. It no longer answers your customers."
 msgstr "ربات حذف شد. دیگر به مشتریان شما پاسخ نمی‌دهد."
 
-#: src/Features/Settings/SettingsPage.php:352
+#: src/Features/Settings/SettingsPage.php:355
 msgid "A new admin PIN was issued; the previous one no longer works. Bot admins stay admins."
 msgstr "PIN ادمین جدید صادر شد؛ PIN قبلی دیگر کار نمی‌کند. ادمین‌های ربات ادمین می‌مانند."
 
-#: src/Features/Settings/SettingsPage.php:353
+#: src/Features/Settings/SettingsPage.php:356
 msgid "A new admin PIN was issued and every bot admin was logged out."
 msgstr "PIN ادمین جدید صادر شد و همهٔ ادمین‌های ربات خارج شدند."
 
-#: src/Features/Settings/SettingsPage.php:354
+#: src/Features/Settings/SettingsPage.php:357
 msgid "The bot admin was removed. The current PIN still works for them until you issue a new one."
 msgstr "ادمین ربات حذف شد. تا وقتی PIN جدید صادر نکنید، PIN فعلی هنوز برای او کار می‌کند."
 
-#: src/Features/Settings/SettingsPage.php:369
+#: src/Features/Settings/SettingsPage.php:358
+msgid "WooNyx is reading your catalog again. Check the catalog sync below in a few minutes."
+msgstr "WooNyx در حال خواندن دوبارهٔ کاتالوگ شماست. چند دقیقهٔ دیگر وضعیت همگام‌سازی کاتالوگ را در پایین بررسی کنید."
+
+#: src/Features/Settings/SettingsPage.php:359
+msgid "A catalog sync is already running. Check the catalog sync below in a few minutes."
+msgstr "یک همگام‌سازی کاتالوگ از قبل در حال اجراست. چند دقیقهٔ دیگر وضعیت آن را در پایین بررسی کنید."
+
+#: src/Features/Settings/SettingsPage.php:374
 msgid "Connected"
 msgstr "متصل"
 
-#: src/Features/Settings/SettingsPage.php:370
+#: src/Features/Settings/SettingsPage.php:375
 msgid "Store ID:"
 msgstr "شناسهٔ فروشگاه:"
 
-#: src/Features/Settings/SettingsPage.php:381
+#: src/Features/Settings/SettingsPage.php:386
 msgid "Connection lost"
 msgstr "اتصال از دست رفته"
 
-#: src/Features/Settings/SettingsPage.php:381
+#: src/Features/Settings/SettingsPage.php:386
 msgid "Not connected"
 msgstr "متصل نیست"
 
-#: src/Features/Settings/StatusSection.php:31
+#: src/Features/Settings/StatusSection.php:33
 msgid "Store on WooNyx"
 msgstr "فروشگاه در WooNyx"
 
-#: src/Features/Settings/StatusSection.php:42
+#: src/Features/Settings/StatusSection.php:44
 msgid "Check connection"
 msgstr "بررسی اتصال"
 
 #. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:47
+#: src/Features/Settings/StatusSection.php:49
 #, php-format
 msgid "Checked %s"
 msgstr "بررسی‌شده در %s"
 
-#: src/Features/Settings/StatusSection.php:66
+#: src/Features/Settings/StatusSection.php:68
 msgid "Store"
 msgstr "فروشگاه"
 
-#: src/Features/Settings/StatusSection.php:76
+#: src/Features/Settings/StatusSection.php:78
 msgid "License"
 msgstr "لایسنس"
 
 #. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:86
+#: src/Features/Settings/StatusSection.php:88
 #, php-format
 msgid "Activated %s"
 msgstr "فعال‌شده در %s"
 
-#: src/Features/Settings/StatusSection.php:94
+#: src/Features/Settings/StatusSection.php:96
 msgid "Plan"
 msgstr "پلن"
 
 #. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:100
+#: src/Features/Settings/StatusSection.php:102
 #, php-format
 msgid "Expires %s"
 msgstr "انقضا: %s"
 
-#: src/Features/Settings/StatusSection.php:106
+#: src/Features/Settings/StatusSection.php:108
 msgid "Messengers"
 msgstr "پیام‌رسان‌ها"
 
-#: src/Features/Settings/StatusSection.php:110
+#: src/Features/Settings/StatusSection.php:112
 msgid "Products"
 msgstr "محصولات"
 
-#: src/Features/Settings/StatusSection.php:114
+#: src/Features/Settings/StatusSection.php:116
 msgid "Catalog sync"
 msgstr "همگام‌سازی کاتالوگ"
 
 #. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:121
+#: src/Features/Settings/StatusSection.php:123
 #, php-format
 msgid "Last synced %s"
 msgstr "آخرین همگام‌سازی: %s"
 
-#: src/Features/Settings/StatusSection.php:129
+#: src/Features/Settings/StatusSection.php:131
 msgid "Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them."
 msgstr "سقف محصولات پلن شما پر شده و برخی محصولات در ربات‌ها نیستند. برای افزودن آن‌ها پلن خود را ارتقا دهید."
 
-#: src/Features/Settings/StatusSection.php:146
+#: src/Features/Settings/StatusSection.php:151
+msgid "Sync now"
+msgstr "همگام‌سازی اکنون"
+
+#: src/Features/Settings/StatusSection.php:152
+msgid "WooNyx reads every product and category of this store again."
+msgstr "WooNyx همهٔ محصولات و دسته‌های این فروشگاه را دوباره می‌خواند."
+
+#: src/Features/Settings/StatusSection.php:166
 msgid "Deactivated"
 msgstr "غیرفعال"
 
-#: src/Features/Settings/StatusSection.php:147
+#: src/Features/Settings/StatusSection.php:167
 msgid "Suspended"
 msgstr "معلق"
 
-#: src/Features/Settings/StatusSection.php:158
+#: src/Features/Settings/StatusSection.php:178
 msgid "Not synced yet"
 msgstr "هنوز همگام نشده"
 
-#: src/Features/Settings/StatusSection.php:159
+#: src/Features/Settings/StatusSection.php:179
 msgid "Syncing…"
 msgstr "در حال همگام‌سازی…"
 
-#: src/Features/Settings/StatusSection.php:160
+#: src/Features/Settings/StatusSection.php:180
 msgid "Synced"
 msgstr "همگام شد"
 
-#: src/Features/Settings/StatusSection.php:182
+#: src/Features/Settings/StatusSection.php:202
 msgid "None"
 msgstr "هیچ‌کدام"
 
 #. translators: separator between the items of a list
-#: src/Features/Settings/StatusSection.php:193
+#: src/Features/Settings/StatusSection.php:213
 msgctxt "list separator"
 msgid ", "
 msgstr "، "
 
 #. translators: %s: number of products
-#: src/Features/Settings/StatusSection.php:206
+#: src/Features/Settings/StatusSection.php:226
 #, php-format
 msgid "%s (no limit)"
 msgstr "%s (بدون سقف)"
 
 #. translators: 1: number of products, 2: the plan's limit
-#: src/Features/Settings/StatusSection.php:211
+#: src/Features/Settings/StatusSection.php:231
 #, php-format
 msgid "%1$s of %2$s"
 msgstr "%1$s از %2$s"
 
 #. translators: %s: the oldest supported WooCommerce version, e.g. 9.0
-#: src/Plugin.php:150
+#: src/Plugin.php:173
 #, php-format
 msgid "WooNyx needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
 msgstr "WooNyx به ووکامرس %s یا جدیدتر نیاز دارد. برای استفاده از آن، ووکامرس را نصب، فعال یا به‌روزرسانی کنید."

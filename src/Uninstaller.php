@@ -9,15 +9,18 @@ declare(strict_types=1);
 
 namespace WooNyx;
 
+use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PlanLimitNotice;
+use WooNyx\Features\Catalog\Schema;
 use WooNyx\Features\Store\RestKeys;
 use WooNyx\Features\Store\StatusService;
 use WooNyx\Shared\Admin\Notices;
 use WooNyx\Shared\Options\SecretStore;
 
 /**
- * Removes everything the plugin stored, on every site of a network: the WooCommerce REST key it created, its options
- * and its transients. Nothing is sent to the core (the deactivation already told it, or couldn't); keys the plugin
- * didn't create are never touched.
+ * Removes everything the plugin stored, on every site of a network: the WooCommerce REST key it created, its pending
+ * catalog flushes (when Action Scheduler is loaded), its catalog queue table, its options and its transients. Nothing
+ * is sent to the core (the deactivation already told it, or couldn't); keys the plugin didn't create are never touched.
  */
 final class Uninstaller {
 
@@ -30,6 +33,9 @@ final class Uninstaller {
 		SecretStore::OPTION_CONNECTION,
 		SecretStore::OPTION_ADMIN_PIN,
 		RestKeys::OPTION_KEY_ID,
+		Schema::OPTION_VERSION,
+		FlushScheduler::OPTION_RETRY_AT,
+		PlanLimitNotice::OPTION,
 	);
 
 	/**
@@ -70,10 +76,12 @@ final class Uninstaller {
 	}
 
 	/**
-	 * Deletes the current site's REST key, options and transients.
+	 * Deletes the current site's REST key, pending flushes, queue table, options and transients.
 	 */
 	private static function clean_site(): void {
 		self::delete_rest_key();
+		FlushScheduler::unschedule_all();
+		Schema::drop();
 
 		foreach ( self::OPTIONS as $option ) {
 			delete_option( $option );

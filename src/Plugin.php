@@ -18,6 +18,13 @@ use WooNyx\Features\Bots\BotRegistrationHandler;
 use WooNyx\Features\Bots\BotRemovalHandler;
 use WooNyx\Features\Bots\BotService;
 use WooNyx\Features\Bots\BotToken;
+use WooNyx\Features\Catalog\CatalogFlush;
+use WooNyx\Features\Catalog\CatalogSender;
+use WooNyx\Features\Catalog\CatalogSyncHandler;
+use WooNyx\Features\Catalog\ChangeCollector;
+use WooNyx\Features\Catalog\FlushScheduler;
+use WooNyx\Features\Catalog\PlanLimitNotice;
+use WooNyx\Features\Catalog\Schema;
 use WooNyx\Features\Settings\DeactivationWarning;
 use WooNyx\Features\Settings\SettingsPage;
 use WooNyx\Features\Store\ActivationHandler;
@@ -66,7 +73,16 @@ final class Plugin {
 		add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'plugins_loaded', array( $this, 'boot' ) );
+		register_activation_hook( $this->plugin_file, array( $this, 'activate' ) );
 		register_deactivation_hook( $this->plugin_file, array( $this, 'deactivate' ) );
+	}
+
+	/**
+	 * Creates the current site's catalog queue table. Other sites of a network get theirs on their next request
+	 * (boot()), as do sites updated by upload, which doesn't run this hook.
+	 */
+	public function activate(): void {
+		Schema::maybe_install();
 	}
 
 	/**
@@ -110,6 +126,11 @@ final class Plugin {
 			return;
 		}
 
+		Schema::maybe_install();
+		// Catalog changes come from every kind of request: the admin, REST, checkout (stock), cron and WP-CLI.
+		( new ChangeCollector( new FlushScheduler(), new Logger() ) )->register();
+		add_action( FlushScheduler::HOOK, array( CatalogFlush::class, 'run_for_site' ) );
+
 		if ( is_admin() ) {
 			$store    = new SecretStore( Encryptor::for_site() );
 			$core_url = CoreClient::configured_base_url();
@@ -118,6 +139,7 @@ final class Plugin {
 
 			( new SettingsPage( $this->plugin_file, $store, $core_url, new StatusService( $client, $logger ), new BotService( $client, $logger ), new AdminService( $client, $logger ) ) )->register();
 			( new StatusRefreshHandler() )->register();
+			( new PlanLimitNotice() )->register();
 			// The services behind the forms are built only when a form is posted.
 			( new ActivationHandler( static fn( LicenseKey $license, int $user_id ) => Activator::for_site()->activate( $license, $user_id ) ) )->register();
 			( new SecretRotationHandler( static fn() => SecretRotator::for_site()->rotate() ) )->register();
@@ -125,6 +147,7 @@ final class Plugin {
 			( new BotRemovalHandler( static fn( string $platform ) => BotService::for_site()->remove( $platform ) ) )->register();
 			( new AdminPinHandler( static fn( bool $revoke_admins ) => AdminPinIssuer::for_site()->issue( $revoke_admins ) ) )->register();
 			( new AdminRemovalHandler( static fn( int $id ) => AdminService::for_site()->revoke( $id ) ) )->register();
+			( new CatalogSyncHandler( static fn() => CatalogSender::for_site()->request_sync(), $logger ) )->register();
 		}
 	}
 
