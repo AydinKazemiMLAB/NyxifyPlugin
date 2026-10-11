@@ -19,6 +19,8 @@ use WooNyx\Features\Catalog\Schema;
 use WooNyx\Features\Store\Deactivator;
 use WooNyx\Features\Store\RestKeys;
 use WooNyx\Features\Store\StatusService;
+use WooNyx\Features\Sync\PullLock;
+use WooNyx\Features\Sync\PullScheduler;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Http\CoreError;
 use WooNyx\Shared\Logging\Logger;
@@ -145,6 +147,13 @@ final class DeactivatorTest extends TestCase {
 	private array $unscheduled = array();
 
 	/**
+	 * Cancelled pulls: site and hook, in order.
+	 *
+	 * @var list<string>
+	 */
+	private array $pulls_unscheduled = array();
+
+	/**
 	 * Log entries.
 	 *
 	 * @var list<array{level: string, message: string, context: array<string, mixed>}>
@@ -190,8 +199,13 @@ final class DeactivatorTest extends TestCase {
 		Functions\when( 'is_multisite' )->alias( fn(): bool => $this->multisite );
 		Functions\when( 'as_unschedule_all_actions' )->alias(
 			function ( string $hook, array $args, string $group ): void {
-				self::assertSame( array( FlushScheduler::HOOK, array(), FlushScheduler::GROUP ), array( $hook, $args, $group ) );
-				$this->unscheduled[] = $this->site();
+				self::assertSame( array( array(), 'woonyx' ), array( $args, $group ) );
+				if ( FlushScheduler::HOOK === $hook ) {
+					$this->unscheduled[] = $this->site();
+					return;
+				}
+				self::assertContains( $hook, array( PullScheduler::HOOK, PullScheduler::NOW_HOOK ) );
+				$this->pulls_unscheduled[] = $this->site() . ':' . $hook;
 			}
 		);
 		Functions\when( 'get_sites' )->alias(
@@ -589,6 +603,8 @@ final class DeactivatorTest extends TestCase {
 				'count' => 3,
 				'time'  => 1_791_000_000,
 			),
+			PullScheduler::OPTION_RETRY_AT  => 1_791_000_000,
+			PullLock::OPTION                => str_repeat( 'a', 32 ) . ':1791000000',
 			'blogname'                      => 'Shop',
 		);
 
@@ -596,6 +612,7 @@ final class DeactivatorTest extends TestCase {
 
 		self::assertFalse( Schema::is_installed() );
 		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
+		self::assertSame( array( self::MAIN_SITE . ':woonyx_sync_pull', self::MAIN_SITE . ':woonyx_sync_pull_now' ), $this->pulls_unscheduled );
 		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
 	}
 
@@ -623,6 +640,7 @@ final class DeactivatorTest extends TestCase {
 
 		self::assertSame( array( 'DELETE FROM `wp_2_woonyx_catalog_queue`' ), $queries );
 		self::assertSame( array( 2 ), $this->unscheduled );
+		self::assertSame( array( '2:woonyx_sync_pull', '2:woonyx_sync_pull_now' ), $this->pulls_unscheduled );
 		self::assertSame( array( Schema::OPTION_VERSION => Schema::VERSION ), $this->options[2] );
 	}
 

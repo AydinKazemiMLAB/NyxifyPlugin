@@ -12,6 +12,7 @@ namespace WooNyx\Tests\Unit\Features\Store;
 use Brain\Monkey\Functions;
 use WooNyx\Features\Store\StatusRefreshHandler;
 use WooNyx\Features\Store\StatusService;
+use WooNyx\Features\Sync\PullScheduler;
 use WooNyx\Tests\Unit\TestCase;
 
 /**
@@ -48,6 +49,13 @@ final class StatusRefreshHandlerTest extends TestCase {
 	 * @var string|null
 	 */
 	private ?string $redirect = null;
+
+	/**
+	 * Times the pulls were resumed.
+	 *
+	 * @var int
+	 */
+	private int $resumed = 0;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -86,7 +94,11 @@ final class StatusRefreshHandlerTest extends TestCase {
 
 	private function handle(): string {
 		try {
-			( new StatusRefreshHandler() )->handle();
+			( new StatusRefreshHandler(
+				function (): void {
+					++$this->resumed;
+				}
+			) )->handle();
 		} catch ( \RuntimeException $e ) {
 			return $e->getMessage();
 		}
@@ -107,6 +119,32 @@ final class StatusRefreshHandlerTest extends TestCase {
 
 		self::assertSame( array(), $this->transients );
 		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=woonyx', $this->redirect );
+		self::assertSame( 1, $this->resumed );
+	}
+
+	public function test_resuming_ends_the_pause_and_asks_for_a_pull_at_once(): void {
+		$deleted = array();
+		$queued  = array();
+		Functions\when( 'delete_option' )->alias(
+			function ( string $name ) use ( &$deleted ): bool {
+				$deleted[] = $name;
+				return true;
+			}
+		);
+		Functions\when( 'as_schedule_recurring_action' )->justReturn( 1 );
+		Functions\when( 'as_has_scheduled_action' )->justReturn( false );
+		Functions\when( 'as_get_scheduled_actions' )->justReturn( array() );
+		Functions\when( 'as_enqueue_async_action' )->alias(
+			function ( string $hook, array $args, string $group, bool $unique ) use ( &$queued ): int {
+				$queued[] = array( $hook, $args, $group, $unique );
+				return 9;
+			}
+		);
+
+		StatusRefreshHandler::resume_pulls();
+
+		self::assertSame( array( PullScheduler::OPTION_RETRY_AT ), $deleted );
+		self::assertSame( array( array( PullScheduler::NOW_HOOK, array(), PullScheduler::GROUP, false ) ), $queued );
 	}
 
 	public function test_without_the_capability_nothing_happens(): void {
@@ -114,6 +152,7 @@ final class StatusRefreshHandlerTest extends TestCase {
 
 		self::assertSame( 'wp_die', $this->handle() );
 		self::assertArrayHasKey( StatusService::TRANSIENT, $this->transients );
+		self::assertSame( 0, $this->resumed );
 	}
 
 	public function test_without_a_valid_nonce_nothing_happens(): void {
@@ -121,5 +160,6 @@ final class StatusRefreshHandlerTest extends TestCase {
 
 		self::assertSame( 'nonce', $this->handle() );
 		self::assertArrayHasKey( StatusService::TRANSIENT, $this->transients );
+		self::assertSame( 0, $this->resumed );
 	}
 }

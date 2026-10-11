@@ -5,13 +5,14 @@ store's products through Telegram, Bale and Rubika bots. The plugin activates th
 catalog and order changes to the core, and gives the store owner a settings page for the bots, the admin PIN and the
 bot admins.
 
-> Status: phase 5 (order status webhook), version 0.5.0. On **WooCommerce > WooNyx** the owner enters a license key
+> Status: phase 6 (pull fallback), version 0.6.0. On **WooCommerce > WooNyx** the owner enters a license key
 > and the store is connected to the core; the page shows the store's status, checks the connection and rotates the
 > shared secret, connects, replaces and removes the store's Telegram, Bale and Rubika bots, issues the bots' admin PIN
 > and lists and removes the bot admins. While connected, every change to a product, a variation, its stock or a
 > product category, and every change to an order placed through a bot, reaches the core within seconds in the
 > background, and "Sync now" starts a full catalog sync. Deactivating the plugin tells the core, and uninstalling
-> removes everything the plugin stored. The pull fallback comes in the next phase. Plans and progress:
+> removes everything the plugin stored. When the core can't reach the store, the plugin fetches the bot admins'
+> product edits itself every 5 minutes and applies them (pull fallback). Plans and progress:
 > `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
 > WordPress.org doesn't accept slugs starting with `woo`, so the public name, slug and text domain change before the
 > first release.
@@ -122,6 +123,41 @@ queued or sent.
 - **Logs:** kinds, counts, order ids, request ids, error codes and the core's `affected` count; never an order's
   status, number, total, items or any customer data.
 
+## Pull fallback
+
+Bot admins' product edits normally reach WooCommerce through the core, which writes them with the store's REST key.
+When it can't (a host that refuses the core's requests, a firewall, an outage), the plugin fetches them itself. Runs
+only while the store is connected.
+
+- **When:** an Action Scheduler action (`woonyx_sync_pull`, group `woonyx`) every 5 minutes, scheduled when the store
+  is activated and kept in place on every admin page load (removed when not connected), plus one immediate run
+  (`woonyx_sync_pull_now`) after "Check connection" and after a run that got a full answer. Like every Action
+  Scheduler action it needs WP-Cron (a page load or a system cron). One run at a time per site (a lock in
+  `woonyx_sync_lock`, expiring after 330 s).
+- **What is pulled** (`GET /sync/outbox?limit=20`): only the changes whose push by the core has failed at least once,
+  oldest first, each claimed by the plugin for 5 minutes: `product.create`, `product.update`, `product.delete` and
+  `variation.update`. While the core reaches the store, nothing comes back and the call is answered empty.
+- **How they are applied:** one by one, in the core's order, through WooCommerce's own REST controllers in-process
+  (`rest_do_request()`: the same validation, image download and meta handling as the core's push), as the user who
+  owns the plugin's REST key. A create becomes `POST /wc/v3/products` (after looking for a product that already
+  carries the change's `_woonyx_outbox_id`, so a create is never applied twice), an edit `PUT /wc/v3/products/{id}`,
+  a delete `DELETE /wc/v3/products/{id}` (to the trash), a variation edit `PUT
+  /wc/v3/products/{id}/variations/{id}`. Before that every payload is checked against the fields the core can send
+  (name, status, visibility, descriptions, SKU, prices, stock fields, categories by id, images by https link or
+  attachment id): anything else fails that change as `invalid_change`. Image downloads are capped at 15 seconds.
+  No change is started after 20 seconds of a run; the rest come back later.
+- **Acknowledgement** (`POST /sync/outbox/ack`): each change's result, with the product's `date_modified_gmt` after
+  the run (the parent's for a variation), so the core recognises the product webhook that follows as the echo of
+  its own change. Failures carry WooCommerce's error code and its message without tags or links, cut to 1000
+  characters (shown to the bot's admins); `invalid_change`, `rest_user_missing` and `plugin_error` are the plugin's
+  own. Sent once more after a network error or a 5xx; a change left unacknowledged is handed out again once its
+  claim expires and found by its `_woonyx_outbox_id` instead of being created again.
+- **Failures:** a lapsed subscription, an inactive store or a rejected signature pauses pulls for an hour
+  (`woonyx_sync_retry_at`; "Check connection" ends the pause); other errors wait for the next run. Nothing is kept
+  locally.
+- **Logs:** counts (pulled, applied, failed, not started), the core's `affected`, request ids, and for each failed
+  change its id, action and error code; never a payload, a product's content, an image link or a signed link.
+
 ## Layout
 
 ```
@@ -136,7 +172,8 @@ src/Features/         Settings (the admin page and its sections: status, bots, a
                       Bots (platforms, token input, bots, admin PIN, bot admins: services and form handlers),
                       Catalog (queue table, the request's pending changes, change collector, flush action for
                       catalog and orders, payload builder, sender, retry policy, "Sync now", plan-limit notice),
-                      Orders (order collector, whitelisted order payloads, status sender); later Sync
+                      Orders (order collector, whitelisted order payloads, status sender),
+                      Sync (pull fallback: outbox client, payload whitelist, change applier, lock, scheduler, run)
 assets/css/           admin styles (logical CSS properties, RTL-safe)
 assets/js/            confirmations: forms with `data-woonyx-confirm` (settings page), deactivation (plugins list)
 languages/            woonyx.pot and the Persian translation
@@ -160,6 +197,8 @@ docs/                 handoff, phase plans, the core's OpenAPI spec
   object's content.
 - Orders are personal data: only orders the core created are sent, built from a short whitelist of getters (no
   customer, address, contact, note, payment or meta field is read), and logged by id only.
+- Pulled changes are applied only through WooCommerce's REST controllers, after a whitelist check, as the REST key's
+  user; their payloads, images and links are never logged.
 - The WooCommerce REST key the core uses is created by the plugin for the admin who activates; its consumer key and
   secret exist only in memory for the activation request. The plugin only ever deletes the key it created (its id is
   kept in `woonyx_rest_key_id`), never a key made by hand.

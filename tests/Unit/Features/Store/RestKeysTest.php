@@ -15,12 +15,15 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use WooNyx\Features\Store\RestKey;
 use WooNyx\Features\Store\RestKeys;
+use WooNyx\Tests\Unit\EmulatesPrepare;
 use WooNyx\Tests\Unit\TestCase;
 
 /**
  * Key rows like WC_Auth::create_keys(), over a mocked $wpdb and an in-memory wp_options.
  */
 final class RestKeysTest extends TestCase {
+
+	use EmulatesPrepare;
 
 	private const TABLE = 'wp_woocommerce_api_keys';
 
@@ -274,5 +277,54 @@ final class RestKeysTest extends TestCase {
 		self::assertStringContainsString( '17', $output );
 		self::assertStringNotContainsString( 'aaaa', $output );
 		self::assertStringNotContainsString( 'bbbb', $output );
+	}
+
+	// ------------------------------------------------------------------ user_id
+
+	/**
+	 * Expects the key's row to be read and answers with a user id.
+	 *
+	 * @param mixed $user_id What get_var() returns.
+	 */
+	private function expect_user_read( $user_id ): void {
+		$this->wpdb->shouldReceive( 'prepare' )->andReturnUsing( fn( string $query, ...$args ): string => self::prepare_query( $query, ...$args ) );
+		$this->wpdb->shouldReceive( 'get_var' )
+			->once()
+			->with( 'SELECT user_id FROM `' . self::TABLE . '` WHERE key_id = 17' )
+			->andReturn( $user_id );
+	}
+
+	public function test_user_id_is_the_remembered_keys_owner(): void {
+		$this->options[ RestKeys::OPTION_KEY_ID ] = 17;
+		$this->expect_user_read( '5' );
+
+		self::assertSame( 5, ( new RestKeys() )->user_id() );
+	}
+
+	/**
+	 * Rows that name no user.
+	 *
+	 * @return array<string, array{mixed}>
+	 */
+	public static function missing_users(): array {
+		return array(
+			'row gone' => array( null ),
+			'user 0'   => array( '0' ),
+			'text'     => array( 'admin' ),
+		);
+	}
+
+	#[DataProvider( 'missing_users' )]
+	public function test_user_id_is_null_without_a_user( mixed $user_id ): void {
+		$this->options[ RestKeys::OPTION_KEY_ID ] = 17;
+		$this->expect_user_read( $user_id );
+
+		self::assertNull( ( new RestKeys() )->user_id() );
+	}
+
+	public function test_user_id_reads_nothing_without_a_key(): void {
+		$this->wpdb->shouldNotReceive( 'get_var' );
+
+		self::assertNull( ( new RestKeys() )->user_id() );
 	}
 }

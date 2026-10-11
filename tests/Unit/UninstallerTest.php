@@ -17,6 +17,8 @@ use WooNyx\Features\Catalog\PlanLimitNotice;
 use WooNyx\Features\Catalog\Schema;
 use WooNyx\Features\Store\RestKeys;
 use WooNyx\Features\Store\StatusService;
+use WooNyx\Features\Sync\PullLock;
+use WooNyx\Features\Sync\PullScheduler;
 use WooNyx\Shared\Options\SecretStore;
 use WooNyx\Uninstaller;
 
@@ -73,6 +75,13 @@ final class UninstallerTest extends TestCase {
 	private array $unscheduled = array();
 
 	/**
+	 * Cancelled pulls: site and hook, in order.
+	 *
+	 * @var list<string>
+	 */
+	private array $pulls_unscheduled = array();
+
+	/**
 	 * The current site, and the sites switched from.
 	 *
 	 * @var list<int>
@@ -122,8 +131,13 @@ final class UninstallerTest extends TestCase {
 		Functions\expect( 'wp_remote_request' )->never();
 		Functions\when( 'as_unschedule_all_actions' )->alias(
 			function ( string $hook, array $args, string $group ): void {
-				self::assertSame( array( FlushScheduler::HOOK, array(), FlushScheduler::GROUP ), array( $hook, $args, $group ) );
-				$this->unscheduled[] = $this->site();
+				self::assertSame( array( array(), 'woonyx' ), array( $args, $group ) );
+				if ( FlushScheduler::HOOK === $hook ) {
+					$this->unscheduled[] = $this->site();
+					return;
+				}
+				self::assertContains( $hook, array( PullScheduler::HOOK, PullScheduler::NOW_HOOK ) );
+				$this->pulls_unscheduled[] = $this->site() . ':' . $hook;
 			}
 		);
 
@@ -215,6 +229,7 @@ final class UninstallerTest extends TestCase {
 		self::assertSame( array( '1:' . StatusService::TRANSIENT ), $this->deleted_transients );
 		self::assertSame( self::site_queries( 'wp_' ), $this->queries );
 		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
+		self::assertSame( array( self::MAIN_SITE . ':woonyx_sync_pull', self::MAIN_SITE . ':woonyx_sync_pull_now' ), $this->pulls_unscheduled );
 	}
 
 	public function test_database_errors_are_hidden_while_deleting_the_key_and_restored(): void {
@@ -246,7 +261,7 @@ final class UninstallerTest extends TestCase {
 
 	public function test_every_option_and_transient_is_listed(): void {
 		self::assertSame(
-			array( SecretStore::OPTION_CONNECTION, SecretStore::OPTION_ADMIN_PIN, RestKeys::OPTION_KEY_ID, Schema::OPTION_VERSION, FlushScheduler::OPTION_RETRY_AT, PlanLimitNotice::OPTION ),
+			array( SecretStore::OPTION_CONNECTION, SecretStore::OPTION_ADMIN_PIN, RestKeys::OPTION_KEY_ID, Schema::OPTION_VERSION, FlushScheduler::OPTION_RETRY_AT, PlanLimitNotice::OPTION, PullScheduler::OPTION_RETRY_AT, PullLock::OPTION ),
 			Uninstaller::OPTIONS
 		);
 		self::assertSame( array( StatusService::TRANSIENT ), Uninstaller::TRANSIENTS );
@@ -278,6 +293,7 @@ final class UninstallerTest extends TestCase {
 			$this->queries
 		);
 		self::assertSame( array( 1, 2, 3 ), $this->unscheduled );
+		self::assertSame( array( '1:woonyx_sync_pull', '1:woonyx_sync_pull_now', '2:woonyx_sync_pull', '2:woonyx_sync_pull_now', '3:woonyx_sync_pull', '3:woonyx_sync_pull_now' ), $this->pulls_unscheduled );
 		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
 		self::assertSame( 'wp_', $this->wpdb->prefix );
 	}

@@ -111,6 +111,25 @@ final class RestKeys {
 	}
 
 	/**
+	 * The user who owns the key the plugin created (the core writes as this user, and so do pulled changes).
+	 *
+	 * @return int|null Null when no key is remembered or its row is gone.
+	 */
+	public function user_id(): ?int {
+		$key_id = $this->current_id();
+		if ( null === $key_id ) {
+			return null;
+		}
+
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- WooCommerce's own table; read once per pull.
+		$user_id = $wpdb->get_var( $wpdb->prepare( 'SELECT user_id FROM %i WHERE key_id = %d', $wpdb->prefix . self::TABLE, $key_id ) );
+
+		return is_numeric( $user_id ) && (int) $user_id > 0 ? (int) $user_id : null;
+	}
+
+	/**
 	 * Remembers the id of the key the plugin created.
 	 *
 	 * @param int $key_id Row id.

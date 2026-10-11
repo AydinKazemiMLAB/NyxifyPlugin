@@ -13,6 +13,8 @@ use WooNyx\Features\Catalog\CatalogQueue;
 use WooNyx\Features\Catalog\FlushScheduler;
 use WooNyx\Features\Catalog\PlanLimitNotice;
 use WooNyx\Features\Catalog\Schema;
+use WooNyx\Features\Sync\PullLock;
+use WooNyx\Features\Sync\PullScheduler;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Logging\Logger;
 use WooNyx\Shared\Options\SecretStore;
@@ -31,6 +33,7 @@ use WooNyx\Shared\Security\Encryptor;
  *   budget; sites left over keep their connection (logged).
  * - Catalog changes still queued, and the pending flushes, are dropped on every site where the plugin stops, whatever
  *   the core answers: the plugin no longer sends them, and the core's full sync after the next activation catches up.
+ *   The pulls are cancelled there too, with their pause and lock.
  */
 final class Deactivator {
 
@@ -116,13 +119,16 @@ final class Deactivator {
 	}
 
 	/**
-	 * Cancels the current site's pending catalog flushes, forgets its backoff and plan-limit notice and empties its
-	 * queue, if its table was ever created.
+	 * Cancels the current site's pending catalog flushes and pulls, forgets their backoff, pause and lock and the
+	 * plan-limit notice, and empties its queue, if its table was ever created.
 	 */
 	public static function stop_site_catalog(): void {
 		FlushScheduler::unschedule_all();
 		( new FlushScheduler() )->clear_retry_at();
 		PlanLimitNotice::clear();
+		PullScheduler::unschedule_all();
+		PullScheduler::clear_retry_at();
+		delete_option( PullLock::OPTION );
 
 		if ( Schema::is_installed() ) {
 			CatalogQueue::for_site()->clear();

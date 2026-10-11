@@ -87,7 +87,11 @@ final class OrderPayloadBuilderTest extends TestCase {
 		Functions\when( 'wc_rest_prepare_date_response' )->alias(
 			function ( $date, $utc = true ) {
 				$this->date_calls[] = array( $date, $utc );
-				return $date instanceof \DateTimeInterface ? $date->format( 'Y-m-d\TH:i:s' ) : null;
+				if ( ! $date instanceof \DateTimeInterface ) {
+					return null;
+				}
+				// As WooCommerce: the UTC timestamp, or with $utc = false the shop's local time (getOffsetTimestamp()).
+				return gmdate( 'Y-m-d\TH:i:s', $utc ? $date->getTimestamp() : $date->getTimestamp() + $date->getOffset() );
 			}
 		);
 		Functions\when( 'wp_json_encode' )->alias( static fn( $data, int $flags = 0 ) => json_encode( $data, $flags ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
@@ -113,9 +117,9 @@ final class OrderPayloadBuilderTest extends TestCase {
 			'get_order_number'  => (string) $id,
 			'get_currency'      => 'IRT',
 			'get_total'         => '2400000',
-			'get_date_created'  => new \DateTimeImmutable( '2026-09-14 10:00:00' ),
-			'get_date_modified' => new \DateTimeImmutable( '2026-09-14 11:00:00' ),
-			'get_date_paid'     => new \DateTimeImmutable( '2026-09-14 10:59:30' ),
+			'get_date_created'  => new \DateTimeImmutable( '2026-09-14 10:00:00', new \DateTimeZone( 'UTC' ) ),
+			'get_date_modified' => new \DateTimeImmutable( '2026-09-14 11:00:00', new \DateTimeZone( 'UTC' ) ),
+			'get_date_paid'     => new \DateTimeImmutable( '2026-09-14 10:59:30', new \DateTimeZone( 'UTC' ) ),
 		);
 
 		$order = Mockery::mock( 'WC_Order' );
@@ -212,8 +216,27 @@ final class OrderPayloadBuilderTest extends TestCase {
 		self::assertSame( array( array( '2400000', self::DECIMALS ), array( '1600000', self::DECIMALS ) ), $this->decimal_calls );
 		self::assertCount( 3, $this->date_calls );
 		foreach ( $this->date_calls as $call ) {
-			self::assertFalse( $call[1], 'GMT dates are read with $utc = false, as the REST API does for *_gmt.' );
+			self::assertTrue( $call[1], 'GMT dates are read with $utc = true, as the REST API does for *_gmt.' );
 		}
+	}
+
+	public function test_gmt_dates_are_utc_in_a_shop_outside_utc(): void {
+		$tehran            = new \DateTimeZone( 'Asia/Tehran' );
+		$this->orders[501] = self::order(
+			501,
+			array(),
+			array(
+				'get_date_created'  => new \DateTimeImmutable( '2026-09-14 13:30:00', $tehran ),
+				'get_date_modified' => new \DateTimeImmutable( '2026-09-14 14:30:00', $tehran ),
+				'get_date_paid'     => new \DateTimeImmutable( '2026-09-14 14:29:30', $tehran ),
+			)
+		);
+
+		$item = $this->builder()->orders( array( 501 ) )->items[0];
+
+		self::assertSame( '2026-09-14T10:00:00', $item['date_created_gmt'] );
+		self::assertSame( '2026-09-14T11:00:00', $item['date_modified_gmt'] );
+		self::assertSame( '2026-09-14T10:59:30', $item['date_paid_gmt'] );
 	}
 
 	public function test_an_unpaid_order_has_a_null_paid_date_and_a_number_is_always_a_string(): void {

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace WooNyx\Features\Store;
 
+use WooNyx\Features\Sync\PullScheduler;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Http\CoreError;
 use WooNyx\Shared\Logging\Logger;
@@ -70,18 +71,37 @@ final class Activator {
 	private Logger $logger;
 
 	/**
+	 * Starts the pulls once the store is connected.
+	 *
+	 * @var callable(): void
+	 */
+	private $start_pulls;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param CoreClient  $client    Core client.
-	 * @param SecretStore $store     Where the connection is saved.
-	 * @param RestKeys    $rest_keys The plugin's REST keys.
-	 * @param Logger      $logger    Safe logger.
+	 * @param CoreClient    $client      Core client.
+	 * @param SecretStore   $store       Where the connection is saved.
+	 * @param RestKeys      $rest_keys   The plugin's REST keys.
+	 * @param Logger        $logger      Safe logger.
+	 * @param callable|null $start_pulls Starts the pulls; start_pulls() by default.
+	 *
+	 * @phpstan-param (callable(): void)|null $start_pulls
 	 */
-	public function __construct( CoreClient $client, SecretStore $store, RestKeys $rest_keys, Logger $logger ) {
-		$this->client    = $client;
-		$this->store     = $store;
-		$this->rest_keys = $rest_keys;
-		$this->logger    = $logger;
+	public function __construct( CoreClient $client, SecretStore $store, RestKeys $rest_keys, Logger $logger, ?callable $start_pulls = null ) {
+		$this->client      = $client;
+		$this->store       = $store;
+		$this->rest_keys   = $rest_keys;
+		$this->logger      = $logger;
+		$this->start_pulls = $start_pulls ?? array( self::class, 'start_pulls' );
+	}
+
+	/**
+	 * Ends any pause left from before and schedules the recurring pull (contract §5.2).
+	 */
+	public static function start_pulls(): void {
+		PullScheduler::clear_retry_at();
+		( new PullScheduler() )->ensure( true );
 	}
 
 	/**
@@ -153,6 +173,7 @@ final class Activator {
 				'request_id' => $response->request_id,
 			)
 		);
+		( $this->start_pulls )();
 
 		return null;
 	}

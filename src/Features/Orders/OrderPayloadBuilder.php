@@ -113,9 +113,10 @@ final class OrderPayloadBuilder {
 			'number'            => (string) $order->get_order_number(),
 			'currency'          => $order->get_currency(),
 			'total'             => wc_format_decimal( $order->get_total(), $decimals ),
-			'date_created_gmt'  => wc_rest_prepare_date_response( $order->get_date_created(), false ),
-			'date_modified_gmt' => wc_rest_prepare_date_response( $order->get_date_modified(), false ),
-			'date_paid_gmt'     => wc_rest_prepare_date_response( $order->get_date_paid(), false ),
+			// The REST API's *_gmt fields use $utc = true (the default); false gives the shop's local time.
+			'date_created_gmt'  => wc_rest_prepare_date_response( $order->get_date_created() ),
+			'date_modified_gmt' => wc_rest_prepare_date_response( $order->get_date_modified() ),
+			'date_paid_gmt'     => wc_rest_prepare_date_response( $order->get_date_paid() ),
 			'line_items'        => self::line_items( $order, $decimals ),
 		);
 	}

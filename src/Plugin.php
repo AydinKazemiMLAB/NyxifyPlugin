@@ -37,6 +37,8 @@ use WooNyx\Features\Store\SecretRotationHandler;
 use WooNyx\Features\Store\SecretRotator;
 use WooNyx\Features\Store\StatusRefreshHandler;
 use WooNyx\Features\Store\StatusService;
+use WooNyx\Features\Sync\PullScheduler;
+use WooNyx\Features\Sync\SyncPull;
 use WooNyx\Shared\Logging\Logger;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Options\SecretStore;
@@ -135,6 +137,9 @@ final class Plugin {
 		( new OrderCollector( $changes ) )->register();
 		( new ChangeCollector( $changes ) )->register();
 		add_action( FlushScheduler::HOOK, array( CatalogFlush::class, 'run_for_site' ) );
+		// The pull fallback (contract §5.2): the recurring pull and the immediate one run the same pull.
+		add_action( PullScheduler::HOOK, array( SyncPull::class, 'run_for_site' ) );
+		add_action( PullScheduler::NOW_HOOK, array( SyncPull::class, 'run_for_site' ) );
 
 		if ( is_admin() ) {
 			$store    = new SecretStore( Encryptor::for_site() );
@@ -144,6 +149,7 @@ final class Plugin {
 
 			( new SettingsPage( $this->plugin_file, $store, $core_url, new StatusService( $client, $logger ), new BotService( $client, $logger ), new AdminService( $client, $logger ) ) )->register();
 			( new StatusRefreshHandler() )->register();
+			add_action( 'admin_init', array( PullScheduler::class, 'ensure_for_site' ) );
 			( new PlanLimitNotice() )->register();
 			// The services behind the forms are built only when a form is posted.
 			( new ActivationHandler( static fn( LicenseKey $license, int $user_id ) => Activator::for_site()->activate( $license, $user_id ) ) )->register();

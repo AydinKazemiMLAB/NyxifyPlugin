@@ -17,6 +17,7 @@ use WooNyx\Features\Store\Activator;
 use WooNyx\Features\Store\LicenseKey;
 use WooNyx\Features\Store\RestKeys;
 use WooNyx\Features\Store\StatusService;
+use WooNyx\Features\Sync\PullScheduler;
 use WooNyx\Shared\Http\CoreClient;
 use WooNyx\Shared\Http\CoreError;
 use WooNyx\Shared\Logging\Logger;
@@ -103,6 +104,13 @@ final class ActivatorTest extends TestCase {
 	 * @var list<array{level: string, message: string, context: array<string, mixed>}>
 	 */
 	private array $entries = array();
+
+	/**
+	 * Times the pulls were started.
+	 *
+	 * @var int
+	 */
+	private int $pulls_started = 0;
 
 	/**
 	 * Values returned by site_url(), rest_url(), get_bloginfo( 'version' ) and wp_get_environment_type().
@@ -276,7 +284,15 @@ final class ActivatorTest extends TestCase {
 
 		$store = $this->store();
 
-		return new Activator( new CoreClient( $store, self::BASE_URL ), $store, new RestKeys(), new Logger( $wc_logger ) );
+		return new Activator(
+			new CoreClient( $store, self::BASE_URL ),
+			$store,
+			new RestKeys(),
+			new Logger( $wc_logger ),
+			function (): void {
+				++$this->pulls_started;
+			}
+		);
 	}
 
 	private function activate(): ?CoreError {
@@ -349,6 +365,7 @@ final class ActivatorTest extends TestCase {
 
 	public function test_activation_sends_the_contract_body_and_saves_the_connection(): void {
 		self::assertNull( $this->activate() );
+		self::assertSame( 1, $this->pulls_started );
 
 		$request = $this->requests[0];
 		self::assertSame( self::BASE_URL . '/api/v1/store/activate', $request['url'] );
@@ -477,6 +494,7 @@ final class ActivatorTest extends TestCase {
 		self::assertSame( $code, $this->entries[0]['context']['error_code'] );
 		self::assertSame( Activator::OPERATION, $this->entries[0]['context']['operation'] );
 		$this->assert_logs_hold_no_secrets();
+		self::assertSame( 0, $this->pulls_started );
 	}
 
 	public function test_a_connection_that_cannot_be_saved_is_reported_and_the_new_key_kept(): void {
@@ -497,6 +515,26 @@ final class ActivatorTest extends TestCase {
 
 		self::assertSame( array( 'warning:' . CoreError::CONNECTION_NOT_SAVED ), $this->logged_codes() );
 		$this->assert_logs_hold_no_secrets();
+		self::assertSame( 0, $this->pulls_started );
+	}
+
+	public function test_starting_the_pulls_ends_the_pause_and_schedules_the_recurring_pull(): void {
+		$this->options[ PullScheduler::OPTION_RETRY_AT ] = 1_791_000_000;
+		$scheduled                                       = array();
+		Functions\when( 'as_has_scheduled_action' )->justReturn( false );
+		Functions\when( 'as_get_scheduled_actions' )->justReturn( array() );
+		Functions\when( 'as_enqueue_async_action' )->justReturn( 0 );
+		Functions\when( 'as_schedule_recurring_action' )->alias(
+			function ( int $timestamp, int $interval, string $hook, array $args, string $group, bool $unique ) use ( &$scheduled ): int {
+				$scheduled[] = array( $interval, $hook, $args, $group, $unique );
+				return 4;
+			}
+		);
+
+		Activator::start_pulls();
+
+		self::assertArrayNotHasKey( PullScheduler::OPTION_RETRY_AT, $this->options );
+		self::assertSame( array( array( 300, PullScheduler::HOOK, array(), PullScheduler::GROUP, true ) ), $scheduled );
 	}
 
 	public function test_a_key_id_that_cannot_be_remembered_is_logged(): void {
