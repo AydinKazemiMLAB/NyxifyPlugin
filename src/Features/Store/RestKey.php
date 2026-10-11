@@ -2,12 +2,12 @@
 /**
  * A WooCommerce REST key just created by the plugin.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
 /**
  * The plain consumer key and secret exist only in this value, for the activation request; WooCommerce keeps a hash

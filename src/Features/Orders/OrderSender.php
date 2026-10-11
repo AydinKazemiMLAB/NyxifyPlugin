@@ -2,16 +2,16 @@
 /**
  * The core's order status endpoint.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Orders;
+namespace Nyxify\Features\Orders;
 
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
 
 /**
  * Sends order updates (contract §3, `POST /orders/webhooks/status`), each a new signed call. A successful answer must be

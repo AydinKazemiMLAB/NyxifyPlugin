@@ -2,15 +2,15 @@
 /**
  * What a failed catalog send leads to.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
 
 /**
  * Sorts a failed send into one of three outcomes and gives the backoff before the next attempt.

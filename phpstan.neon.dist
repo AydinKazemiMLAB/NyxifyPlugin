@@ -4,7 +4,7 @@ parameters:
     level: 8
     phpVersion: 80100
     paths:
-        - woonyx.php
+        - nyxify.php
         - uninstall.php
         - src
         - tests

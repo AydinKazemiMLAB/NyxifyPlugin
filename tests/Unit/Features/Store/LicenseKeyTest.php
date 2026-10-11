@@ -2,24 +2,24 @@
 /**
  * Tests for the license key value.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\LicenseKey;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\LicenseKey;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Normalization and format check, matching the core's LicenseKeyCodec.
  */
 final class LicenseKeyTest extends TestCase {
 
-	private const KEY = 'WN-ABCDEF-GHIJKL-MNOPQR-ST2345';
+	private const KEY = 'NX-ABCDEF-GHIJKL-MNOPQR-ST2345';
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -36,7 +36,7 @@ final class LicenseKeyTest extends TestCase {
 
 		self::assertNotNull( $key );
 		self::assertSame( self::KEY, $key->value() );
-		self::assertSame( 'WN-ABCDEF', $key->prefix() );
+		self::assertSame( 'NX-ABCDEF', $key->prefix() );
 	}
 
 	/**
@@ -45,12 +45,12 @@ final class LicenseKeyTest extends TestCase {
 	public static function pasted_keys(): array {
 		return array(
 			'lower case'         => array( strtolower( self::KEY ) ),
-			'mixed case'         => array( 'wN-AbCdEf-GHIJKL-mnopqr-ST2345' ),
+			'mixed case'         => array( 'nX-AbCdEf-GHIJKL-mnopqr-ST2345' ),
 			'surrounding spaces' => array( "  \t" . self::KEY . "\n" ),
-			'spaces inside'      => array( 'WN-ABCDEF -GHIJKL- MNOPQR-ST 2345' ),
-			'line break inside'  => array( "WN-ABCDEF-GHIJKL-\r\nMNOPQR-ST2345" ),
-			'non-breaking space' => array( "WN-ABCDEF-GHIJKL-MNOPQR-ST2345\u{00A0}" ),
-			'lower case, spaced' => array( ' wn-abcdef-ghijkl-mnopqr-st2345 ' ),
+			'spaces inside'      => array( 'NX-ABCDEF -GHIJKL- MNOPQR-ST 2345' ),
+			'line break inside'  => array( "NX-ABCDEF-GHIJKL-\r\nMNOPQR-ST2345" ),
+			'non-breaking space' => array( "NX-ABCDEF-GHIJKL-MNOPQR-ST2345\u{00A0}" ),
+			'lower case, spaced' => array( ' nx-abcdef-ghijkl-mnopqr-st2345 ' ),
 		);
 	}
 
@@ -71,20 +71,20 @@ final class LicenseKeyTest extends TestCase {
 			'only spaces'         => array( '   ' ),
 			'wrong brand'         => array( 'WX-ABCDEF-GHIJKL-MNOPQR-ST2345' ),
 			'no brand'            => array( 'ABCDEF-GHIJKL-MNOPQR-ST2345' ),
-			'digit 0'             => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST0345' ),
-			'digit 1'             => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST1345' ),
-			'digit 8'             => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST8345' ),
-			'digit 9'             => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST9345' ),
-			'short group'         => array( 'WN-ABCDE-GHIJKL-MNOPQR-ST2345' ),
-			'long group'          => array( 'WN-ABCDEFG-GHIJKL-MNOPQR-ST2345' ),
-			'three groups'        => array( 'WN-ABCDEF-GHIJKL-MNOPQR' ),
-			'five groups'         => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST2345-UVWXYZ' ),
+			'digit 0'             => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST0345' ),
+			'digit 1'             => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST1345' ),
+			'digit 8'             => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST8345' ),
+			'digit 9'             => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST9345' ),
+			'short group'         => array( 'NX-ABCDE-GHIJKL-MNOPQR-ST2345' ),
+			'long group'          => array( 'NX-ABCDEFG-GHIJKL-MNOPQR-ST2345' ),
+			'three groups'        => array( 'NX-ABCDEF-GHIJKL-MNOPQR' ),
+			'five groups'         => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST2345-UVWXYZ' ),
 			'no hyphens'          => array( 'WNABCDEFGHIJKLMNOPQRST2345' ),
 			'underscores'         => array( 'WN_ABCDEF_GHIJKL_MNOPQR_ST2345' ),
 			'trailing hyphen'     => array( self::KEY . '-' ),
 			'trailing line break' => array( self::KEY . "\n-" ),
-			'non-ascii letter'    => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST234Ş' ),
-			'invalid utf-8'       => array( 'WN-ABCDEF-GHIJKL-MNOPQR-ST2345' . "\xC3" ),
+			'non-ascii letter'    => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST234Ş' ),
+			'invalid utf-8'       => array( 'NX-ABCDEF-GHIJKL-MNOPQR-ST2345' . "\xC3" ),
 			'core secret'         => array( 'sec_' . str_repeat( 'ab', 32 ) ),
 		);
 	}
@@ -123,7 +123,7 @@ final class LicenseKeyTest extends TestCase {
 
 		$output = print_r( $key, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 
-		self::assertStringContainsString( 'WN-ABCDEF', $output );
+		self::assertStringContainsString( 'NX-ABCDEF', $output );
 		self::assertStringNotContainsString( 'GHIJKL', $output );
 		self::assertStringNotContainsString( 'ST2345', $output );
 	}

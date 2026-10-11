@@ -2,16 +2,16 @@
 /**
  * Tests for ChangeResult.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Sync\ChangeResult;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Sync\ChangeResult;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The ack's results stay within the core's limits (contract §5.2), so one result can't make it refuse the whole ack.

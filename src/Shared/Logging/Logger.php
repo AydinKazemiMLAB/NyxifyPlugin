@@ -2,17 +2,17 @@
 /**
  * The plugin's log, in WooCommerce > Status > Logs.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Logging;
+namespace Nyxify\Shared\Logging;
 
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Writes to the WooCommerce logger with the source `woonyx`.
+ * Writes to the WooCommerce logger with the source `nyxify`.
  *
  * Callers log error codes, HTTP statuses and request ids, never payloads. As a safety net every message and context
  * value is redacted (shared secrets, consumer keys and secrets, license keys, bot tokens, long tokens, Iranian mobile
@@ -20,7 +20,7 @@ use WooNyx\Shared\Http\CoreError;
  */
 final class Logger {
 
-	public const SOURCE = 'woonyx';
+	public const SOURCE = 'nyxify';
 
 	public const REDACTED = '[redacted]';
 
@@ -32,8 +32,8 @@ final class Logger {
 		'/\bsec_[A-Za-z0-9]{8,}/',
 		// WooCommerce REST API consumer key and secret: ck_/cs_ + 40 hex.
 		'/\bc[ks]_[A-Za-z0-9]{8,}/',
-		// License key: WN- + 4 groups of 6 base32 characters; case and whitespace are ignored by the core.
-		'/\bWN-[A-Z2-7]{6}(?:[\s-]*[A-Z2-7]{6}){3}\b/i',
+		// License key: NX- + 4 groups of 6 base32 characters; case and whitespace are ignored by the core.
+		'/\bNX-[A-Z2-7]{6}(?:[\s-]*[A-Z2-7]{6}){3}\b/i',
 		// Telegram and Bale bot tokens: <bot id>:<secret>.
 		'/\b\d{1,20}:[A-Za-z0-9_-]{20,100}/',
 		// Iranian mobile numbers (personal data).
@@ -111,7 +111,7 @@ final class Logger {
 	public function core_error( string $operation, CoreError $error ): void {
 		$this->log(
 			0 === $error->status || $error->status >= 500 ? 'error' : 'warning',
-			'WooNyx core call failed.',
+			'Nyxify core call failed.',
 			array(
 				'operation'  => $operation,
 				'error_code' => $error->code,

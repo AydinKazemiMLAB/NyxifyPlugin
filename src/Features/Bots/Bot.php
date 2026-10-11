@@ -2,12 +2,12 @@
 /**
  * A bot of the store, as the core describes it.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
 /**
  * One item of `GET /bots` (`BotView`, contract §4.1), read defensively. The token is never part of it.

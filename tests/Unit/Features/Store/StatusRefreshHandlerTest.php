@@ -2,18 +2,18 @@
 /**
  * Tests for the "Check connection" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
-use WooNyx\Features\Store\StatusRefreshHandler;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\StatusRefreshHandler;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Capability and nonce first, then the cache is cleared and the page reloaded.
@@ -65,7 +65,7 @@ final class StatusRefreshHandlerTest extends TestCase {
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_refresh_status' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_refresh_status' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -111,14 +111,14 @@ final class StatusRefreshHandlerTest extends TestCase {
 
 		$handler->register();
 
-		self::assertNotFalse( has_action( 'admin_post_woonyx_refresh_status', array( $handler, 'handle' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_refresh_status', array( $handler, 'handle' ) ) );
 	}
 
 	public function test_the_cache_is_cleared_and_the_page_reloaded(): void {
 		self::assertSame( 'redirect', $this->handle() );
 
 		self::assertSame( array(), $this->transients );
-		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=woonyx', $this->redirect );
+		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=nyxify', $this->redirect );
 		self::assertSame( 1, $this->resumed );
 	}
 

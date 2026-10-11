@@ -2,23 +2,23 @@
 /**
  * Tests for CatalogSender.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\CatalogSender;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\CatalogSender;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The catalog endpoints over a mocked wp_remote_request(), with the real client and secret store.
@@ -141,7 +141,7 @@ final class CatalogSenderTest extends TestCase {
 	 * Calls an endpoint with sample data.
 	 *
 	 * @param string $call Method name.
-	 * @return \WooNyx\Shared\Http\CoreResponse
+	 * @return \Nyxify\Shared\Http\CoreResponse
 	 */
 	private function call( string $call ) {
 		$sender = $this->sender();

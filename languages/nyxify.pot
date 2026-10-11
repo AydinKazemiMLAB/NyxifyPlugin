@@ -2,34 +2,35 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooNyx 0.6.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woonyx\n"
+"Project-Id-Version: Nyxify – Shop Bots for WooCommerce 0.6.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nyxify\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-11T01:14:38+00:00\n"
+"POT-Creation-Date: 2026-10-11T11:53:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: woonyx\n"
+"X-Domain: nyxify\n"
 
 #. Plugin Name of the plugin
-#: woonyx.php:3
-#: src/Features/Settings/SettingsPage.php:145
-#: src/Features/Settings/SettingsPage.php:146
-#: src/Features/Settings/SettingsPage.php:213
-msgid "WooNyx"
+#: nyxify.php:3
+msgid "Nyxify – Shop Bots for WooCommerce"
 msgstr ""
 
 #. Description of the plugin
-#: woonyx.php:4
+#: nyxify.php:4
 msgid "Sell your WooCommerce products through Telegram, Bale and Rubika bots."
 msgstr ""
 
 #. Author of the plugin
-#: woonyx.php:9
+#: nyxify.php:9
 msgid "Nyxon"
+msgstr ""
+
+#: nyxify.php:49
+msgid "Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip."
 msgstr ""
 
 #: src/Features/Bots/BotPlatform.php:78
@@ -66,7 +67,7 @@ msgid "Last seen %s"
 msgstr ""
 
 #: src/Features/Catalog/PlanLimitNotice.php:160
-msgid "WooNyx settings"
+msgid "Nyxify settings"
 msgstr ""
 
 #: src/Features/Catalog/PlanLimitNotice.php:162
@@ -122,7 +123,7 @@ msgid "The bot admins can be managed here once the store’s status above can be
 msgstr ""
 
 #: src/Features/Settings/AdminsSection.php:61
-msgid "The bot admins can be managed here once the store is active on WooNyx again."
+msgid "The bot admins can be managed here once the store is active on Nyxify again."
 msgstr ""
 
 #: src/Features/Settings/AdminsSection.php:71
@@ -172,7 +173,7 @@ msgid "The bots can be managed here once the store’s status above can be read.
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:64
-msgid "The bots can be managed here once the store is active on WooNyx again."
+msgid "The bots can be managed here once the store is active on Nyxify again."
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:81
@@ -180,7 +181,7 @@ msgid "Your plan doesn’t include any messenger. Upgrade your plan to connect a
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:85
-msgid "One bot per messenger. A bot token is sent once to WooNyx and is not stored on this site."
+msgid "One bot per messenger. A bot token is sent once to Nyxify and is not stored on this site."
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:125
@@ -205,7 +206,7 @@ msgid "Status"
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:173
-msgid "WooNyx is setting the bot up; this usually takes a few seconds."
+msgid "Nyxify is setting the bot up; this usually takes a few seconds."
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:174
@@ -213,7 +214,7 @@ msgid "Check again"
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:179
-msgid "Setting up the bot failed. WooNyx tries again every hour, up to five times; you can also enter its token again."
+msgid "Setting up the bot failed. Nyxify tries again every hour, up to five times; you can also enter its token again."
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:181
@@ -247,7 +248,7 @@ msgid "Bot token"
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:252
-msgid "The token the messenger gave you when you created the bot (for example with BotFather). It is sent once to WooNyx and is not stored on this site."
+msgid "The token the messenger gave you when you created the bot (for example with BotFather). It is sent once to Nyxify and is not stored on this site."
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:254
@@ -283,16 +284,22 @@ msgid "Failed"
 msgstr ""
 
 #: src/Features/Settings/DeactivationWarning.php:62
-msgid "Deactivating WooNyx stops your shop’s bots. To connect again you will need your license key."
+msgid "Deactivating Nyxify stops your shop’s bots. To connect again you will need your license key."
 msgstr ""
 
 #: src/Features/Settings/DeactivationWarning.php:69
-msgid "When the plugin is deactivated, WooNyx is told and this site’s connection and WooCommerce REST API key are removed. If the WooNyx server can’t be reached, or your subscription has expired, WooNyx keeps the store connected and both stay on this site until you delete the plugin."
+msgid "When the plugin is deactivated, Nyxify is told and this site’s connection and WooCommerce REST API key are removed. If the Nyxify server can’t be reached, or your subscription has expired, Nyxify keeps the store connected and both stay on this site until you delete the plugin."
 msgstr ""
 
 #: src/Features/Settings/ErrorNotice.php:35
 #: src/Features/Settings/SettingsPage.php:337
-msgid "Request ID (for WooNyx support):"
+msgid "Request ID (for Nyxify support):"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:145
+#: src/Features/Settings/SettingsPage.php:146
+#: src/Features/Settings/SettingsPage.php:213
+msgid "Nyxify"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:173
@@ -308,11 +315,11 @@ msgid "Connection"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:226
-msgid "WooNyx server"
+msgid "Nyxify server"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:230
-msgid "Set by WOONYX_API_BASE_URL in wp-config.php."
+msgid "Set by NYXIFY_API_BASE_URL in wp-config.php."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:245
@@ -330,7 +337,7 @@ msgid "Activate"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:256
-msgid "Nothing is sent to the WooNyx server until you enter a license key."
+msgid "Nothing is sent to the Nyxify server until you enter a license key."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:267
@@ -338,7 +345,7 @@ msgid "Shared secret"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:268
-msgid "This site signs every request to WooNyx with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
+msgid "This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:269
@@ -354,11 +361,11 @@ msgid "License key"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:294
-msgid "The key is sent once to the WooNyx server and is not stored on this site."
+msgid "The key is sent once to the Nyxify server and is not stored on this site."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:295
-msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; WooNyx uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
+msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:330
@@ -366,7 +373,7 @@ msgid "Invalid fields:"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:351
-msgid "The store is connected to WooNyx."
+msgid "The store is connected to Nyxify."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:352
@@ -374,7 +381,7 @@ msgid "The shared secret was replaced with a new one. The store stays connected.
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:353
-msgid "The bot token was accepted. WooNyx is setting the bot up; check its status below."
+msgid "The bot token was accepted. Nyxify is setting the bot up; check its status below."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:354
@@ -394,7 +401,7 @@ msgid "The bot admin was removed. The current PIN still works for them until you
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:358
-msgid "WooNyx is reading your catalog again. Check the catalog sync below in a few minutes."
+msgid "Nyxify is reading your catalog again. Check the catalog sync below in a few minutes."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:359
@@ -418,7 +425,7 @@ msgid "Not connected"
 msgstr ""
 
 #: src/Features/Settings/StatusSection.php:33
-msgid "Store on WooNyx"
+msgid "Store on Nyxify"
 msgstr ""
 
 #: src/Features/Settings/StatusSection.php:44
@@ -482,7 +489,7 @@ msgid "Sync now"
 msgstr ""
 
 #: src/Features/Settings/StatusSection.php:152
-msgid "WooNyx reads every product and category of this store again."
+msgid "Nyxify reads every product and category of this store again."
 msgstr ""
 
 #: src/Features/Settings/StatusSection.php:166
@@ -530,7 +537,7 @@ msgstr ""
 #. translators: %s: the oldest supported WooCommerce version, e.g. 9.0
 #: src/Plugin.php:184
 #, php-format
-msgid "WooNyx needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
+msgid "Nyxify needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
 msgstr ""
 
 #: src/Shared/Admin/AdminAction.php:77
@@ -538,59 +545,59 @@ msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:110
-msgid "This store is not connected to WooNyx yet. Enter your license key to activate it."
+msgid "This store is not connected to Nyxify yet. Enter your license key to activate it."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:111
-msgid "The saved connection to WooNyx can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect."
+msgid "The saved connection to Nyxify can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:112
-msgid "The WooNyx server address is invalid. Check WOONYX_API_BASE_URL in wp-config.php: it must be an https address."
+msgid "The Nyxify server address is invalid. Check NYXIFY_API_BASE_URL in wp-config.php: it must be an https address."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:113
-msgid "The data could not be prepared for sending to WooNyx."
+msgid "The data could not be prepared for sending to Nyxify."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:114
-msgid "Could not reach the WooNyx server. Check this site’s internet connection and try again in a few minutes."
+msgid "Could not reach the Nyxify server. Check this site’s internet connection and try again in a few minutes."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:115
-msgid "The WooNyx server answered with a redirect, which is not followed. Check the server address."
+msgid "The Nyxify server answered with a redirect, which is not followed. Check the server address."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:116
-msgid "The WooNyx server sent an unexpected answer. Try again later."
+msgid "The Nyxify server sent an unexpected answer. Try again later."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:117
-msgid "Something went wrong while talking to the WooNyx server. Try again later."
+msgid "Something went wrong while talking to the Nyxify server. Try again later."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:118
-msgid "This is not a WooNyx license key. A license key looks like WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
+msgid "This is not a Nyxify license key. A license key looks like NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:119
-msgid "WooNyx needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again."
+msgid "Nyxify needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:120
-msgid "This site’s REST API is not on the same address as the site, so WooNyx cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port."
+msgid "This site’s REST API is not on the same address as the site, so Nyxify cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:121
-msgid "The WooCommerce REST API key WooNyx needs could not be created. Try again; if it keeps failing, check the site’s database error log."
+msgid "The WooCommerce REST API key Nyxify needs could not be created. Try again; if it keeps failing, check the site’s database error log."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:122
-msgid "The store was activated on WooNyx, but the connection could not be saved on this site. Enter your license key again to activate it once more."
+msgid "The store was activated on Nyxify, but the connection could not be saved on this site. Enter your license key again to activate it once more."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:123
-msgid "WooNyx issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now."
+msgid "Nyxify issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:124
@@ -598,35 +605,35 @@ msgid "This does not look like a bot token. Paste the token the messenger gave y
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:125
-msgid "WooNyx issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now."
+msgid "Nyxify issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:128
-msgid "The WooNyx server rejected the request as invalid. Update the plugin and try again."
+msgid "The Nyxify server rejected the request as invalid. Update the plugin and try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:129
-msgid "The WooNyx server did not accept this store’s credentials. Activate the store again with your license key."
+msgid "The Nyxify server did not accept this store’s credentials. Activate the store again with your license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:130
-msgid "The WooNyx server does not accept this request. Update the plugin."
+msgid "The Nyxify server does not accept this request. Update the plugin."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:131
-msgid "Some of the data sent to WooNyx is invalid. Check it and try again."
+msgid "Some of the data sent to Nyxify is invalid. Check it and try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:132
-msgid "The data is too large for the WooNyx server."
+msgid "The data is too large for the Nyxify server."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:133
-msgid "The WooNyx server had an internal error. Try again later."
+msgid "The Nyxify server had an internal error. Try again later."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:134
-msgid "The WooNyx server could not read this store’s saved credentials. Activate the store again with your license key."
+msgid "The Nyxify server could not read this store’s saved credentials. Activate the store again with your license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:135
@@ -646,7 +653,7 @@ msgid "The request’s signature did not match; the shared secret may be out of 
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:141
-msgid "The same request reached the WooNyx server twice and was rejected. Try again."
+msgid "The same request reached the Nyxify server twice and was rejected. Try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:144
@@ -654,7 +661,7 @@ msgid "This license key is not valid. Check it and try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:145
-msgid "This license key has been revoked. Contact WooNyx support."
+msgid "This license key has been revoked. Contact Nyxify support."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:146
@@ -666,35 +673,35 @@ msgid "This website is already activated with another license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:148
-msgid "This store is deactivated or suspended on WooNyx. Activate it again with your license key; if the license was revoked, contact WooNyx support."
+msgid "This store is deactivated or suspended on Nyxify. Activate it again with your license key; if the license was revoked, contact Nyxify support."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:149
-msgid "Your WooNyx subscription is not active or has expired. Renew it to continue."
+msgid "Your Nyxify subscription is not active or has expired. Renew it to continue."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:150
-msgid "Your WooNyx plan does not include this messenger. Upgrade your plan to use it."
+msgid "Your Nyxify plan does not include this messenger. Upgrade your plan to use it."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:151
-msgid "The WooNyx server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again."
+msgid "The Nyxify server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:152
-msgid "The WooNyx server could not reach this store. The site must be public, use https, and its REST API must not redirect."
+msgid "The Nyxify server could not reach this store. The site must be public, use https, and its REST API must not redirect."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:153
-msgid "This store’s WooCommerce REST API rejected the WooNyx server’s request. Check the firewall and security plugins."
+msgid "This store’s WooCommerce REST API rejected the Nyxify server’s request. Check the firewall and security plugins."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:154
-msgid "This store’s WooCommerce REST API sent the WooNyx server an unexpected answer. Check for plugins that change REST API responses."
+msgid "This store’s WooCommerce REST API sent the Nyxify server an unexpected answer. Check for plugins that change REST API responses."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:157
-msgid "This bot is already connected to another WooNyx store. Create a new bot for this shop, or remove this one from the other store first."
+msgid "This bot is already connected to another Nyxify store. Create a new bot for this shop, or remove this one from the other store first."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:158
@@ -711,8 +718,4 @@ msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:161
 msgid "The messenger’s servers did not respond. Try again in a few minutes."
-msgstr ""
-
-#: woonyx.php:49
-msgid "WooNyx is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip."
 msgstr ""

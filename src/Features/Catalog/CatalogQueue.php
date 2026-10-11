@@ -2,12 +2,12 @@
 /**
  * The queue of catalog changes waiting to be sent to the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
 /**
  * Ids of changed orders, products and categories, one row per kind and id, in the table of Schema. Every operation is a

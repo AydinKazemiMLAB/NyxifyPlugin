@@ -2,20 +2,20 @@
 /**
  * The settings page's "Bot admins" section.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
-use WooNyx\Features\Bots\AdminRemovalHandler;
-use WooNyx\Features\Bots\AdminService;
-use WooNyx\Features\Bots\BotAdmin;
-use WooNyx\Features\Bots\BotPlatform;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Bots\AdminRemovalHandler;
+use Nyxify\Features\Bots\AdminService;
+use Nyxify\Features\Bots\BotAdmin;
+use Nyxify\Features\Bots\BotPlatform;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Http\CoreError;
 
 /**
  * Shown while connected: the people who became bot admins with the PIN (messenger, name, username; the messenger
@@ -50,15 +50,15 @@ final class AdminsSection {
 	 */
 	public function render( StoreStatus|CoreError $status ): void {
 		?>
-		<h2><?php esc_html_e( 'Bot admins', 'woonyx' ); ?></h2>
+		<h2><?php esc_html_e( 'Bot admins', 'nyxify' ); ?></h2>
 		<?php
 		if ( $status instanceof CoreError ) {
-			printf( '<p class="description">%s</p>', esc_html__( 'The bot admins can be managed here once the store’s status above can be read.', 'woonyx' ) );
+			printf( '<p class="description">%s</p>', esc_html__( 'The bot admins can be managed here once the store’s status above can be read.', 'nyxify' ) );
 			return;
 		}
 
 		if ( 'active' !== $status->status ) {
-			printf( '<p class="description">%s</p>', esc_html__( 'The bot admins can be managed here once the store is active on WooNyx again.', 'woonyx' ) );
+			printf( '<p class="description">%s</p>', esc_html__( 'The bot admins can be managed here once the store is active on Nyxify again.', 'nyxify' ) );
 			return;
 		}
 
@@ -68,21 +68,21 @@ final class AdminsSection {
 			return;
 		}
 
-		printf( '<p class="description">%s</p>', esc_html__( 'People who sent the admin PIN to one of your bots. Removing one takes away their admin access, but the current PIN still works for them: issue a new PIN too if they shouldn’t come back.', 'woonyx' ) );
+		printf( '<p class="description">%s</p>', esc_html__( 'People who sent the admin PIN to one of your bots. Removing one takes away their admin access, but the current PIN still works for them: issue a new PIN too if they shouldn’t come back.', 'nyxify' ) );
 
 		if ( array() === $admins ) {
-			printf( '<p>%s</p>', esc_html__( 'No one is a bot admin yet.', 'woonyx' ) );
+			printf( '<p>%s</p>', esc_html__( 'No one is a bot admin yet.', 'nyxify' ) );
 			return;
 		}
 
 		?>
-		<table class="widefat striped woonyx-admins">
+		<table class="widefat striped nyxify-admins">
 			<thead>
 				<tr>
-					<th scope="col"><?php esc_html_e( 'Messenger', 'woonyx' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Name', 'woonyx' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Username', 'woonyx' ); ?></th>
-					<td><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'woonyx' ); ?></span></td>
+					<th scope="col"><?php esc_html_e( 'Messenger', 'nyxify' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Name', 'nyxify' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Username', 'nyxify' ); ?></th>
+					<td><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'nyxify' ); ?></span></td>
 				</tr>
 			</thead>
 			<tbody>
@@ -104,7 +104,7 @@ final class AdminsSection {
 		$username = self::username( $admin );
 
 		/* translators: %s: the bot admin's name, username or messenger user id */
-		$confirm = sprintf( __( 'Remove %s as a bot admin? The current PIN still works for them until you issue a new one.', 'woonyx' ), self::who( $admin ) );
+		$confirm = sprintf( __( 'Remove %s as a bot admin? The current PIN still works for them until you issue a new one.', 'nyxify' ), self::who( $admin ) );
 
 		?>
 		<tr>
@@ -114,7 +114,7 @@ final class AdminsSection {
 				if ( '' !== $name ) {
 					echo esc_html( $name );
 				} elseif ( null === $username ) {
-					printf( '%s <code dir="ltr">%s</code>', esc_html__( 'Messenger ID:', 'woonyx' ), esc_html( $admin->messenger_user_id ) );
+					printf( '%s <code dir="ltr">%s</code>', esc_html__( 'Messenger ID:', 'nyxify' ), esc_html( $admin->messenger_user_id ) );
 				} else {
 					echo '&mdash;';
 				}
@@ -130,10 +130,10 @@ final class AdminsSection {
 				?>
 			</td>
 			<td>
-				<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-admin-remove-form" data-woonyx-confirm="<?php echo esc_attr( $confirm ); ?>">
+				<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-admin-remove-form" data-nyxify-confirm="<?php echo esc_attr( $confirm ); ?>">
 					<?php AdminAction::render_fields( AdminRemovalHandler::ACTION ); ?>
 					<input type="hidden" name="<?php echo esc_attr( AdminRemovalHandler::FIELD_ADMIN_ID ); ?>" value="<?php echo esc_attr( (string) $admin->id ); ?>" />
-					<button type="submit" class="button button-small"><?php esc_html_e( 'Remove', 'woonyx' ); ?></button>
+					<button type="submit" class="button button-small"><?php esc_html_e( 'Remove', 'nyxify' ); ?></button>
 				</form>
 			</td>
 		</tr>

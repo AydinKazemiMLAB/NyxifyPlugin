@@ -2,26 +2,26 @@
 /**
  * Tests for the bot admins service.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\AdminService;
-use WooNyx\Features\Bots\BotAdmin;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\AdminService;
+use Nyxify\Features\Bots\BotAdmin;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * GET /bots/admins and DELETE /bots/admins/{id} over a mocked wp_remote_request() and WooCommerce logger, with the
@@ -357,7 +357,7 @@ final class AdminServiceTest extends TestCase {
 		self::assertSame(
 			array(
 				'request_id' => 'req-core-0001',
-				'source'     => 'woonyx',
+				'source'     => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);

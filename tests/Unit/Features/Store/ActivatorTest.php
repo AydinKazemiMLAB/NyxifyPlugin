@@ -2,29 +2,29 @@
 /**
  * Tests for the store activation.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\Activator;
-use WooNyx\Features\Store\LicenseKey;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\Activator;
+use Nyxify\Features\Store\LicenseKey;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The whole activation over a mocked wp_remote_request(), $wpdb and WooCommerce logger, with the real client, secret
@@ -38,7 +38,7 @@ final class ActivatorTest extends TestCase {
 	private const BASE_URL    = 'https://core.example.com';
 	private const SITE_URL    = 'https://shop.example.com';
 	private const REST_URL    = 'https://shop.example.com/wp-json/';
-	private const LICENSE_KEY = 'WN-ABCDEF-GHIJKL-MNOPQR-ST2345';
+	private const LICENSE_KEY = 'NX-ABCDEF-GHIJKL-MNOPQR-ST2345';
 	private const STORE_ID    = 'shop_8f2a0c1d3e4b5a69';
 	private const OLD_STORE   = 'shop_0000000000000001';
 
@@ -371,7 +371,7 @@ final class ActivatorTest extends TestCase {
 		self::assertSame( self::BASE_URL . '/api/v1/store/activate', $request['url'] );
 		self::assertSame( 'POST', $request['args']['method'] );
 		self::assertSame( CoreClient::LONG_TIMEOUT_SECONDS, $request['args']['timeout'] );
-		self::assertArrayNotHasKey( 'X-WooNyx-Signature', $request['args']['headers'] );
+		self::assertArrayNotHasKey( 'X-Nyxify-Signature', $request['args']['headers'] );
 
 		$body = $this->sent_body();
 		self::assertSame(

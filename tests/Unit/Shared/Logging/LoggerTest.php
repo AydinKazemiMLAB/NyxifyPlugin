@@ -2,21 +2,21 @@
 /**
  * Tests for the safe logger.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Logging;
+namespace Nyxify\Tests\Unit\Shared\Logging;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Redaction, context cleaning and the WooCommerce logger calls.
@@ -60,9 +60,9 @@ final class LoggerTest extends TestCase {
 			'shared secret'          => array( 'sec_' . str_repeat( 'a1', 32 ) ),
 			'consumer key'           => array( 'ck_' . str_repeat( 'b2', 20 ) ),
 			'consumer secret'        => array( 'cs_' . str_repeat( 'c3', 20 ) ),
-			'license key'            => array( 'WN-ABCDEF-GHIJKL-MNOPQR-STUVWX' ),
-			'license key, lowercase' => array( 'wn-abcdef-ghijkl-mnopqr-stuvwx' ),
-			'license key, spaces'    => array( 'WN-ABCDEF GHIJKL MNOPQR STUVWX' ),
+			'license key'            => array( 'NX-ABCDEF-GHIJKL-MNOPQR-STUVWX' ),
+			'license key, lowercase' => array( 'nx-abcdef-ghijkl-mnopqr-stuvwx' ),
+			'license key, spaces'    => array( 'NX-ABCDEF GHIJKL MNOPQR STUVWX' ),
 			'telegram token'         => array( '123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw' ),
 			'bale token'             => array( '1234567890:' . str_repeat( 'x', 40 ) ),
 			'rubika token'           => array( str_repeat( 'Ab1_', 16 ) ),
@@ -94,10 +94,10 @@ final class LoggerTest extends TestCase {
 	public static function safe_values(): array {
 		return array(
 			'store id'           => array( 'shop_8f2a0c1d3e4b5a69' ),
-			'plugin request id'  => array( 'wn-0123456789abcdef01234567' ),
+			'plugin request id'  => array( 'nx-0123456789abcdef01234567' ),
 			'core request id'    => array( 'f47ac10b58cc4372a5670e02b2c3d479' ),
 			'uuid'               => array( 'f47ac10b-58cc-4372-a567-0e02b2c3d479' ),
-			'license key prefix' => array( 'WN-ABCDEF' ),
+			'license key prefix' => array( 'NX-ABCDEF' ),
 			'error code'         => array( 'woocommerce_authentication_failed' ),
 			'timestamp'          => array( '1789234567' ),
 			'time of day'        => array( '12:30' ),
@@ -125,7 +125,7 @@ final class LoggerTest extends TestCase {
 		( new Logger( $this->wc_logger() ) )->warning(
 			"Rotation failed for {$secret}",
 			array(
-				'request_id' => 'wn-0123456789abcdef01234567',
+				'request_id' => 'nx-0123456789abcdef01234567',
 				'detail'     => "token {$secret}",
 				'status'     => 401,
 				'retry'      => false,
@@ -140,7 +140,7 @@ final class LoggerTest extends TestCase {
 		self::assertSame( 'Rotation failed for ' . Logger::REDACTED, $this->entries[0]['message'] );
 		self::assertSame(
 			array(
-				'request_id' => 'wn-0123456789abcdef01234567',
+				'request_id' => 'nx-0123456789abcdef01234567',
 				'detail'     => 'token ' . Logger::REDACTED,
 				'status'     => 401,
 				'retry'      => false,
@@ -182,7 +182,7 @@ final class LoggerTest extends TestCase {
 	 */
 	#[DataProvider( 'core_errors' )]
 	public function test_core_error( string $code, int $status, string $level ): void {
-		( new Logger( $this->wc_logger() ) )->core_error( 'store/status', new CoreError( $code, $status, 'wn-0123456789abcdef01234567' ) );
+		( new Logger( $this->wc_logger() ) )->core_error( 'store/status', new CoreError( $code, $status, 'nx-0123456789abcdef01234567' ) );
 
 		self::assertSame( $level, $this->entries[0]['level'] );
 		self::assertSame(
@@ -190,7 +190,7 @@ final class LoggerTest extends TestCase {
 				'operation'  => 'store/status',
 				'error_code' => $code,
 				'status'     => $status,
-				'request_id' => 'wn-0123456789abcdef01234567',
+				'request_id' => 'nx-0123456789abcdef01234567',
 				'source'     => Logger::SOURCE,
 			),
 			$this->entries[0]['context']

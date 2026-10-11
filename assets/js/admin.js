@@ -1,7 +1,7 @@
 /**
- * WooNyx settings page: asks for confirmation before a form with a `data-woonyx-confirm` message is submitted.
+ * Nyxify settings page: asks for confirmation before a form with a `data-nyxify-confirm` message is submitted.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 ( function () {
@@ -13,7 +13,7 @@
 			return;
 		}
 
-		var message = form.getAttribute( 'data-woonyx-confirm' );
+		var message = form.getAttribute( 'data-nyxify-confirm' );
 		if ( message && ! window.confirm( message ) ) {
 			event.preventDefault();
 		}

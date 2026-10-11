@@ -2,18 +2,18 @@
 /**
  * Collecting order changes.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Orders;
+namespace Nyxify\Features\Orders;
 
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Features\Catalog\PendingChanges;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Features\Catalog\PendingChanges;
 
 /**
- * Listens to changes of the orders the core created (those with the `_woonyx_order` meta) and adds their ids to the
+ * Listens to changes of the orders the core created (those with the `_nyxify_order` meta) and adds their ids to the
  * request's PendingChanges. Orders the core didn't create are never queued: they hold customers' personal data and
  * are none of the core's business. Only the id is kept; the order is read again when it is sent.
  *
@@ -30,7 +30,7 @@ final class OrderCollector {
 	/**
 	 * The meta the core's checkout puts on its orders.
 	 */
-	public const MARKER = '_woonyx_order';
+	public const MARKER = '_nyxify_order';
 
 	private const ORDER_TYPE = 'shop_order';
 
@@ -74,7 +74,7 @@ final class OrderCollector {
 	 */
 	public function order_changed( $order_id, $order = null ): void {
 		$order_id = PendingChanges::to_id( $order_id );
-		if ( self::is_woonyx_order( self::order( $order_id, $order ) ) ) {
+		if ( self::is_nyxify_order( self::order( $order_id, $order ) ) ) {
 			$this->changes->add( CatalogQueue::ORDER, array( $order_id ) );
 		}
 	}
@@ -99,7 +99,7 @@ final class OrderCollector {
 	 */
 	public function order_deleting( $order_id, $order = null ): void {
 		$order_id = PendingChanges::to_id( $order_id );
-		if ( self::is_woonyx_order( self::order( $order_id, $order ) ) ) {
+		if ( self::is_nyxify_order( self::order( $order_id, $order ) ) ) {
 			$this->changes->add( CatalogQueue::ORDER_DELETE, array( $order_id ) );
 		}
 	}
@@ -133,7 +133,7 @@ final class OrderCollector {
 	 *
 	 * @param mixed $order The order.
 	 */
-	public static function is_woonyx_order( $order ): bool {
+	public static function is_nyxify_order( $order ): bool {
 		if ( ! $order instanceof \WC_Order || self::ORDER_TYPE !== $order->get_type() ) {
 			return false;
 		}

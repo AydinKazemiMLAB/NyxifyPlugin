@@ -2,19 +2,19 @@
 /**
  * The store's bots on the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * Lists, registers and removes the store's bots (contract §4.1), all signed.

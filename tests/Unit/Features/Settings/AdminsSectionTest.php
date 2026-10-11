@@ -2,25 +2,25 @@
 /**
  * Tests for the settings page's "Bot admins" section.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Settings;
+namespace Nyxify\Tests\Unit\Features\Settings;
 
 use Brain\Monkey\Functions;
 use Mockery;
-use WooNyx\Features\Bots\AdminService;
-use WooNyx\Features\Settings\AdminsSection;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\AdminService;
+use Nyxify\Features\Settings\AdminsSection;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The rows (name, username, the messenger id only as a fallback), the "Remove" forms, the escaping of the core's
@@ -261,17 +261,17 @@ final class AdminsSectionTest extends TestCase {
 		self::assertSame( 'Sara Ahmadi', $first[1] );
 		self::assertSame( '<span dir="ltr">@sara_shop</span>', $first[2] );
 		self::assertStringContainsString( 'action="https://shop.example.com/wp-admin/admin-post.php"', $first[3] );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_revoke_admin" />', $first[3] );
-		self::assertStringContainsString( 'name="_woonyx_nonce" value="nonce-for-woonyx_revoke_admin"', $first[3] );
-		self::assertStringContainsString( '<input type="hidden" name="woonyx_admin_id" value="7" />', $first[3] );
-		self::assertStringContainsString( 'data-woonyx-confirm="Remove Sara Ahmadi as a bot admin? The current PIN still works for them until you issue a new one."', $first[3] );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_revoke_admin" />', $first[3] );
+		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_revoke_admin"', $first[3] );
+		self::assertStringContainsString( '<input type="hidden" name="nyxify_admin_id" value="7" />', $first[3] );
+		self::assertStringContainsString( 'data-nyxify-confirm="Remove Sara Ahmadi as a bot admin? The current PIN still works for them until you issue a new one."', $first[3] );
 		self::assertStringContainsString( '>Remove</button>', $first[3] );
 
 		$second = self::cells( $rows[1] );
 		self::assertSame( 'Bale', $second[0] );
 		self::assertSame( 'Reza', $second[1] );
 		self::assertSame( '&mdash;', $second[2] );
-		self::assertStringContainsString( 'name="woonyx_admin_id" value="12"', $second[3] );
+		self::assertStringContainsString( 'name="nyxify_admin_id" value="12"', $second[3] );
 	}
 
 	public function test_the_messenger_id_is_shown_only_without_a_name_and_a_username(): void {
@@ -305,12 +305,12 @@ final class AdminsSectionTest extends TestCase {
 		$no_name = self::cells( $rows[1] );
 		self::assertSame( '&mdash;', $no_name[1] );
 		self::assertSame( '<span dir="ltr">@sara_shop</span>', $no_name[2] );
-		self::assertStringContainsString( 'data-woonyx-confirm="Remove @sara_shop as a bot admin?', $no_name[3] );
+		self::assertStringContainsString( 'data-nyxify-confirm="Remove @sara_shop as a bot admin?', $no_name[3] );
 
 		$neither = self::cells( $rows[2] );
 		self::assertSame( 'Messenger ID: <code dir="ltr">44402</code>', $neither[1] );
 		self::assertSame( '&mdash;', $neither[2] );
-		self::assertStringContainsString( 'data-woonyx-confirm="Remove 44402 as a bot admin?', $neither[3] );
+		self::assertStringContainsString( 'data-nyxify-confirm="Remove 44402 as a bot admin?', $neither[3] );
 	}
 
 	public function test_a_username_is_shown_with_one_at_sign(): void {
@@ -410,7 +410,7 @@ final class AdminsSectionTest extends TestCase {
 		$html = $this->rendered( self::store_status( 'deactivated' ) );
 
 		self::assertSame( array(), $this->requests );
-		self::assertStringContainsString( 'The bot admins can be managed here once the store is active on WooNyx again.', $html );
+		self::assertStringContainsString( 'The bot admins can be managed here once the store is active on Nyxify again.', $html );
 		self::assertStringNotContainsString( '<form', $html );
 	}
 }

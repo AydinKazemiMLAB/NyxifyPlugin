@@ -2,25 +2,25 @@
 /**
  * Tests for the settings page's "Bots" section.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Settings;
+namespace Nyxify\Tests\Unit\Features\Settings;
 
 use Brain\Monkey\Functions;
 use Mockery;
-use WooNyx\Features\Bots\BotService;
-use WooNyx\Features\Settings\BotsSection;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\BotService;
+use Nyxify\Features\Settings\BotsSection;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Blocks per plan, bots outside the plan, the forms, the escaping of the core's strings and when nothing is sent.
@@ -138,8 +138,8 @@ final class BotsSectionTest extends TestCase {
 	private static function bot( array $changes = array() ): array {
 		return $changes + array(
 			'platform'       => 'telegram',
-			'username'       => 'woonyx_shop_bot',
-			'name'           => 'WooNyx Shop',
+			'username'       => 'nyxify_shop_bot',
+			'name'           => 'Nyxify Shop',
 			'status'         => 'active',
 			'webhook_active' => true,
 			'last_error'     => null,
@@ -203,7 +203,7 @@ final class BotsSectionTest extends TestCase {
 	 * @param string $label The messenger's heading.
 	 */
 	private static function block( string $html, string $label ): string {
-		$pattern = '#<div class="woonyx-bot">\s*<h3>' . preg_quote( $label, '#' ) . '</h3>.*?</div>\s*(?=<div class="woonyx-bot">|$)#s';
+		$pattern = '#<div class="nyxify-bot">\s*<h3>' . preg_quote( $label, '#' ) . '</h3>.*?</div>\s*(?=<div class="nyxify-bot">|$)#s';
 
 		return 1 === preg_match( $pattern, $html, $matches ) ? $matches[0] : '';
 	}
@@ -213,19 +213,19 @@ final class BotsSectionTest extends TestCase {
 
 		self::assertSame( array( self::CORE_URL . '/api/v1/bots' ), array_column( $this->requests, 'url' ) );
 		self::assertStringContainsString( '<h2>Bots</h2>', $html );
-		self::assertStringContainsString( 'A bot token is sent once to WooNyx and is not stored on this site.', $html );
+		self::assertStringContainsString( 'A bot token is sent once to Nyxify and is not stored on this site.', $html );
 		self::assertLessThan( (int) strpos( $html, '<h3>Bale</h3>' ), (int) strpos( $html, '<h3>Telegram</h3>' ) );
 		self::assertLessThan( (int) strpos( $html, '<h3>Rubika</h3>' ), (int) strpos( $html, '<h3>Bale</h3>' ) );
 
 		$block = self::block( $html, 'Bale' );
 		self::assertStringContainsString( 'No bot is connected.', $block );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_register_bot" />', $block );
-		self::assertStringContainsString( 'name="_woonyx_nonce" value="nonce-for-woonyx_register_bot"', $block );
-		self::assertStringContainsString( '<input type="hidden" name="woonyx_platform" value="bale" />', $block );
-		self::assertMatchesRegularExpression( '#<input type="password" id="woonyx-bot-token-bale" name="woonyx_bot_token" [^>]*autocomplete="off"#', $block );
-		self::assertDoesNotMatchRegularExpression( '#name="woonyx_bot_token"[^>]*\bvalue=#', $block );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_register_bot" />', $block );
+		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_register_bot"', $block );
+		self::assertStringContainsString( '<input type="hidden" name="nyxify_platform" value="bale" />', $block );
+		self::assertMatchesRegularExpression( '#<input type="password" id="nyxify-bot-token-bale" name="nyxify_bot_token" [^>]*autocomplete="off"#', $block );
+		self::assertDoesNotMatchRegularExpression( '#name="nyxify_bot_token"[^>]*\bvalue=#', $block );
 		self::assertStringContainsString( '>Connect bot</button>', $block );
-		self::assertStringNotContainsString( 'data-woonyx-confirm', $block );
+		self::assertStringNotContainsString( 'data-nyxify-confirm', $block );
 		self::assertStringNotContainsString( '<details', $block );
 	}
 
@@ -242,18 +242,18 @@ final class BotsSectionTest extends TestCase {
 
 		$block = self::block( $this->rendered( self::store_status() ), 'Telegram' );
 
-		self::assertStringContainsString( '<a href="https://t.me/woonyx_shop_bot" target="_blank" rel="noopener noreferrer" dir="ltr">@woonyx_shop_bot</a>', $block );
-		self::assertStringContainsString( '<p class="description">WooNyx Shop</p>', $block );
+		self::assertStringContainsString( '<a href="https://t.me/nyxify_shop_bot" target="_blank" rel="noopener noreferrer" dir="ltr">@nyxify_shop_bot</a>', $block );
+		self::assertStringContainsString( '<p class="description">Nyxify Shop</p>', $block );
 		self::assertMatchesRegularExpression( '#<th scope="row">Status</th>\s*<td>\s*Active#', $block );
 		self::assertMatchesRegularExpression( '#<th scope="row">Webhook</th>\s*<td>Set</td>#', $block );
 		self::assertMatchesRegularExpression( '#<th scope="row">Set up</th>\s*<td>2026-10-07 10:15</td>#', $block );
 		self::assertStringNotContainsString( 'Check again', $block );
 
-		self::assertMatchesRegularExpression( '#<form[^>]*class="woonyx-bot-remove-form" data-woonyx-confirm="Remove the Telegram bot\? It stops answering your customers\.">#', $block );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_remove_bot" />', $block );
+		self::assertMatchesRegularExpression( '#<form[^>]*class="nyxify-bot-remove-form" data-nyxify-confirm="Remove the Telegram bot\? It stops answering your customers\.">#', $block );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_remove_bot" />', $block );
 		self::assertStringContainsString( '>Remove bot</button>', $block );
 
-		self::assertMatchesRegularExpression( '#<details class="woonyx-replace-bot">\s*<summary>Replace with another bot</summary>\s*<form[^>]*class="woonyx-bot-token-form" data-woonyx-confirm="Replace the Telegram bot with the bot of this token\?#', $block );
+		self::assertMatchesRegularExpression( '#<details class="nyxify-replace-bot">\s*<summary>Replace with another bot</summary>\s*<form[^>]*class="nyxify-bot-token-form" data-nyxify-confirm="Replace the Telegram bot with the bot of this token\?#', $block );
 		self::assertStringContainsString( '>Replace bot</button>', $block );
 	}
 
@@ -299,7 +299,7 @@ final class BotsSectionTest extends TestCase {
 		$block = self::block( $this->rendered( self::store_status() ), 'Telegram' );
 
 		self::assertStringContainsString( 'Setting up…', $block );
-		self::assertStringContainsString( '<a href="https://shop.example.com/wp-admin/admin.php?page=woonyx">Check again</a>', $block );
+		self::assertStringContainsString( '<a href="https://shop.example.com/wp-admin/admin.php?page=nyxify">Check again</a>', $block );
 		self::assertMatchesRegularExpression( '#<th scope="row">Webhook</th>\s*<td>Not set</td>#', $block );
 		self::assertStringNotContainsString( 'Set up</th>', $block );
 	}
@@ -321,7 +321,7 @@ final class BotsSectionTest extends TestCase {
 
 		self::assertStringContainsString( 'Failed', $block );
 		self::assertStringContainsString( '<div class="notice notice-error inline">', $block );
-		self::assertStringContainsString( 'Setting up the bot failed. WooNyx tries again every hour, up to five times', $block );
+		self::assertStringContainsString( 'Setting up the bot failed. Nyxify tries again every hour, up to five times', $block );
 		self::assertStringContainsString( 'Details: <code dir="ltr">Bad Request: &lt;b&gt;bad webhook&lt;/b&gt; &amp; more</code>', $block );
 		self::assertStringNotContainsString( '<b>', $block );
 	}
@@ -372,8 +372,8 @@ final class BotsSectionTest extends TestCase {
 
 		self::assertLessThan( (int) strpos( $html, '<h3>Rubika</h3>' ), (int) strpos( $html, '<h3>Telegram</h3>' ) );
 		self::assertStringContainsString( 'This messenger isn’t in your plan, so the bot doesn’t work.', $block );
-		self::assertStringContainsString( 'woonyx-bot-remove-form', $block );
-		self::assertStringNotContainsString( 'woonyx-bot-token-form', $block );
+		self::assertStringContainsString( 'nyxify-bot-remove-form', $block );
+		self::assertStringNotContainsString( 'nyxify-bot-token-form', $block );
 		self::assertStringNotContainsString( '<details', $block );
 	}
 
@@ -382,7 +382,7 @@ final class BotsSectionTest extends TestCase {
 
 		$block = self::block( $this->rendered( self::store_status( array( 'telegram', 'eitaa' ) ) ), 'eitaa' );
 
-		self::assertStringContainsString( '@woonyx_shop_bot', $block );
+		self::assertStringContainsString( '@nyxify_shop_bot', $block );
 		self::assertStringNotContainsString( '<form', $block );
 		self::assertStringNotContainsString( '<a href', $block );
 	}
@@ -406,7 +406,7 @@ final class BotsSectionTest extends TestCase {
 		$html = $this->rendered( self::store_status( array( 'telegram' ), 'suspended' ) );
 
 		self::assertSame( array(), $this->requests );
-		self::assertStringContainsString( 'The bots can be managed here once the store is active on WooNyx again.', $html );
+		self::assertStringContainsString( 'The bots can be managed here once the store is active on Nyxify again.', $html );
 		self::assertStringNotContainsString( '<form', $html );
 	}
 
@@ -415,7 +415,7 @@ final class BotsSectionTest extends TestCase {
 
 		$html = $this->rendered( self::store_status() );
 
-		self::assertStringContainsString( 'Could not reach the WooNyx server.', $html );
+		self::assertStringContainsString( 'Could not reach the Nyxify server.', $html );
 		self::assertStringNotContainsString( '<form', $html );
 	}
 
@@ -433,7 +433,7 @@ final class BotsSectionTest extends TestCase {
 		$html = $this->rendered( self::store_status() );
 
 		self::assertStringContainsString( '<div class="notice notice-error inline">', $html );
-		self::assertStringContainsString( 'The WooNyx server had an internal error.', $html );
+		self::assertStringContainsString( 'The Nyxify server had an internal error.', $html );
 		self::assertStringContainsString( '<code dir="ltr">req-core-0003</code>', $html );
 		self::assertStringNotContainsString( 'raw core message', $html );
 		self::assertStringNotContainsString( '<form', $html );

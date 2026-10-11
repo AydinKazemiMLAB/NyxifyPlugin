@@ -1,6 +1,6 @@
 {
-    "name": "nyxon/woonyx",
-    "description": "WordPress/WooCommerce plugin of WooNyx: sell a WooCommerce shop's products through Telegram, Bale and Rubika bots.",
+    "name": "nyxon/nyxify",
+    "description": "WordPress/WooCommerce plugin of Nyxify: sell a WooCommerce shop's products through Telegram, Bale and Rubika bots.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {
@@ -8,12 +8,12 @@
     },
     "autoload": {
         "psr-4": {
-            "WooNyx\\": "src/"
+            "Nyxify\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "WooNyx\\Tests\\": "tests/"
+            "Nyxify\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -21,9 +21,9 @@
         "lint:fix": "phpcbf",
         "analyse": "phpstan analyse --memory-limit=1G --no-progress",
         "test": "phpunit",
-        "i18n:pot": "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-pot . languages/woonyx.pot --slug=woonyx --domain=woonyx --exclude=vendor,tests,docs,graft,build,dist,bin",
+        "i18n:pot": "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-pot . languages/nyxify.pot --slug=nyxify --domain=nyxify --exclude=vendor,tests,docs,graft,build,dist,bin",
         "i18n:compile": [
-            "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n update-po languages/woonyx.pot languages",
+            "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n update-po languages/nyxify.pot languages",
             "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-mo languages",
             "@php vendor/wp-cli/wp-cli/php/boot-fs.php i18n make-php languages"
         ],
@@ -39,10 +39,10 @@
         "lint:fix": "PHPCBF: fix what PHPCS can fix by itself.",
         "analyse": "PHPStan level 8 with the WordPress and WooCommerce stubs.",
         "test": "PHPUnit unit tests (Brain Monkey, no WordPress needed).",
-        "i18n:pot": "Regenerate languages/woonyx.pot from the code.",
+        "i18n:pot": "Regenerate languages/nyxify.pot from the code.",
         "i18n:compile": "Merge the .pot into every .po, then build the .mo and .l10n.php files WordPress loads.",
         "check": "Every check: lint, analyse, test.",
-        "build": "Build dist/woonyx-<version>.zip (export-ignore honoured, production autoloader only)."
+        "build": "Build dist/nyxify-<version>.zip (export-ignore honoured, production autoloader only)."
     },
     "config": {
         "process-timeout": 0,

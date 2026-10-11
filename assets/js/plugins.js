@@ -1,20 +1,20 @@
 /**
- * WooNyx on the plugins list: asks for confirmation before WooNyx is deactivated, through its Deactivate link or the
+ * Nyxify on the plugins list: asks for confirmation before Nyxify is deactivated, through its Deactivate link or the
  * bulk "Deactivate" action with its row checked. The plugin's basename and the translated warning come from
- * `window.woonyxPlugins`.
+ * `window.nyxifyPlugins`.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 ( function () {
 	'use strict';
 
-	var settings = window.woonyxPlugins;
+	var settings = window.nyxifyPlugins;
 	if ( ! settings || ! settings.basename || ! settings.message ) {
 		return;
 	}
 
-	function isWooNyxRow( row ) {
+	function isNyxifyRow( row ) {
 		return !! row && row.getAttribute( 'data-plugin' ) === settings.basename;
 	}
 
@@ -25,7 +25,7 @@
 		}
 
 		var link = target.closest( '.deactivate a' );
-		if ( link && isWooNyxRow( link.closest( 'tr[data-plugin]' ) ) && ! window.confirm( settings.message ) ) {
+		if ( link && isNyxifyRow( link.closest( 'tr[data-plugin]' ) ) && ! window.confirm( settings.message ) ) {
 			event.preventDefault();
 		}
 	} );

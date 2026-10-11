@@ -2,18 +2,18 @@
 /**
  * Tests for the error messages.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Http;
+namespace Nyxify\Tests\Unit\Shared\Http;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\ErrorMessages;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\ErrorMessages;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Every code has a message, and the code list follows the core's OpenAPI spec.
@@ -91,7 +91,7 @@ final class ErrorMessagesTest extends TestCase {
 	public function test_known_code(): void {
 		self::assertSame(
 			ErrorMessages::messages()['store_not_active'],
-			ErrorMessages::for_error( new CoreError( 'store_not_active', 403, 'wn-1234567890' ) )
+			ErrorMessages::for_error( new CoreError( 'store_not_active', 403, 'nx-1234567890' ) )
 		);
 	}
 

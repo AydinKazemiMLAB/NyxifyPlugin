@@ -2,16 +2,16 @@
 /**
  * The store's status, from the core with a short cache.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
 
 /**
  * `GET /store/status` (signed, contract §1.3) for the settings page, cached for five minutes in a transient. Only
@@ -27,7 +27,7 @@ final class StatusService {
 	/**
 	 * Transient holding the last status (no secrets).
 	 */
-	public const TRANSIENT = 'woonyx_store_status';
+	public const TRANSIENT = 'nyxify_store_status';
 
 	/**
 	 * Seconds a status is reused.

@@ -1,11 +1,11 @@
-# WooNyx for WooCommerce
+# Nyxify for WooCommerce
 
-The WordPress/WooCommerce plugin of WooNyx: it connects a WooCommerce store to the WooNyx core, which sells the
+The WordPress/WooCommerce plugin of Nyxify: it connects a WooCommerce store to the Nyxify core, which sells the
 store's products through Telegram, Bale and Rubika bots. The plugin activates the store with a license key, sends
 catalog and order changes to the core, and gives the store owner a settings page for the bots, the admin PIN and the
 bot admins.
 
-> Status: phase 6 (pull fallback), version 0.6.0. On **WooCommerce > WooNyx** the owner enters a license key
+> Status: phase 6 (pull fallback), version 0.6.0. On **WooCommerce > Nyxify** the owner enters a license key
 > and the store is connected to the core; the page shows the store's status, checks the connection and rotates the
 > shared secret, connects, replaces and removes the store's Telegram, Bale and Rubika bots, issues the bots' admin PIN
 > and lists and removes the bot admins. While connected, every change to a product, a variation, its stock or a
@@ -13,7 +13,7 @@ bot admins.
 > background, and "Sync now" starts a full catalog sync. Deactivating the plugin tells the core, and uninstalling
 > removes everything the plugin stored. When the core can't reach the store, the plugin fetches the bot admins'
 > product edits itself every 5 minutes and applies them (pull fallback). Plans and progress:
-> `docs/phase-*-plan.md`. "WooNyx" / `woonyx` is a temporary name:
+> `docs/phase-*-plan.md`. "Nyxify" / `nyxify` is a temporary name:
 > WordPress.org doesn't accept slugs starting with `woo`, so the public name, slug and text domain change before the
 > first release.
 
@@ -31,13 +31,13 @@ composer check
 
 | Command | What it does |
 |---|---|
-| `composer lint` / `composer lint:fix` | PHPCS with the WordPress Coding Standards and PHPCompatibilityWP (PHP 8.1+, WordPress 6.5+, prefixes `woonyx`/`WooNyx`, text domain `woonyx`); `lint:fix` runs PHPCBF |
+| `composer lint` / `composer lint:fix` | PHPCS with the WordPress Coding Standards and PHPCompatibilityWP (PHP 8.1+, WordPress 6.5+, prefixes `nyxify`/`Nyxify`, text domain `nyxify`); `lint:fix` runs PHPCBF |
 | `composer analyse` | PHPStan level 8 with the WordPress and WooCommerce stubs |
 | `composer test` | PHPUnit 10 with Brain Monkey (unit tests, no WordPress needed) |
 | `composer check` | the three above; must be green before every commit |
-| `composer i18n:pot` | regenerates `languages/woonyx.pot` |
+| `composer i18n:pot` | regenerates `languages/nyxify.pot` |
 | `composer i18n:compile` | merges the `.pot` into every `.po`, then builds the `.mo` and `.l10n.php` files |
-| `composer build` | builds `dist/woonyx-<version>.zip`: the files `git archive` would ship (dev files are `export-ignore`d in `.gitattributes`) plus Composer's production autoloader; nothing has to be committed first |
+| `composer build` | builds `dist/nyxify-<version>.zip`: the files `git archive` would ship (dev files are `export-ignore`d in `.gitattributes`) plus Composer's production autoloader; nothing has to be committed first |
 
 On Windows run Composer from PowerShell or cmd (Git Bash may not find `php`).
 
@@ -45,12 +45,12 @@ On Windows run Composer from PowerShell or cmd (Git Bash may not find `php`).
 
 | Constant | Default | Purpose |
 |---|---|---|
-| `WOONYX_API_BASE_URL` | `https://api.woonyx.nyxon.tech:88` (the test core, until a production URL exists) | The core's address, without `/api/v1`. Must be https unless `WP_ENVIRONMENT_TYPE` is `local` or `development`. |
-| `WOONYX_ENCRYPTION_KEY` | the site's `AUTH_KEY`/`AUTH_SALT` (`wp_salt('auth')`) | Key material for the encrypted options. Changing it, or the salts when it isn't set, means activating the store again. |
+| `NYXIFY_API_BASE_URL` | `https://api.nyxify.nyxon.tech` (the production core) | The core's address, without `/api/v1`. Must be https unless `WP_ENVIRONMENT_TYPE` is `local` or `development`. |
+| `NYXIFY_ENCRYPTION_KEY` | the site's `AUTH_KEY`/`AUTH_SALT` (`wp_salt('auth')`) | Key material for the encrypted options. Changing it, or the salts when it isn't set, means activating the store again. |
 
 ## Connecting a store
 
-1. **WooCommerce > WooNyx**: enter the license key and activate. The plugin creates a read/write WooCommerce REST key
+1. **WooCommerce > Nyxify**: enter the license key and activate. The plugin creates a read/write WooCommerce REST key
    for the current admin (deleting that user or the key disconnects the shop) and sends it to the core with the
    site's URLs; the core answers with the store id and a shared secret, kept encrypted. The license key is not kept.
 2. The page then shows the store's status (license, plan, platforms, catalog sync), cached for 5 minutes; "Check
@@ -84,8 +84,8 @@ Runs only while the store is connected; nothing is queued before.
   REST controllers at sending time and cut down to the fields the core reads: `meta_data` never leaves the shop.
 - **When:** saving never waits on the core. The changes of a request (a save, a bulk edit, an import, an order's stock
   update) are collected in memory and written once at the end of the request to the table
-  `{prefix}woonyx_catalog_queue` (deduplicated, safe under concurrent requests). An Action Scheduler action
-  (`woonyx_catalog_flush`, group `woonyx`) then sends them in batches of up to 100 items (500 ids for deletes): right
+  `{prefix}nyxify_catalog_queue` (deduplicated, safe under concurrent requests). An Action Scheduler action
+  (`nyxify_catalog_flush`, group `nyxify`) then sends them in batches of up to 100 items (500 ids for deletes): right
   after an admin request, otherwise at WP-Cron's next queue run (every minute, needs a page load or a system cron).
 - **Failures:** network errors, timeouts, 408, 429 and 5xx are retried after 1, 5, 15 and 60 minutes (a longer
   `Retry-After` is honoured), then dropped and logged; a lapsed subscription, an inactive store or a rejected
@@ -94,15 +94,15 @@ Runs only while the store is connected; nothing is queued before.
 - **Sync now:** next to the catalog line of the status section while the store is `active`: asks the core to read the
   whole catalog again (`POST /catalog/sync`); a second click while one runs says so.
 - **Plan limit:** when the core skips products because the plan's product limit is reached, a dismissible notice
-  with their count is shown on the products list, the product editor and the WooNyx page. The next product batch
+  with their count is shown on the products list, the product editor and the Nyxify page. The next product batch
   with nothing skipped, "Sync now" and deactivation clear it.
-- **Logs** (WooCommerce > Status > Logs, source `woonyx`): kinds, counts, ids, error codes and request ids; never a
+- **Logs** (WooCommerce > Status > Logs, source `nyxify`): kinds, counts, ids, error codes and request ids; never a
   product's or category's content.
 
 ## Order status
 
 Runs only while the store is connected, and only for orders the core created through a bot's checkout (marked with
-the `_woonyx_order` meta). Orders made any other way (the shop's own checkout, wp-admin, other plugins) are never
+the `_nyxify_order` meta). Orders made any other way (the shop's own checkout, wp-admin, other plugins) are never
 queued or sent.
 
 - **What is sent** (`POST /orders/webhooks/status`): `id`, `status`, `number`, `currency`, `total`,
@@ -129,18 +129,18 @@ Bot admins' product edits normally reach WooCommerce through the core, which wri
 When it can't (a host that refuses the core's requests, a firewall, an outage), the plugin fetches them itself. Runs
 only while the store is connected.
 
-- **When:** an Action Scheduler action (`woonyx_sync_pull`, group `woonyx`) every 5 minutes, scheduled when the store
+- **When:** an Action Scheduler action (`nyxify_sync_pull`, group `nyxify`) every 5 minutes, scheduled when the store
   is activated and kept in place on every admin page load (removed when not connected), plus one immediate run
-  (`woonyx_sync_pull_now`) after "Check connection" and after a run that got a full answer. Like every Action
+  (`nyxify_sync_pull_now`) after "Check connection" and after a run that got a full answer. Like every Action
   Scheduler action it needs WP-Cron (a page load or a system cron). One run at a time per site (a lock in
-  `woonyx_sync_lock`, expiring after 330 s).
+  `nyxify_sync_lock`, expiring after 330 s).
 - **What is pulled** (`GET /sync/outbox?limit=20`): only the changes whose push by the core has failed at least once,
   oldest first, each claimed by the plugin for 5 minutes: `product.create`, `product.update`, `product.delete` and
   `variation.update`. While the core reaches the store, nothing comes back and the call is answered empty.
 - **How they are applied:** one by one, in the core's order, through WooCommerce's own REST controllers in-process
   (`rest_do_request()`: the same validation, image download and meta handling as the core's push), as the user who
   owns the plugin's REST key. A create becomes `POST /wc/v3/products` (after looking for a product that already
-  carries the change's `_woonyx_outbox_id`, so a create is never applied twice), an edit `PUT /wc/v3/products/{id}`,
+  carries the change's `_nyxify_outbox_id`, so a create is never applied twice), an edit `PUT /wc/v3/products/{id}`,
   a delete `DELETE /wc/v3/products/{id}` (to the trash), a variation edit `PUT
   /wc/v3/products/{id}/variations/{id}`. Before that every payload is checked against the fields the core can send
   (name, status, visibility, descriptions, SKU, prices, stock fields, categories by id, images by https link or
@@ -151,9 +151,9 @@ only while the store is connected.
   its own change. Failures carry WooCommerce's error code and its message without tags or links, cut to 1000
   characters (shown to the bot's admins); `invalid_change`, `rest_user_missing` and `plugin_error` are the plugin's
   own. Sent once more after a network error or a 5xx; a change left unacknowledged is handed out again once its
-  claim expires and found by its `_woonyx_outbox_id` instead of being created again.
+  claim expires and found by its `_nyxify_outbox_id` instead of being created again.
 - **Failures:** a lapsed subscription, an inactive store or a rejected signature pauses pulls for an hour
-  (`woonyx_sync_retry_at`; "Check connection" ends the pause); other errors wait for the next run. Nothing is kept
+  (`nyxify_sync_retry_at`; "Check connection" ends the pause); other errors wait for the next run. Nothing is kept
   locally.
 - **Logs:** counts (pulled, applied, failed, not started), the core's `affected`, request ids, and for each failed
   change its id, action and error code; never a payload, a product's content, an image link or a signed link.
@@ -161,7 +161,7 @@ only while the store is connected.
 ## Layout
 
 ```
-woonyx.php            plugin header, constants, Composer autoload, boot
+nyxify.php            plugin header, constants, Composer autoload, boot
 uninstall.php         removes the plugin's REST key, options, transients, queue table and scheduled actions (every
                       site of a multisite)
 src/Plugin.php        hooks: WooCommerce check, HPOS compatibility, translations, deactivation, features
@@ -175,8 +175,8 @@ src/Features/         Settings (the admin page and its sections: status, bots, a
                       Orders (order collector, whitelisted order payloads, status sender),
                       Sync (pull fallback: outbox client, payload whitelist, change applier, lock, scheduler, run)
 assets/css/           admin styles (logical CSS properties, RTL-safe)
-assets/js/            confirmations: forms with `data-woonyx-confirm` (settings page), deactivation (plugins list)
-languages/            woonyx.pot and the Persian translation
+assets/js/            confirmations: forms with `data-nyxify-confirm` (settings page), deactivation (plugins list)
+languages/            nyxify.pot and the Persian translation
 tests/Unit/           PHPUnit + Brain Monkey
 bin/build-zip.php     the zip builder behind `composer build`
 docs/                 handoff, phase plans, the core's OpenAPI spec
@@ -201,10 +201,10 @@ docs/                 handoff, phase plans, the core's OpenAPI spec
   user; their payloads, images and links are never logged.
 - The WooCommerce REST key the core uses is created by the plugin for the admin who activates; its consumer key and
   secret exist only in memory for the activation request. The plugin only ever deletes the key it created (its id is
-  kept in `woonyx_rest_key_id`), never a key made by hand.
+  kept in `nyxify_rest_key_id`), never a key made by hand.
 
-The contract with the core: `.agents/skills/woonyx-plugin-contract/SKILL.md`, `.agents/skills/woonyx-security/SKILL.md`
-and `docs/core-api/openapi.json`. Background and decisions: `docs/WooNyxPlugin-HANDOFF.md`.
+The contract with the core: `.agents/skills/nyxify-plugin-contract/SKILL.md`, `.agents/skills/nyxify-security/SKILL.md`
+and `docs/core-api/openapi.json`. Background and decisions: `docs/NyxifyPlugin-HANDOFF.md`.
 
 ## License
 

@@ -2,19 +2,19 @@
 /**
  * The "Check connection" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Admin\AdminAction;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Admin\AdminAction;
 
 /**
- * Handles `admin-post.php?action=woonyx_refresh_status`: checks the capability and nonce, forgets the cached status,
+ * Handles `admin-post.php?action=nyxify_refresh_status`: checks the capability and nonce, forgets the cached status,
  * ends the pulls' pause and asks for a pull at once, then redirects to the settings page, which asks the core again.
  */
 final class StatusRefreshHandler {

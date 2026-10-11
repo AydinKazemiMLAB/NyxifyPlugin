@@ -2,25 +2,25 @@
 /**
  * Tests for the admin PIN issuer.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\AdminPinIssuer;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\AdminPinIssuer;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * POST /bots/admin-pin over a mocked wp_remote_request() and WooCommerce logger, with the real client and secret

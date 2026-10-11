@@ -2,12 +2,12 @@
 /**
  * A failed call to the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Http;
+namespace Nyxify\Shared\Http;
 
 /**
  * Why a call failed: the core's `error_code`, or one of the plugin's own codes below when no usable answer came back
@@ -24,7 +24,7 @@ final class CoreError {
 	public const NOT_ACTIVATED = 'not_activated';
 
 	/**
-	 * A connection is stored but can't be decrypted (salts or WOONYX_ENCRYPTION_KEY changed): activate again.
+	 * A connection is stored but can't be decrypted (salts or NYXIFY_ENCRYPTION_KEY changed): activate again.
 	 */
 	public const CONNECTION_UNREADABLE = 'connection_unreadable';
 
@@ -59,7 +59,7 @@ final class CoreError {
 	public const UNKNOWN_ERROR = 'unknown_error';
 
 	/**
-	 * The text entered is not a license key (`WN-` + four groups of six characters); nothing was sent.
+	 * The text entered is not a license key (`NX-` + four groups of six characters); nothing was sent.
 	 */
 	public const LICENSE_KEY_FORMAT = 'license_key_format';
 

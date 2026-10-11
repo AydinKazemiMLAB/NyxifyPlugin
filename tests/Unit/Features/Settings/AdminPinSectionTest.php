@@ -2,20 +2,20 @@
 /**
  * Tests for the settings page's "Admin PIN" section.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Settings;
+namespace Nyxify\Tests\Unit\Features\Settings;
 
 use Brain\Monkey\Functions;
-use WooNyx\Features\Settings\AdminPinSection;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Settings\AdminPinSection;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The masked PIN, "no PIN yet", the two buttons and when they are offered. No request is ever sent.
@@ -104,7 +104,7 @@ final class AdminPinSectionTest extends TestCase {
 	 * @return list<string>
 	 */
 	private static function forms( string $html ): array {
-		preg_match_all( '#<form[^>]*class="woonyx-admin-pin-form".*?</form>#s', $html, $matches );
+		preg_match_all( '#<form[^>]*class="nyxify-admin-pin-form".*?</form>#s', $html, $matches );
 
 		return $matches[0];
 	}
@@ -127,11 +127,11 @@ final class AdminPinSectionTest extends TestCase {
 		$html = $this->rendered( self::store_status() );
 
 		self::assertMatchesRegularExpression(
-			'#<details class="woonyx-admin-pin">\s*<summary>Show PIN</summary>\s*<p><code dir="ltr" class="woonyx-pin">042917</code></p>#',
+			'#<details class="nyxify-admin-pin">\s*<summary>Show PIN</summary>\s*<p><code dir="ltr" class="nyxify-pin">042917</code></p>#',
 			$html
 		);
 		self::assertSame( 1, substr_count( $html, self::PIN ) );
-		self::assertStringNotContainsString( '<details class="woonyx-admin-pin" open', $html );
+		self::assertStringNotContainsString( '<details class="nyxify-admin-pin" open', $html );
 		self::assertStringNotContainsString( 'No PIN has been issued', $html );
 		self::assertStringContainsString( 'class="button">New PIN</button>', self::forms( $html )[0] );
 	}
@@ -142,15 +142,15 @@ final class AdminPinSectionTest extends TestCase {
 		self::assertCount( 2, $forms );
 		foreach ( $forms as $form ) {
 			self::assertStringContainsString( 'action="https://shop.example.com/wp-admin/admin-post.php"', $form );
-			self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_issue_admin_pin" />', $form );
-			self::assertStringContainsString( 'name="_woonyx_nonce" value="nonce-for-woonyx_issue_admin_pin"', $form );
+			self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_issue_admin_pin" />', $form );
+			self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_issue_admin_pin"', $form );
 		}
 
-		self::assertStringContainsString( 'data-woonyx-confirm="Issue a new PIN? The current PIN stops working; current bot admins stay admins."', $forms[0] );
-		self::assertStringNotContainsString( 'woonyx_revoke_admins', $forms[0] );
+		self::assertStringContainsString( 'data-nyxify-confirm="Issue a new PIN? The current PIN stops working; current bot admins stay admins."', $forms[0] );
+		self::assertStringNotContainsString( 'nyxify_revoke_admins', $forms[0] );
 
-		self::assertStringContainsString( 'data-woonyx-confirm="Issue a new PIN and log out every bot admin?', $forms[1] );
-		self::assertStringContainsString( '<input type="hidden" name="woonyx_revoke_admins" value="1" />', $forms[1] );
+		self::assertStringContainsString( 'data-nyxify-confirm="Issue a new PIN and log out every bot admin?', $forms[1] );
+		self::assertStringContainsString( '<input type="hidden" name="nyxify_revoke_admins" value="1" />', $forms[1] );
 		self::assertStringContainsString( '>New PIN and log out every admin</button>', $forms[1] );
 	}
 

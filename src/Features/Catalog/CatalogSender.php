@@ -2,18 +2,18 @@
 /**
  * The core's catalog endpoints.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * Sends catalog changes and the full-sync request (contract §2), each a new signed call. A successful answer is

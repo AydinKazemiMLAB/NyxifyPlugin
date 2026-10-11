@@ -2,17 +2,17 @@
 /**
  * Tests for the admin form helpers.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Admin;
+namespace Nyxify\Tests\Unit\Shared\Admin;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Action names, form fields, and the capability and nonce checks.
@@ -32,8 +32,8 @@ final class AdminActionTest extends TestCase {
 	}
 
 	public function test_hook_name(): void {
-		self::assertSame( 'woonyx_activate', AdminAction::hook_name( 'activate' ) );
-		self::assertSame( 'woonyx_issue_admin_pin', AdminAction::hook_name( 'issue_admin_pin' ) );
+		self::assertSame( 'nyxify_activate', AdminAction::hook_name( 'activate' ) );
+		self::assertSame( 'nyxify_issue_admin_pin', AdminAction::hook_name( 'issue_admin_pin' ) );
 	}
 
 	/**
@@ -70,12 +70,12 @@ final class AdminActionTest extends TestCase {
 	}
 
 	public function test_render_fields(): void {
-		Functions\expect( 'wp_nonce_field' )->once()->with( 'woonyx_activate', '_woonyx_nonce' );
+		Functions\expect( 'wp_nonce_field' )->once()->with( 'nyxify_activate', '_nyxify_nonce' );
 
 		ob_start();
 		AdminAction::render_fields( 'activate' );
 
-		self::assertSame( '<input type="hidden" name="action" value="woonyx_activate" />', ob_get_clean() );
+		self::assertSame( '<input type="hidden" name="action" value="nyxify_activate" />', ob_get_clean() );
 	}
 
 	public function test_verify_needs_the_capability_before_the_nonce(): void {
@@ -88,7 +88,7 @@ final class AdminActionTest extends TestCase {
 
 	public function test_verify_checks_the_nonce_of_this_action(): void {
 		Functions\expect( 'current_user_can' )->once()->with( 'manage_woocommerce' )->andReturn( true );
-		Functions\expect( 'check_admin_referer' )->once()->with( 'woonyx_activate', '_woonyx_nonce' )->andReturn( 1 );
+		Functions\expect( 'check_admin_referer' )->once()->with( 'nyxify_activate', '_nyxify_nonce' )->andReturn( 1 );
 
 		AdminAction::verify( 'activate' );
 	}

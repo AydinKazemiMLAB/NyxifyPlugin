@@ -2,25 +2,25 @@
 /**
  * Tests for the "Sync now" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\CatalogSyncHandler;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\CatalogSyncHandler;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Capability and nonce first, then the request, the notice, the caches and the redirect.
@@ -94,7 +94,7 @@ final class CatalogSyncHandlerTest extends TestCase {
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_catalog_sync' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_catalog_sync' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -176,7 +176,7 @@ final class CatalogSyncHandlerTest extends TestCase {
 
 		$handler->register();
 
-		self::assertNotFalse( has_action( 'admin_post_woonyx_catalog_sync', array( $handler, 'handle' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_catalog_sync', array( $handler, 'handle' ) ) );
 	}
 
 	public function test_a_scheduled_sync(): void {
@@ -189,7 +189,7 @@ final class CatalogSyncHandlerTest extends TestCase {
 		self::assertSame( Notice::SUCCESS, $notice->type );
 		self::assertArrayNotHasKey( StatusService::TRANSIENT, $this->transients );
 		self::assertSame( array(), $this->options );
-		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=woonyx', $this->redirect );
+		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=nyxify', $this->redirect );
 		self::assertSame( 'Full catalog sync requested.', $this->entries[0]['message'] );
 		self::assertSame( 'req-core-0003', $this->entries[0]['context']['request_id'] );
 	}
@@ -237,7 +237,7 @@ final class CatalogSyncHandlerTest extends TestCase {
 		self::assertSame( $error->request_id, $notice->request_id );
 		self::assertArrayNotHasKey( StatusService::TRANSIENT, $this->transients );
 		self::assertArrayHasKey( PlanLimitNotice::OPTION, $this->options );
-		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=woonyx', $this->redirect );
+		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=nyxify', $this->redirect );
 
 		if ( null === $level ) {
 			self::assertSame( array(), $this->entries );

@@ -2,23 +2,23 @@
 /**
  * Telling the core the plugin was deactivated.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Catalog\Schema;
-use WooNyx\Features\Sync\PullLock;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Catalog\Schema;
+use Nyxify\Features\Sync\PullLock;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * Runs from the plugin's deactivation hook (contract §1.4): sends the signed `POST /store/deactivate` (empty body) and,
@@ -148,7 +148,7 @@ final class Deactivator {
 	 * The deactivation hook: never throws.
 	 *
 	 * @param bool   $network_wide    Whether the plugin is being deactivated for the whole network.
-	 * @param string $plugin_basename The plugin's basename, e.g. `woonyx/woonyx.php`.
+	 * @param string $plugin_basename The plugin's basename, e.g. `nyxify/nyxify.php`.
 	 */
 	public static function run( bool $network_wide, string $plugin_basename ): void {
 		try {
@@ -293,7 +293,7 @@ final class Deactivator {
 		}
 
 		if ( ! $this->rest_keys->delete( $key_id ) ) {
-			$this->logger->warning( 'A WooNyx REST key could not be deleted.', array( 'key_id' => $key_id ) );
+			$this->logger->warning( 'A Nyxify REST key could not be deleted.', array( 'key_id' => $key_id ) );
 			return;
 		}
 

@@ -2,17 +2,17 @@
 /**
  * The warning before the plugin is deactivated.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
-use WooNyx\Shared\Options\SecretStore;
+use Nyxify\Shared\Options\SecretStore;
 
 /**
- * Asks for confirmation on the plugins list before WooNyx is deactivated (its Deactivate link, and the bulk
+ * Asks for confirmation on the plugins list before Nyxify is deactivated (its Deactivate link, and the bulk
  * "Deactivate" with its row checked), while the store is connected; the settings page shows the same text as a note.
  *
  * The script is only loaded on `plugins.php`. On a site's plugins list it needs a readable connection; on the network
@@ -21,7 +21,7 @@ use WooNyx\Shared\Options\SecretStore;
  */
 final class DeactivationWarning {
 
-	public const SCRIPT_HANDLE = 'woonyx-plugins';
+	public const SCRIPT_HANDLE = 'nyxify-plugins';
 
 	/**
 	 * Absolute path of the main plugin file.
@@ -59,14 +59,14 @@ final class DeactivationWarning {
 	 * The warning, shown in the confirmation and on the settings page.
 	 */
 	public static function message(): string {
-		return __( 'Deactivating WooNyx stops your shop’s bots. To connect again you will need your license key.', 'woonyx' );
+		return __( 'Deactivating Nyxify stops your shop’s bots. To connect again you will need your license key.', 'nyxify' );
 	}
 
 	/**
 	 * What deactivating does with the connection, for the settings page.
 	 */
 	public static function details(): string {
-		return __( 'When the plugin is deactivated, WooNyx is told and this site’s connection and WooCommerce REST API key are removed. If the WooNyx server can’t be reached, or your subscription has expired, WooNyx keeps the store connected and both stay on this site until you delete the plugin.', 'woonyx' );
+		return __( 'When the plugin is deactivated, Nyxify is told and this site’s connection and WooCommerce REST API key are removed. If the Nyxify server can’t be reached, or your subscription has expired, Nyxify keeps the store connected and both stay on this site until you delete the plugin.', 'nyxify' );
 	}
 
 	/**
@@ -87,7 +87,7 @@ final class DeactivationWarning {
 			self::SCRIPT_HANDLE,
 			plugins_url( 'assets/js/plugins.js', $this->plugin_file ),
 			array(),
-			WOONYX_VERSION,
+			NYXIFY_VERSION,
 			array(
 				'in_footer' => true,
 				'strategy'  => 'defer',
@@ -102,6 +102,6 @@ final class DeactivationWarning {
 			JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE
 		);
 
-		wp_add_inline_script( self::SCRIPT_HANDLE, 'window.woonyxPlugins = ' . (string) $settings . ';', 'before' );
+		wp_add_inline_script( self::SCRIPT_HANDLE, 'window.nyxifyPlugins = ' . (string) $settings . ';', 'before' );
 	}
 }

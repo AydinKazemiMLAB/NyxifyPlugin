@@ -2,17 +2,17 @@
 /**
  * Tests for the messenger platforms.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\BotPlatform;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\BotPlatform;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Known values, form input, labels and bot links.
@@ -86,9 +86,9 @@ final class BotPlatformTest extends TestCase {
 	}
 
 	public function test_bot_links(): void {
-		self::assertSame( 'https://t.me/woonyx_bot', BotPlatform::bot_url( 'telegram', 'woonyx_bot' ) );
-		self::assertSame( 'https://t.me/woonyx_bot', BotPlatform::bot_url( 'telegram', '@woonyx_bot' ) );
-		self::assertSame( 'https://ble.ir/WooNyxBot', BotPlatform::bot_url( 'bale', 'WooNyxBot' ) );
+		self::assertSame( 'https://t.me/nyxify_bot', BotPlatform::bot_url( 'telegram', 'nyxify_bot' ) );
+		self::assertSame( 'https://t.me/nyxify_bot', BotPlatform::bot_url( 'telegram', '@nyxify_bot' ) );
+		self::assertSame( 'https://ble.ir/NyxifyBot', BotPlatform::bot_url( 'bale', 'NyxifyBot' ) );
 	}
 
 	/**
@@ -96,8 +96,8 @@ final class BotPlatformTest extends TestCase {
 	 */
 	public static function no_link(): array {
 		return array(
-			'rubika'         => array( 'rubika', 'woonyx_bot' ),
-			'unknown'        => array( 'eitaa', 'woonyx_bot' ),
+			'rubika'         => array( 'rubika', 'nyxify_bot' ),
+			'unknown'        => array( 'eitaa', 'nyxify_bot' ),
 			'empty username' => array( 'telegram', '' ),
 			'only @'         => array( 'telegram', '@' ),
 			'path'           => array( 'telegram', 'bot/../x' ),

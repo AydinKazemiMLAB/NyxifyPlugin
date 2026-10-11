@@ -2,17 +2,17 @@
 /**
  * Tests for PullLock.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use Mockery;
-use WooNyx\Features\Sync\PullLock;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Sync\PullLock;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The lock over a mocked $wpdb that keeps the one option row in memory and runs the lock's three statements as MySQL
@@ -62,7 +62,7 @@ final class PullLockTest extends TestCase {
 		$wpdb->shouldReceive( 'get_var' )->andReturnUsing(
 			function ( string $query ): ?string {
 				$this->queries[] = $query;
-				self::assertSame( "SELECT option_value FROM wp_2_options WHERE option_name = 'woonyx_sync_lock'", $query );
+				self::assertSame( "SELECT option_value FROM wp_2_options WHERE option_name = 'nyxify_sync_lock'", $query );
 				return null !== $this->read ? ( $this->read )() : $this->row;
 			}
 		);
@@ -83,7 +83,7 @@ final class PullLockTest extends TestCase {
 	private function execute( string $query ): int {
 		$this->queries[] = $query;
 
-		if ( 1 === preg_match( "/^INSERT IGNORE INTO wp_2_options \\(option_name, option_value, autoload\\) VALUES \\('woonyx_sync_lock', '([^']+)', 'no'\\)$/", $query, $m ) ) {
+		if ( 1 === preg_match( "/^INSERT IGNORE INTO wp_2_options \\(option_name, option_value, autoload\\) VALUES \\('nyxify_sync_lock', '([^']+)', 'no'\\)$/", $query, $m ) ) {
 			if ( null !== $this->row ) {
 				return 0;
 			}
@@ -91,7 +91,7 @@ final class PullLockTest extends TestCase {
 			return 1;
 		}
 
-		if ( 1 === preg_match( "/^UPDATE wp_2_options SET option_value = '([^']+)' WHERE option_name = 'woonyx_sync_lock' AND option_value = '([^']+)'$/", $query, $m ) ) {
+		if ( 1 === preg_match( "/^UPDATE wp_2_options SET option_value = '([^']+)' WHERE option_name = 'nyxify_sync_lock' AND option_value = '([^']+)'$/", $query, $m ) ) {
 			if ( $this->row !== $m[2] ) {
 				return 0;
 			}
@@ -99,7 +99,7 @@ final class PullLockTest extends TestCase {
 			return 1;
 		}
 
-		if ( 1 === preg_match( "/^DELETE FROM wp_2_options WHERE option_name = 'woonyx_sync_lock' AND option_value = '([^']+)'$/", $query, $m ) ) {
+		if ( 1 === preg_match( "/^DELETE FROM wp_2_options WHERE option_name = 'nyxify_sync_lock' AND option_value = '([^']+)'$/", $query, $m ) ) {
 			if ( $this->row !== $m[1] ) {
 				return 0;
 			}

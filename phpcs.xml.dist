@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="WooNyx">
-	<description>WordPress Coding Standards for the WooNyx plugin.</description>
+<ruleset name="Nyxify">
+	<description>WordPress Coding Standards for the Nyxify plugin.</description>
 
-	<file>woonyx.php</file>
+	<file>nyxify.php</file>
 	<file>uninstall.php</file>
 	<file>src</file>
 	<file>tests</file>
@@ -23,8 +23,8 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="woonyx"/>
-				<element value="WooNyx"/>
+				<element value="nyxify"/>
+				<element value="Nyxify"/>
 			</property>
 		</properties>
 	</rule>
@@ -33,7 +33,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="woonyx"/>
+				<element value="nyxify"/>
 			</property>
 		</properties>
 	</rule>

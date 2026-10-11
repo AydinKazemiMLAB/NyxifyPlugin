@@ -2,15 +2,15 @@
 /**
  * One batch of objects to send.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
 
 /**
  * What a builder (PayloadBuilder, Orders\OrderPayloadBuilder) made of a list of claimed ids: the objects to send, the

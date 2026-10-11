@@ -2,47 +2,47 @@
 /**
  * Plugin bootstrap.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx;
+namespace Nyxify;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
-use WooNyx\Features\Bots\AdminPinHandler;
-use WooNyx\Features\Bots\AdminPinIssuer;
-use WooNyx\Features\Bots\AdminRemovalHandler;
-use WooNyx\Features\Bots\AdminService;
-use WooNyx\Features\Bots\BotRegistrationHandler;
-use WooNyx\Features\Bots\BotRemovalHandler;
-use WooNyx\Features\Bots\BotService;
-use WooNyx\Features\Bots\BotToken;
-use WooNyx\Features\Catalog\CatalogFlush;
-use WooNyx\Features\Catalog\CatalogSender;
-use WooNyx\Features\Catalog\CatalogSyncHandler;
-use WooNyx\Features\Catalog\ChangeCollector;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PendingChanges;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Catalog\Schema;
-use WooNyx\Features\Orders\OrderCollector;
-use WooNyx\Features\Settings\DeactivationWarning;
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Features\Store\ActivationHandler;
-use WooNyx\Features\Store\Activator;
-use WooNyx\Features\Store\Deactivator;
-use WooNyx\Features\Store\LicenseKey;
-use WooNyx\Features\Store\SecretRotationHandler;
-use WooNyx\Features\Store\SecretRotator;
-use WooNyx\Features\Store\StatusRefreshHandler;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Features\Sync\SyncPull;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Features\Bots\AdminPinHandler;
+use Nyxify\Features\Bots\AdminPinIssuer;
+use Nyxify\Features\Bots\AdminRemovalHandler;
+use Nyxify\Features\Bots\AdminService;
+use Nyxify\Features\Bots\BotRegistrationHandler;
+use Nyxify\Features\Bots\BotRemovalHandler;
+use Nyxify\Features\Bots\BotService;
+use Nyxify\Features\Bots\BotToken;
+use Nyxify\Features\Catalog\CatalogFlush;
+use Nyxify\Features\Catalog\CatalogSender;
+use Nyxify\Features\Catalog\CatalogSyncHandler;
+use Nyxify\Features\Catalog\ChangeCollector;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PendingChanges;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Catalog\Schema;
+use Nyxify\Features\Orders\OrderCollector;
+use Nyxify\Features\Settings\DeactivationWarning;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Features\Store\ActivationHandler;
+use Nyxify\Features\Store\Activator;
+use Nyxify\Features\Store\Deactivator;
+use Nyxify\Features\Store\LicenseKey;
+use Nyxify\Features\Store\SecretRotationHandler;
+use Nyxify\Features\Store\SecretRotator;
+use Nyxify\Features\Store\StatusRefreshHandler;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Features\Sync\SyncPull;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * Wires the plugin into WordPress and WooCommerce.
@@ -104,7 +104,7 @@ final class Plugin {
 	 * `wp-content/languages/plugins/`) take precedence; WordPress loads them on its own.
 	 */
 	public function load_textdomain(): void {
-		load_plugin_textdomain( 'woonyx', false, dirname( plugin_basename( $this->plugin_file ) ) . '/languages' );
+		load_plugin_textdomain( 'nyxify', false, dirname( plugin_basename( $this->plugin_file ) ) . '/languages' );
 	}
 
 	/**
@@ -181,7 +181,7 @@ final class Plugin {
 
 		$message = sprintf(
 			/* translators: %s: the oldest supported WooCommerce version, e.g. 9.0 */
-			__( 'WooNyx needs WooCommerce %s or later. Install, activate or update WooCommerce to use it.', 'woonyx' ),
+			__( 'Nyxify needs WooCommerce %s or later. Install, activate or update WooCommerce to use it.', 'nyxify' ),
 			self::MIN_WOOCOMMERCE_VERSION
 		);
 

@@ -2,16 +2,16 @@
 /**
  * The changes collected during one request.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * The ids the collectors (ChangeCollector for the catalog, Orders\OrderCollector for orders) gather during a request,

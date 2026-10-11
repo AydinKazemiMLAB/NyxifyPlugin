@@ -2,25 +2,25 @@
 /**
  * Tests for the uninstall cleanup.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit;
+namespace Nyxify\Tests\Unit;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Catalog\Schema;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\PullLock;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Uninstaller;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Catalog\Schema;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PullLock;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Uninstaller;
 
 /**
  * The plugin's REST key, options and transients are deleted, on one site or on each site of a network, and nothing is
@@ -131,7 +131,7 @@ final class UninstallerTest extends TestCase {
 		Functions\expect( 'wp_remote_request' )->never();
 		Functions\when( 'as_unschedule_all_actions' )->alias(
 			function ( string $hook, array $args, string $group ): void {
-				self::assertSame( array( array(), 'woonyx' ), array( $args, $group ) );
+				self::assertSame( array( array(), 'nyxify' ), array( $args, $group ) );
 				if ( FlushScheduler::HOOK === $hook ) {
 					$this->unscheduled[] = $this->site();
 					return;
@@ -206,7 +206,7 @@ final class UninstallerTest extends TestCase {
 	 * @param string $prefix Table prefix.
 	 */
 	private static function notices_query( string $prefix ): string {
-		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\\\_transient\\\\_woonyx\\\\_notice\\\\_%' OR option_name LIKE '\\\\_transient\\\\_timeout\\\\_woonyx\\\\_notice\\\\_%'";
+		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\\\_transient\\\\_nyxify\\\\_notice\\\\_%' OR option_name LIKE '\\\\_transient\\\\_timeout\\\\_nyxify\\\\_notice\\\\_%'";
 	}
 
 	/**
@@ -216,7 +216,7 @@ final class UninstallerTest extends TestCase {
 	 * @return list<string>
 	 */
 	private static function site_queries( string $prefix ): array {
-		return array( "DROP TABLE IF EXISTS `{$prefix}woonyx_catalog_queue`", self::notices_query( $prefix ) );
+		return array( "DROP TABLE IF EXISTS `{$prefix}nyxify_catalog_queue`", self::notices_query( $prefix ) );
 	}
 
 	public function test_single_site_deletes_the_rest_key_options_and_transients(): void {
@@ -229,7 +229,7 @@ final class UninstallerTest extends TestCase {
 		self::assertSame( array( '1:' . StatusService::TRANSIENT ), $this->deleted_transients );
 		self::assertSame( self::site_queries( 'wp_' ), $this->queries );
 		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
-		self::assertSame( array( self::MAIN_SITE . ':woonyx_sync_pull', self::MAIN_SITE . ':woonyx_sync_pull_now' ), $this->pulls_unscheduled );
+		self::assertSame( array( self::MAIN_SITE . ':nyxify_sync_pull', self::MAIN_SITE . ':nyxify_sync_pull_now' ), $this->pulls_unscheduled );
 	}
 
 	public function test_database_errors_are_hidden_while_deleting_the_key_and_restored(): void {
@@ -293,7 +293,7 @@ final class UninstallerTest extends TestCase {
 			$this->queries
 		);
 		self::assertSame( array( 1, 2, 3 ), $this->unscheduled );
-		self::assertSame( array( '1:woonyx_sync_pull', '1:woonyx_sync_pull_now', '2:woonyx_sync_pull', '2:woonyx_sync_pull_now', '3:woonyx_sync_pull', '3:woonyx_sync_pull_now' ), $this->pulls_unscheduled );
+		self::assertSame( array( '1:nyxify_sync_pull', '1:nyxify_sync_pull_now', '2:nyxify_sync_pull', '2:nyxify_sync_pull_now', '3:nyxify_sync_pull', '3:nyxify_sync_pull_now' ), $this->pulls_unscheduled );
 		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
 		self::assertSame( 'wp_', $this->wpdb->prefix );
 	}

@@ -2,30 +2,30 @@
 /**
  * Tests for CatalogFlush.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\CatalogFlush;
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Features\Catalog\CatalogSender;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PayloadBuilder;
-use WooNyx\Features\Orders\OrderPayloadBuilder;
-use WooNyx\Features\Orders\OrderSender;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\CatalogFlush;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Features\Catalog\CatalogSender;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PayloadBuilder;
+use Nyxify\Features\Orders\OrderPayloadBuilder;
+use Nyxify\Features\Orders\OrderSender;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The flush over an in-memory queue, the real builders (fake WooCommerce controllers and orders), senders and client (a
@@ -95,7 +95,7 @@ final class CatalogFlushTest extends TestCase {
 	private array $missing = array();
 
 	/**
-	 * Orders that exist but weren't created by WooNyx (no marker).
+	 * Orders that exist but weren't created by Nyxify (no marker).
 	 *
 	 * @var list<int>
 	 */
@@ -319,7 +319,7 @@ final class CatalogFlushTest extends TestCase {
 		$order = Mockery::mock( 'WC_Order' );
 		$order->allows( 'get_id' )->andReturn( $id );
 		$order->allows( 'get_type' )->andReturn( 'shop_order' );
-		$order->allows( 'get_meta' )->with( '_woonyx_order' )->andReturn( in_array( $id, $this->foreign, true ) ? '' : '1' );
+		$order->allows( 'get_meta' )->with( '_nyxify_order' )->andReturn( in_array( $id, $this->foreign, true ) ? '' : '1' );
 		$order->allows( 'get_status' )->andReturn( 'processing' );
 		$order->allows( 'get_order_number' )->andReturn( $id );
 		$order->allows( 'get_currency' )->andReturn( 'IRT' );
@@ -492,7 +492,7 @@ final class CatalogFlushTest extends TestCase {
 				'applied'            => 1,
 				'skipped_stale'      => 0,
 				'skipped_plan_limit' => 0,
-				'source'             => 'woonyx',
+				'source'             => 'nyxify',
 			),
 			$this->entries[1]['context']
 		);
@@ -649,7 +649,7 @@ final class CatalogFlushTest extends TestCase {
 			array(
 				'kind'   => 'product',
 				'count'  => 1,
-				'source' => 'woonyx',
+				'source' => 'nyxify',
 			),
 			$this->entries[ count( $this->entries ) - 1 ]['context']
 		);
@@ -710,7 +710,7 @@ final class CatalogFlushTest extends TestCase {
 				'kind'   => 'product',
 				'count'  => 1,
 				'fields' => 'body.items.0.product.name',
-				'source' => 'woonyx',
+				'source' => 'nyxify',
 			),
 			$this->entries[1]['context']
 		);
@@ -896,7 +896,7 @@ final class CatalogFlushTest extends TestCase {
 				'ids'        => '61,59',
 				'request_id' => 'req-core-0001',
 				'affected'   => 1,
-				'source'     => 'woonyx',
+				'source'     => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);
@@ -907,7 +907,7 @@ final class CatalogFlushTest extends TestCase {
 				'ids'        => '70',
 				'request_id' => 'req-core-0001',
 				'affected'   => 1,
-				'source'     => 'woonyx',
+				'source'     => 'nyxify',
 			),
 			$this->entries[1]['context']
 		);
@@ -1016,7 +1016,7 @@ final class CatalogFlushTest extends TestCase {
 			array(
 				'kind'   => 'order',
 				'count'  => 1,
-				'source' => 'woonyx',
+				'source' => 'nyxify',
 			),
 			$this->entries[ count( $this->entries ) - 1 ]['context']
 		);
@@ -1072,7 +1072,7 @@ final class CatalogFlushTest extends TestCase {
 		self::assertSame( array(), $this->queue->rows );
 		self::assertSame(
 			array(
-				'warning:WooNyx core call failed.',
+				'warning:Nyxify core call failed.',
 				'warning:The core refused a batch of changes; it was dropped.',
 				'info:Changes sent.',
 				'info:Changes sent.',
@@ -1085,7 +1085,7 @@ final class CatalogFlushTest extends TestCase {
 				'count'  => 1,
 				'ids'    => '59',
 				'fields' => 'body.orders.0.line_items.0.name',
-				'source' => 'woonyx',
+				'source' => 'nyxify',
 			),
 			$this->entries[1]['context']
 		);
@@ -1106,7 +1106,7 @@ final class CatalogFlushTest extends TestCase {
 				'count'      => 1,
 				'ids'        => '59',
 				'request_id' => 'req-core-0001',
-				'source'     => 'woonyx',
+				'source'     => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);

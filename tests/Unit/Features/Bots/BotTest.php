@@ -2,16 +2,16 @@
 /**
  * Tests for a bot of the core's answer.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\Bot;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\Bot;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Every `BotView` field is checked.
@@ -26,8 +26,8 @@ final class BotTest extends TestCase {
 	private static function view(): array {
 		return array(
 			'platform'       => 'telegram',
-			'username'       => 'woonyx_shop_bot',
-			'name'           => 'WooNyx Shop',
+			'username'       => 'nyxify_shop_bot',
+			'name'           => 'Nyxify Shop',
 			'status'         => 'active',
 			'webhook_active' => true,
 			'last_error'     => null,
@@ -40,8 +40,8 @@ final class BotTest extends TestCase {
 
 		self::assertNotNull( $bot );
 		self::assertSame( 'telegram', $bot->platform );
-		self::assertSame( 'woonyx_shop_bot', $bot->username );
-		self::assertSame( 'WooNyx Shop', $bot->name );
+		self::assertSame( 'nyxify_shop_bot', $bot->username );
+		self::assertSame( 'Nyxify Shop', $bot->name );
 		self::assertSame( Bot::ACTIVE, $bot->status );
 		self::assertTrue( $bot->webhook_active );
 		self::assertNull( $bot->last_error );

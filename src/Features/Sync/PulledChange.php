@@ -2,12 +2,12 @@
 /**
  * A change pulled from the core's outbox.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
 /**
  * One item of `GET /sync/outbox` (`PulledChange`, contract §5.2), read defensively: an admin's product edit made in a

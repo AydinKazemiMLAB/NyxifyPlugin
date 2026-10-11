@@ -2,12 +2,12 @@
 /**
  * The store's status on the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
 /**
  * The fields of `GET /store/status` (contract §1.3) the settings page shows, read defensively; nothing in it is
@@ -37,7 +37,7 @@ final class StoreStatus {
 	public readonly string $status;
 
 	/**
-	 * License display prefix (`WN-ABCDEF`), or null without a license.
+	 * License display prefix (`NX-ABCDEF`), or null without a license.
 	 *
 	 * @var string|null
 	 */

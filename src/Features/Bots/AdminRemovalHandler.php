@@ -2,21 +2,21 @@
 /**
  * The bot admins' "Remove" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Handles `admin-post.php?action=woonyx_revoke_admin`: checks the capability and nonce, reads the admin's id, removes
+ * Handles `admin-post.php?action=nyxify_revoke_admin`: checks the capability and nonce, reads the admin's id, removes
  * their admin access and redirects back to the settings page with a one-time notice (which never names the admin).
  */
 final class AdminRemovalHandler {
@@ -29,7 +29,7 @@ final class AdminRemovalHandler {
 	/**
 	 * Name of the hidden admin id field.
 	 */
-	public const FIELD_ADMIN_ID = 'woonyx_admin_id';
+	public const FIELD_ADMIN_ID = 'nyxify_admin_id';
 
 	/**
 	 * Success code of the notice.

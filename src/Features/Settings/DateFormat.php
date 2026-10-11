@@ -2,12 +2,12 @@
 /**
  * Dates on the settings page.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
 /**
  * Formats the core's dates (naive UTC ISO strings) and Unix times in the site's date and time format and time zone.

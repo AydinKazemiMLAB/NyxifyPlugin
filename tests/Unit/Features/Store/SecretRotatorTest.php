@@ -2,26 +2,26 @@
 /**
  * Tests for the shared secret rotation.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\SecretRotator;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\SecretRotator;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The whole rotation over a mocked wp_remote_request() and WooCommerce logger, with the real client and secret store.

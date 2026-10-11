@@ -2,27 +2,27 @@
 /**
  * A license key entered by the owner.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
 /**
- * A well-formed license key, `WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX` (contract §1.1), normalized the way the core's
+ * A well-formed license key, `NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX` (contract §1.1), normalized the way the core's
  * `LicenseKeyCodec` does: whitespace removed, upper case. It is sent once in the activation request and never
  * stored, logged or printed; only `prefix()` may be shown.
  */
 final class LicenseKey {
 
 	/**
-	 * `WN` + four groups of six base32 characters.
+	 * `NX` + four groups of six base32 characters.
 	 */
-	private const PATTERN = '/^WN(-[A-Z2-7]{6}){4}$/D';
+	private const PATTERN = '/^NX(-[A-Z2-7]{6}){4}$/D';
 
 	/**
-	 * Length of the non-secret display prefix (`WN-ABCDEF`), as in the core.
+	 * Length of the non-secret display prefix (`NX-ABCDEF`), as in the core.
 	 */
 	private const PREFIX_LENGTH = 9;
 
@@ -45,7 +45,7 @@ final class LicenseKey {
 	/**
 	 * Reads a key from form input (unslashed and sanitized here).
 	 *
-	 * @param mixed $raw Raw request value, e.g. `$_POST['woonyx_license_key'] ?? null`.
+	 * @param mixed $raw Raw request value, e.g. `$_POST['nyxify_license_key'] ?? null`.
 	 * @return self|null Null when the value is missing or not a well-formed key.
 	 */
 	public static function from_input( $raw ): ?self {
@@ -88,7 +88,7 @@ final class LicenseKey {
 	}
 
 	/**
-	 * The non-secret part that may be shown to the owner (`WN-ABCDEF`).
+	 * The non-secret part that may be shown to the owner (`NX-ABCDEF`).
 	 *
 	 * @return string
 	 */

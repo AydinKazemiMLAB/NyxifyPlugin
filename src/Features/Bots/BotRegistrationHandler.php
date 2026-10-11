@@ -2,21 +2,21 @@
 /**
  * The bot token forms' handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Handles `admin-post.php?action=woonyx_register_bot` (adding a bot, or replacing the platform's bot): checks the
+ * Handles `admin-post.php?action=nyxify_register_bot` (adding a bot, or replacing the platform's bot): checks the
  * capability and nonce, reads the platform and the token, sends the token once and redirects back to the settings
  * page with a one-time notice. The token is never stored, logged or put in the redirect.
  */
@@ -30,12 +30,12 @@ final class BotRegistrationHandler {
 	/**
 	 * Name of the hidden platform field.
 	 */
-	public const FIELD_PLATFORM = 'woonyx_platform';
+	public const FIELD_PLATFORM = 'nyxify_platform';
 
 	/**
 	 * Name of the token field.
 	 */
-	public const FIELD_TOKEN = 'woonyx_bot_token';
+	public const FIELD_TOKEN = 'nyxify_bot_token';
 
 	/**
 	 * Success code of the notice.

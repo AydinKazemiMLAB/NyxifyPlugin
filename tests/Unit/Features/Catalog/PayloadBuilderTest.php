@@ -2,22 +2,22 @@
 /**
  * Tests for PayloadBuilder.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\Batch;
-use WooNyx\Features\Catalog\PayloadBuilder;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\Batch;
+use Nyxify\Features\Catalog\PayloadBuilder;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The builder over fake WooCommerce controllers (they answer with the REST data kept per id), products, variations
@@ -578,7 +578,7 @@ final class PayloadBuilderTest extends TestCase {
 					'context' => array(
 						'product_id' => 13,
 						'count'      => 1001,
-						'source'     => 'woonyx',
+						'source'     => 'nyxify',
 					),
 				),
 			),
@@ -651,7 +651,7 @@ final class PayloadBuilderTest extends TestCase {
 						'kind'      => 'product',
 						'id'        => 5,
 						'exception' => 'RuntimeException',
-						'source'    => 'woonyx',
+						'source'    => 'nyxify',
 					),
 				),
 			),

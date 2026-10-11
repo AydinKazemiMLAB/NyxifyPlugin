@@ -2,19 +2,19 @@
 /**
  * Tests for PayloadFilter.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Sync\ChangeResult;
-use WooNyx\Features\Sync\PayloadFilter;
-use WooNyx\Features\Sync\PulledChange;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Sync\ChangeResult;
+use Nyxify\Features\Sync\PayloadFilter;
+use Nyxify\Features\Sync\PulledChange;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The whitelist per action (contract §5.1), nested fields included; the request body or `invalid_change`.
@@ -146,7 +146,7 @@ final class PayloadFilterTest extends TestCase {
 		self::assertSame(
 			array(
 				array(
-					'key'   => '_woonyx_outbox_id',
+					'key'   => '_nyxify_outbox_id',
 					'value' => '41',
 				),
 			),
@@ -417,7 +417,7 @@ final class PayloadFilterTest extends TestCase {
 				'meta_data',
 				array(
 					array(
-						'key'   => '_woonyx_outbox_id',
+						'key'   => '_nyxify_outbox_id',
 						'value' => '41',
 					),
 					array(
@@ -429,11 +429,11 @@ final class PayloadFilterTest extends TestCase {
 			'meta an object'     => array(
 				'meta_data',
 				array(
-					'key'   => '_woonyx_outbox_id',
+					'key'   => '_nyxify_outbox_id',
 					'value' => '41',
 				),
 			),
-			'meta item a string' => array( 'meta_data', array( '_woonyx_outbox_id' ) ),
+			'meta item a string' => array( 'meta_data', array( '_nyxify_outbox_id' ) ),
 		);
 	}
 

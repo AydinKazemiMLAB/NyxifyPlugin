@@ -2,16 +2,16 @@
 /**
  * Scheduling the catalog flush.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
 /**
- * Schedules the Action Scheduler action that sends the queued catalog changes (`woonyx_catalog_flush`, group
- * `woonyx`) and keeps the backoff's not-before time.
+ * Schedules the Action Scheduler action that sends the queued catalog changes (`nyxify_catalog_flush`, group
+ * `nyxify`) and keeps the backoff's not-before time.
  *
  * - A flush is scheduled only when no **pending** one exists. Action Scheduler's `unique` option and
  *   as_has_scheduled_action() also count the running action, so ids queued while a flush is sending could be left
@@ -26,17 +26,17 @@ final class FlushScheduler {
 	/**
 	 * The action's hook.
 	 */
-	public const HOOK = 'woonyx_catalog_flush';
+	public const HOOK = 'nyxify_catalog_flush';
 
 	/**
 	 * The action's group.
 	 */
-	public const GROUP = 'woonyx';
+	public const GROUP = 'nyxify';
 
 	/**
 	 * Option holding the Unix time before which no flush sends (backoff after a retryable failure); not autoloaded.
 	 */
-	public const OPTION_RETRY_AT = 'woonyx_catalog_retry_at';
+	public const OPTION_RETRY_AT = 'nyxify_catalog_retry_at';
 
 	/**
 	 * Current Unix time.

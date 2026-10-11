@@ -2,21 +2,21 @@
 /**
  * Tests for the plugin's WooCommerce REST key.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\RestKey;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\RestKey;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Key rows like WC_Auth::create_keys(), over a mocked $wpdb and an in-memory wp_options.
@@ -128,7 +128,7 @@ final class RestKeysTest extends TestCase {
 		self::assertSame( array( '%d', '%s', '%s', '%s', '%s', '%s' ), $formats );
 		self::assertSame( 5, $row['user_id'] );
 		self::assertSame( 'read_write', $row['permissions'] );
-		self::assertMatchesRegularExpression( '/^WooNyx - API \(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\)$/D', $row['description'] );
+		self::assertMatchesRegularExpression( '/^Nyxify - API \(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\)$/D', $row['description'] );
 		// WooCommerce looks keys up by their hash; only the secret is stored as is.
 		self::assertSame( hash_hmac( 'sha256', $key->consumer_key, 'wc-api' ), $row['consumer_key'] );
 		self::assertSame( $key->consumer_secret, $row['consumer_secret'] );

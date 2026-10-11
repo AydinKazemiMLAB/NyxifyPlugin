@@ -2,25 +2,25 @@
 /**
  * HMAC signatures of the requests between the plugin and the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Security;
+namespace Nyxify\Shared\Security;
 
 /**
- * The WooNyx signing protocol (woonyx-security §1), a port of the core's `HMACSigner`.
+ * The Nyxify signing protocol (nyxify-security §1), a port of the core's `HMACSigner`.
  *
  * `signature = "sha256=" + hex(HMAC-SHA256(shared_secret, timestamp + "." + nonce + "." + raw_body))`. The body is
  * the exact string sent on the wire: encode JSON once, sign that string, send that string.
  */
 final class HmacSigner {
 
-	public const HEADER_SHOP_ID   = 'X-WooNyx-Shop-Id';
-	public const HEADER_TIMESTAMP = 'X-WooNyx-Timestamp';
-	public const HEADER_NONCE     = 'X-WooNyx-Nonce';
-	public const HEADER_SIGNATURE = 'X-WooNyx-Signature';
+	public const HEADER_SHOP_ID   = 'X-Nyxify-Shop-Id';
+	public const HEADER_TIMESTAMP = 'X-Nyxify-Timestamp';
+	public const HEADER_NONCE     = 'X-Nyxify-Nonce';
+	public const HEADER_SIGNATURE = 'X-Nyxify-Signature';
 
 	/**
 	 * Accepted clock difference, in seconds, in both directions (the core's HMAC_TIMESTAMP_TOLERANCE_SECONDS).

@@ -2,8 +2,8 @@
 /**
  * Constants PHPStan needs to know about; WordPress defines them at runtime.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
-define( 'WOONYX_VERSION', '0.0.0' );
-define( 'WOONYX_PLUGIN_FILE', dirname( __DIR__ ) . '/woonyx.php' );
+define( 'NYXIFY_VERSION', '0.0.0' );
+define( 'NYXIFY_PLUGIN_FILE', dirname( __DIR__ ) . '/nyxify.php' );

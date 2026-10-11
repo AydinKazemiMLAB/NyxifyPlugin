@@ -2,19 +2,19 @@
 /**
  * Tests for the HMAC signer.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Security;
+namespace Nyxify\Tests\Unit\Shared\Security;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
- * The reference vectors of woonyx-security §1 and the checks of an incoming request.
+ * The reference vectors of nyxify-security §1 and the checks of an incoming request.
  */
 final class HmacSignerTest extends TestCase {
 
@@ -58,10 +58,10 @@ final class HmacSignerTest extends TestCase {
 
 		self::assertSame(
 			array(
-				'X-WooNyx-Shop-Id'   => self::SHOP_ID,
-				'X-WooNyx-Timestamp' => self::TIMESTAMP,
-				'X-WooNyx-Nonce'     => self::NONCE,
-				'X-WooNyx-Signature' => $signature,
+				'X-Nyxify-Shop-Id'   => self::SHOP_ID,
+				'X-Nyxify-Timestamp' => self::TIMESTAMP,
+				'X-Nyxify-Nonce'     => self::NONCE,
+				'X-Nyxify-Signature' => $signature,
 			),
 			$headers
 		);
@@ -88,13 +88,13 @@ final class HmacSignerTest extends TestCase {
 		$first  = $signer->build_headers( self::SHOP_ID, '' );
 		$second = $signer->build_headers( self::SHOP_ID, '' );
 
-		self::assertGreaterThanOrEqual( $before, (int) $first['X-WooNyx-Timestamp'] );
-		self::assertLessThanOrEqual( time(), (int) $first['X-WooNyx-Timestamp'] );
-		self::assertMatchesRegularExpression( '/^[a-f0-9]{32}$/D', $first['X-WooNyx-Nonce'] );
-		self::assertNotSame( $first['X-WooNyx-Nonce'], $second['X-WooNyx-Nonce'] );
+		self::assertGreaterThanOrEqual( $before, (int) $first['X-Nyxify-Timestamp'] );
+		self::assertLessThanOrEqual( time(), (int) $first['X-Nyxify-Timestamp'] );
+		self::assertMatchesRegularExpression( '/^[a-f0-9]{32}$/D', $first['X-Nyxify-Nonce'] );
+		self::assertNotSame( $first['X-Nyxify-Nonce'], $second['X-Nyxify-Nonce'] );
 		self::assertSame(
-			$signer->sign( $first['X-WooNyx-Timestamp'], $first['X-WooNyx-Nonce'], '' ),
-			$first['X-WooNyx-Signature']
+			$signer->sign( $first['X-Nyxify-Timestamp'], $first['X-Nyxify-Nonce'], '' ),
+			$first['X-Nyxify-Signature']
 		);
 	}
 
@@ -160,13 +160,13 @@ final class HmacSignerTest extends TestCase {
 	 */
 	public static function malformed_headers(): array {
 		return array(
-			'missing signature'     => array( 'X-WooNyx-Signature', null ),
-			'uppercase signature'   => array( 'X-WooNyx-Signature', 'sha256=' . str_repeat( 'A', 64 ) ),
-			'signature without tag' => array( 'X-WooNyx-Signature', str_repeat( 'a', 64 ) ),
-			'short nonce'           => array( 'X-WooNyx-Nonce', 'abc' ),
-			'nonce with a dot'      => array( 'X-WooNyx-Nonce', str_repeat( 'a', 16 ) . '.' ),
-			'negative timestamp'    => array( 'X-WooNyx-Timestamp', '-1' ),
-			'integer shop id'       => array( 'X-WooNyx-Shop-Id', '1' ),
+			'missing signature'     => array( 'X-Nyxify-Signature', null ),
+			'uppercase signature'   => array( 'X-Nyxify-Signature', 'sha256=' . str_repeat( 'A', 64 ) ),
+			'signature without tag' => array( 'X-Nyxify-Signature', str_repeat( 'a', 64 ) ),
+			'short nonce'           => array( 'X-Nyxify-Nonce', 'abc' ),
+			'nonce with a dot'      => array( 'X-Nyxify-Nonce', str_repeat( 'a', 16 ) . '.' ),
+			'negative timestamp'    => array( 'X-Nyxify-Timestamp', '-1' ),
+			'integer shop id'       => array( 'X-Nyxify-Shop-Id', '1' ),
 		);
 	}
 

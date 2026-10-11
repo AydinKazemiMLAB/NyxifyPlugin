@@ -2,34 +2,34 @@
 /**
  * Tests for the deactivation of the store on the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Catalog\Schema;
-use WooNyx\Features\Store\Deactivator;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\PullLock;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Catalog\Schema;
+use Nyxify\Features\Store\Deactivator;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PullLock;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The deactivation over a mocked wp_remote_request(), $wpdb, WooCommerce logger and multisite functions, with the
@@ -44,7 +44,7 @@ final class DeactivatorTest extends TestCase {
 
 	private const BASE_URL  = 'https://core.example.com';
 	private const STORE_ID  = 'shop_8f2a0c1d3e4b5a69';
-	private const BASENAME  = 'woonyx/woonyx.php';
+	private const BASENAME  = 'nyxify/nyxify.php';
 	private const KEY_ID    = 9;
 	private const MAIN_SITE = 1;
 
@@ -199,7 +199,7 @@ final class DeactivatorTest extends TestCase {
 		Functions\when( 'is_multisite' )->alias( fn(): bool => $this->multisite );
 		Functions\when( 'as_unschedule_all_actions' )->alias(
 			function ( string $hook, array $args, string $group ): void {
-				self::assertSame( array( array(), 'woonyx' ), array( $args, $group ) );
+				self::assertSame( array( array(), 'nyxify' ), array( $args, $group ) );
 				if ( FlushScheduler::HOOK === $hook ) {
 					$this->unscheduled[] = $this->site();
 					return;
@@ -465,7 +465,7 @@ final class DeactivatorTest extends TestCase {
 
 		self::assertArrayNotHasKey( SecretStore::OPTION_CONNECTION, $this->options[ self::MAIN_SITE ] );
 		self::assertSame( self::KEY_ID, $this->options[ self::MAIN_SITE ][ RestKeys::OPTION_KEY_ID ] );
-		self::assertSame( array( 'warning:A WooNyx REST key could not be deleted.', 'info:Store deactivated.' ), $this->logged() );
+		self::assertSame( array( 'warning:A Nyxify REST key could not be deleted.', 'info:Store deactivated.' ), $this->logged() );
 	}
 
 	public function test_not_connected_sends_and_deletes_nothing(): void {
@@ -612,7 +612,7 @@ final class DeactivatorTest extends TestCase {
 
 		self::assertFalse( Schema::is_installed() );
 		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
-		self::assertSame( array( self::MAIN_SITE . ':woonyx_sync_pull', self::MAIN_SITE . ':woonyx_sync_pull_now' ), $this->pulls_unscheduled );
+		self::assertSame( array( self::MAIN_SITE . ':nyxify_sync_pull', self::MAIN_SITE . ':nyxify_sync_pull_now' ), $this->pulls_unscheduled );
 		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
 	}
 
@@ -638,9 +638,9 @@ final class DeactivatorTest extends TestCase {
 
 		Deactivator::stop_site_catalog();
 
-		self::assertSame( array( 'DELETE FROM `wp_2_woonyx_catalog_queue`' ), $queries );
+		self::assertSame( array( 'DELETE FROM `wp_2_nyxify_catalog_queue`' ), $queries );
 		self::assertSame( array( 2 ), $this->unscheduled );
-		self::assertSame( array( '2:woonyx_sync_pull', '2:woonyx_sync_pull_now' ), $this->pulls_unscheduled );
+		self::assertSame( array( '2:nyxify_sync_pull', '2:nyxify_sync_pull_now' ), $this->pulls_unscheduled );
 		self::assertSame( array( Schema::OPTION_VERSION => Schema::VERSION ), $this->options[2] );
 	}
 

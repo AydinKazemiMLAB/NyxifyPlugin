@@ -2,14 +2,14 @@
 /**
  * Building the catalog objects the core receives.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Shared\Logging\Logger;
 
 /**
  * Builds products (with their variations) and product categories as WooCommerce REST v3 objects, through

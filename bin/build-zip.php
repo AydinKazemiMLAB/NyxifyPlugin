@@ -1,26 +1,26 @@
 <?php
 /**
- * Builds the installable zip: dist/woonyx-<version>.zip.
+ * Builds the installable zip: dist/nyxify-<version>.zip.
  *
  * Usage: composer build
  *
  * The files are those `git archive` would ship (tracked and untracked files that aren't ignored, minus the
  * `export-ignore` paths of .gitattributes), taken from a temporary index so nothing has to be committed or staged.
- * Composer then installs the production autoloader (no dev packages) into the copy, which is zipped under `woonyx/`.
+ * Composer then installs the production autoloader (no dev packages) into the copy, which is zipped under `nyxify/`.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-const WOONYX_BUILD_SLUG = 'woonyx';
+const NYXIFY_BUILD_SLUG = 'nyxify';
 
 /**
  * Runs a command in the repository and returns its output; stops the build when it fails.
  *
  * @param string $command Shell command.
  */
-function woonyx_build_run( string $command ): string {
+function nyxify_build_run( string $command ): string {
 	exec( $command . ' 2>&1', $output, $status );
 
 	if ( 0 !== $status ) {
@@ -36,7 +36,7 @@ function woonyx_build_run( string $command ): string {
  *
  * @param string $dir Directory.
  */
-function woonyx_build_remove( string $dir ): void {
+function nyxify_build_remove( string $dir ): void {
 	if ( ! is_dir( $dir ) ) {
 		return;
 	}
@@ -54,18 +54,18 @@ function woonyx_build_remove( string $dir ): void {
 $root = dirname( __DIR__ );
 chdir( $root );
 
-if ( 1 !== preg_match( '/^\s*\*\s*Version:\s*(\S+)/m', (string) file_get_contents( 'woonyx.php' ), $match ) ) {
-	fwrite( STDERR, "No Version header in woonyx.php.\n" );
+if ( 1 !== preg_match( '/^\s*\*\s*Version:\s*(\S+)/m', (string) file_get_contents( 'nyxify.php' ), $match ) ) {
+	fwrite( STDERR, "No Version header in nyxify.php.\n" );
 	exit( 1 );
 }
 $version = $match[1];
 
 $build   = $root . '/build';
-$plugin  = $build . '/' . WOONYX_BUILD_SLUG;
+$plugin  = $build . '/' . NYXIFY_BUILD_SLUG;
 $archive = $build . '/source.zip';
-$zip     = $root . '/dist/' . WOONYX_BUILD_SLUG . '-' . $version . '.zip';
+$zip     = $root . '/dist/' . NYXIFY_BUILD_SLUG . '-' . $version . '.zip';
 
-woonyx_build_remove( $build );
+nyxify_build_remove( $build );
 mkdir( $build, 0777, true );
 if ( ! is_dir( dirname( $zip ) ) ) {
 	mkdir( dirname( $zip ), 0777, true );
@@ -73,11 +73,11 @@ if ( ! is_dir( dirname( $zip ) ) ) {
 
 // The working tree as a tree object, through an index of its own (the real index and HEAD stay untouched).
 putenv( 'GIT_INDEX_FILE=' . $build . '/index' );
-woonyx_build_run( 'git add --all' );
-$tree = trim( woonyx_build_run( 'git write-tree' ) );
+nyxify_build_run( 'git add --all' );
+$tree = trim( nyxify_build_run( 'git write-tree' ) );
 putenv( 'GIT_INDEX_FILE' );
 
-woonyx_build_run( 'git archive --format=zip -o ' . escapeshellarg( $archive ) . ' ' . escapeshellarg( $tree ) );
+nyxify_build_run( 'git archive --format=zip -o ' . escapeshellarg( $archive ) . ' ' . escapeshellarg( $tree ) );
 
 $source = new ZipArchive();
 if ( true !== $source->open( $archive ) || ! $source->extractTo( $plugin ) ) {
@@ -86,7 +86,7 @@ if ( true !== $source->open( $archive ) || ! $source->extractTo( $plugin ) ) {
 }
 $source->close();
 
-woonyx_build_run(
+nyxify_build_run(
 	'composer install --no-dev --classmap-authoritative --no-interaction --no-progress --working-dir=' . escapeshellarg( $plugin )
 );
 
@@ -107,11 +107,11 @@ if ( true !== $out->open( $zip, ZipArchive::CREATE ) ) {
 	exit( 1 );
 }
 foreach ( $paths as $path ) {
-	$out->addFile( $plugin . '/' . $path, WOONYX_BUILD_SLUG . '/' . $path );
+	$out->addFile( $plugin . '/' . $path, NYXIFY_BUILD_SLUG . '/' . $path );
 }
 $out->close();
 
-woonyx_build_remove( $build );
+nyxify_build_remove( $build );
 
 printf( "%s\n%d files, %s bytes, sha256 %s\n", $zip, count( $paths ), number_format( (int) filesize( $zip ) ), hash_file( 'sha256', $zip ) );
 echo implode( "\n", $paths ), "\n";

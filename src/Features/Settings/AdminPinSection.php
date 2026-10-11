@@ -2,18 +2,18 @@
 /**
  * The settings page's "Admin PIN" section.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
-use WooNyx\Features\Bots\AdminPinHandler;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Options\SecretStore;
+use Nyxify\Features\Bots\AdminPinHandler;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Options\SecretStore;
 
 /**
  * Shown while connected: the last PIN issued from this site, masked in a `<details>` (no script, no request), and the
@@ -47,20 +47,20 @@ final class AdminPinSection {
 		$pin = $this->store->get_admin_pin();
 
 		?>
-		<h2><?php esc_html_e( 'Admin PIN', 'woonyx' ); ?></h2>
-		<p class="description"><?php esc_html_e( 'Anyone who sends this PIN to one of your bots becomes a bot admin and can manage your shop from the bot. Share it only with people you trust.', 'woonyx' ); ?></p>
+		<h2><?php esc_html_e( 'Admin PIN', 'nyxify' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'Anyone who sends this PIN to one of your bots becomes a bot admin and can manage your shop from the bot. Share it only with people you trust.', 'nyxify' ); ?></p>
 		<?php if ( null === $pin ) : ?>
-			<p><?php esc_html_e( 'No PIN has been issued from this site yet.', 'woonyx' ); ?></p>
+			<p><?php esc_html_e( 'No PIN has been issued from this site yet.', 'nyxify' ); ?></p>
 		<?php else : ?>
-			<details class="woonyx-admin-pin">
-				<summary><?php esc_html_e( 'Show PIN', 'woonyx' ); ?></summary>
-				<p><code dir="ltr" class="woonyx-pin"><?php echo esc_html( $pin ); ?></code></p>
-				<p class="description"><?php esc_html_e( 'The last PIN issued from this site. Issuing a new one makes it stop working.', 'woonyx' ); ?></p>
+			<details class="nyxify-admin-pin">
+				<summary><?php esc_html_e( 'Show PIN', 'nyxify' ); ?></summary>
+				<p><code dir="ltr" class="nyxify-pin"><?php echo esc_html( $pin ); ?></code></p>
+				<p class="description"><?php esc_html_e( 'The last PIN issued from this site. Issuing a new one makes it stop working.', 'nyxify' ); ?></p>
 			</details>
 		<?php endif; ?>
 		<?php
 		if ( $status instanceof CoreError || 'active' !== $status->status ) {
-			printf( '<p class="description">%s</p>', esc_html__( 'A new PIN can be issued here once the store is active and its status above can be read.', 'woonyx' ) );
+			printf( '<p class="description">%s</p>', esc_html__( 'A new PIN can be issued here once the store is active and its status above can be read.', 'nyxify' ) );
 			return;
 		}
 
@@ -76,16 +76,16 @@ final class AdminPinSection {
 	 */
 	private static function render_form( bool $revoke, bool $primary ): void {
 		$confirm = $revoke
-			? __( 'Issue a new PIN and log out every bot admin? Everyone will need the new PIN to become an admin again.', 'woonyx' )
-			: __( 'Issue a new PIN? The current PIN stops working; current bot admins stay admins.', 'woonyx' );
+			? __( 'Issue a new PIN and log out every bot admin? Everyone will need the new PIN to become an admin again.', 'nyxify' )
+			: __( 'Issue a new PIN? The current PIN stops working; current bot admins stay admins.', 'nyxify' );
 
 		?>
-		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-admin-pin-form" data-woonyx-confirm="<?php echo esc_attr( $confirm ); ?>">
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-admin-pin-form" data-nyxify-confirm="<?php echo esc_attr( $confirm ); ?>">
 			<?php AdminAction::render_fields( AdminPinHandler::ACTION ); ?>
 			<?php if ( $revoke ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( AdminPinHandler::FIELD_REVOKE ); ?>" value="1" />
 			<?php endif; ?>
-			<button type="submit" class="button<?php echo $primary ? ' button-primary' : ''; ?>"><?php echo esc_html( $revoke ? __( 'New PIN and log out every admin', 'woonyx' ) : __( 'New PIN', 'woonyx' ) ); ?></button>
+			<button type="submit" class="button<?php echo $primary ? ' button-primary' : ''; ?>"><?php echo esc_html( $revoke ? __( 'New PIN and log out every admin', 'nyxify' ) : __( 'New PIN', 'nyxify' ) ); ?></button>
 		</form>
 		<?php
 	}

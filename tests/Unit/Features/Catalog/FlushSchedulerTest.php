@@ -2,19 +2,19 @@
 /**
  * Tests for FlushScheduler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The scheduler over Action Scheduler functions that keep pending actions in memory, and in-memory options.
@@ -110,13 +110,13 @@ final class FlushSchedulerTest extends TestCase {
 
 		self::assertTrue( $this->scheduler()->schedule() );
 
-		self::assertSame( array( array( self::NOW, 'woonyx_catalog_flush', array(), 'woonyx', false ) ), $this->pending );
+		self::assertSame( array( array( self::NOW, 'nyxify_catalog_flush', array(), 'nyxify', false ) ), $this->pending );
 		self::assertSame(
 			array(
 				array(
 					array(
-						'hook'     => 'woonyx_catalog_flush',
-						'group'    => 'woonyx',
+						'hook'     => 'nyxify_catalog_flush',
+						'group'    => 'nyxify',
 						'status'   => 'pending',
 						'per_page' => 1,
 						'orderby'  => 'none',
@@ -212,7 +212,7 @@ final class FlushSchedulerTest extends TestCase {
 
 		FlushScheduler::unschedule_all();
 
-		self::assertSame( array( array( 'woonyx_catalog_flush', array(), 'woonyx' ) ), $this->unscheduled );
+		self::assertSame( array( array( 'nyxify_catalog_flush', array(), 'nyxify' ) ), $this->unscheduled );
 	}
 
 	public function test_has_pending(): void {

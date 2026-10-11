@@ -2,24 +2,24 @@
 /**
  * Tests for ChangeCollector.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Features\Catalog\ChangeCollector;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PendingChanges;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Features\Catalog\ChangeCollector;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PendingChanges;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The collector and the request's PendingChanges over in-memory posts, a mocked $wpdb that applies the queue's INSERT … ON DUPLICATE KEY UPDATE to
@@ -234,7 +234,7 @@ final class ChangeCollectorTest extends TestCase {
 			new FlushScheduler( static fn(): int => self::NOW ),
 			new Logger( $this->recording_logger() ),
 			fn(): bool => $this->connected[ $this->site() ] ?? false,
-			fn(): CatalogQueue => new CatalogQueue( $this->wpdb, $this->wpdb->prefix . 'woonyx_catalog_queue', static fn(): int => self::NOW )
+			fn(): CatalogQueue => new CatalogQueue( $this->wpdb, $this->wpdb->prefix . 'nyxify_catalog_queue', static fn(): int => self::NOW )
 		);
 		$collector = new ChangeCollector( $pending );
 
@@ -259,7 +259,7 @@ final class ChangeCollectorTest extends TestCase {
 	 * @return list<string>
 	 */
 	private function queued( string $prefix = 'wp_' ): array {
-		$keys = array_keys( $this->tables[ $prefix . 'woonyx_catalog_queue' ] ?? array() );
+		$keys = array_keys( $this->tables[ $prefix . 'nyxify_catalog_queue' ] ?? array() );
 		sort( $keys );
 
 		return $keys;
@@ -489,7 +489,7 @@ final class ChangeCollectorTest extends TestCase {
 		self::assertStringContainsString( "VALUES ('product', 5, '2026-10-13 12:00:00'), ('product', 6, '2026-10-13 12:00:00') ON", $this->queries[1] );
 		self::assertStringContainsString( "VALUES ('product_delete', 8, '2026-10-13 12:00:00') ON", $this->queries[2] );
 		self::assertStringContainsString( "VALUES ('category_delete', 30, '2026-10-13 12:00:00') ON", $this->queries[3] );
-		self::assertSame( array( 1 => array( array( self::NOW, 'woonyx_catalog_flush', array(), 'woonyx', false ) ) ), $this->scheduled );
+		self::assertSame( array( 1 => array( array( self::NOW, 'nyxify_catalog_flush', array(), 'nyxify', false ) ) ), $this->scheduled );
 		self::assertSame( array(), $this->entries );
 	}
 
@@ -540,7 +540,7 @@ final class ChangeCollectorTest extends TestCase {
 					'context' => array(
 						'kind'   => 'category',
 						'count'  => 1,
-						'source' => 'woonyx',
+						'source' => 'nyxify',
 					),
 				),
 				array(
@@ -549,7 +549,7 @@ final class ChangeCollectorTest extends TestCase {
 					'context' => array(
 						'kind'   => 'product',
 						'count'  => 2,
-						'source' => 'woonyx',
+						'source' => 'nyxify',
 					),
 				),
 			),
@@ -622,7 +622,7 @@ final class ChangeCollectorTest extends TestCase {
 	}
 
 	public function test_no_flush_is_scheduled_while_one_is_pending(): void {
-		$this->scheduled[1] = array( array( self::NOW - 5, 'woonyx_catalog_flush', array(), 'woonyx', false ) );
+		$this->scheduled[1] = array( array( self::NOW - 5, 'nyxify_catalog_flush', array(), 'nyxify', false ) );
 		$collector          = $this->collector();
 		$collector->post_changed( 5 );
 
@@ -672,14 +672,14 @@ final class ChangeCollectorTest extends TestCase {
 		self::assertSame( array( 'category:22', 'category:31', 'product:5', 'product:6', 'product:8' ), $this->queued() );
 		self::assertCount( 4, $this->queries );
 		foreach ( $this->queries as $query ) {
-			self::assertStringStartsWith( 'INSERT INTO `wp_woonyx_catalog_queue`', $query );
+			self::assertStringStartsWith( 'INSERT INTO `wp_nyxify_catalog_queue`', $query );
 		}
 		self::assertCount( 1, $this->scheduled[1] );
 		self::assertCount( 2, $this->pending_queries );
 	}
 
 	public function test_race_an_id_queued_while_a_flush_holds_it_is_marked_dirty_not_lost(): void {
-		$this->tables['wp_woonyx_catalog_queue'] = array(
+		$this->tables['wp_nyxify_catalog_queue'] = array(
 			'product:5' => array(
 				'claim' => str_repeat( 'a', 32 ),
 				'dirty' => 0,
@@ -702,7 +702,7 @@ final class ChangeCollectorTest extends TestCase {
 					'dirty' => 0,
 				),
 			),
-			$this->tables['wp_woonyx_catalog_queue']
+			$this->tables['wp_nyxify_catalog_queue']
 		);
 		self::assertCount( 1, $this->scheduled[1] );
 	}

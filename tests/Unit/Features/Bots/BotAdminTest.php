@@ -2,16 +2,16 @@
 /**
  * Tests for a bot admin of the core's answer.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\BotAdmin;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\BotAdmin;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Every `AdminView` field is checked and the personal data stays out of debug output.

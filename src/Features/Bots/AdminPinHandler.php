@@ -2,22 +2,22 @@
 /**
  * The admin PIN buttons' handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Handles `admin-post.php?action=woonyx_issue_admin_pin` from its two buttons ("New PIN", and "New PIN and log out
- * every admin", whose form carries `woonyx_revoke_admins=1`): checks the capability and nonce, issues the PIN and
+ * Handles `admin-post.php?action=nyxify_issue_admin_pin` from its two buttons ("New PIN", and "New PIN and log out
+ * every admin", whose form carries `nyxify_revoke_admins=1`): checks the capability and nonce, issues the PIN and
  * redirects back to the settings page with a one-time notice. The notice never holds the PIN.
  */
 final class AdminPinHandler {
@@ -30,7 +30,7 @@ final class AdminPinHandler {
 	/**
 	 * Name of the hidden field of the "log out every admin" button.
 	 */
-	public const FIELD_REVOKE = 'woonyx_revoke_admins';
+	public const FIELD_REVOKE = 'nyxify_revoke_admins';
 
 	/**
 	 * Success code of a new PIN.

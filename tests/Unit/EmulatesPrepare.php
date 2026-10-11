@@ -2,12 +2,12 @@
 /**
  * A stand-in for $wpdb->prepare() in tests.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit;
+namespace Nyxify\Tests\Unit;
 
 /**
  * Fills %i (identifier, backticked), %s (quoted) and %d (integer) placeholders in order, with the arguments given

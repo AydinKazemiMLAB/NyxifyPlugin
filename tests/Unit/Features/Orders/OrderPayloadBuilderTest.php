@@ -2,22 +2,22 @@
 /**
  * Tests for OrderPayloadBuilder.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Orders;
+namespace Nyxify\Tests\Unit\Features\Orders;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\Batch;
-use WooNyx\Features\Orders\OrderPayloadBuilder;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\Batch;
+use Nyxify\Features\Orders\OrderPayloadBuilder;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The builder over orders and line items that are strict mocks: only the getters of the whitelist (and the type and
@@ -102,7 +102,7 @@ final class OrderPayloadBuilderTest extends TestCase {
 	}
 
 	/**
-	 * A WooNyx order with only the whitelisted getters.
+	 * A Nyxify order with only the whitelisted getters.
 	 *
 	 * @param int                  $id     Id.
 	 * @param array<int, mixed>    $items  Line items.
@@ -124,7 +124,7 @@ final class OrderPayloadBuilderTest extends TestCase {
 
 		$order = Mockery::mock( 'WC_Order' );
 		$order->allows( 'get_id' )->andReturn( $id );
-		$order->allows( 'get_meta' )->with( '_woonyx_order' )->andReturn( $values['marker'] );
+		$order->allows( 'get_meta' )->with( '_nyxify_order' )->andReturn( $values['marker'] );
 		$order->allows( 'get_items' )->with( 'line_item' )->andReturn( $items );
 		foreach ( array( 'get_type', 'get_status', 'get_order_number', 'get_currency', 'get_total', 'get_date_created', 'get_date_modified', 'get_date_paid' ) as $getter ) {
 			if ( $values[ $getter ] instanceof \Throwable ) {
@@ -286,7 +286,7 @@ final class OrderPayloadBuilderTest extends TestCase {
 	public static function unsendable(): array {
 		return array(
 			'missing'               => array( 'missing' ),
-			'not created by woonyx' => array( 'no marker' ),
+			'not created by nyxify' => array( 'no marker' ),
 			'another order type'    => array( 'subscription' ),
 			'a refund'              => array( 'refund' ),
 		);
@@ -303,7 +303,7 @@ final class OrderPayloadBuilderTest extends TestCase {
 			case 'no marker':
 				$order = Mockery::mock( 'WC_Order' );
 				$order->allows( 'get_type' )->andReturn( 'shop_order' );
-				$order->allows( 'get_meta' )->with( '_woonyx_order' )->andReturn( '' );
+				$order->allows( 'get_meta' )->with( '_nyxify_order' )->andReturn( '' );
 				break;
 			case 'subscription':
 				$order = Mockery::mock( 'WC_Order' );
@@ -343,7 +343,7 @@ final class OrderPayloadBuilderTest extends TestCase {
 						'kind'      => 'order',
 						'id'        => 501,
 						'exception' => \RuntimeException::class,
-						'source'    => 'woonyx',
+						'source'    => 'nyxify',
 					),
 				),
 			),

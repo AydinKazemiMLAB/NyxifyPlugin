@@ -2,15 +2,15 @@
 /**
  * An inline notice for a failed call on the settings page.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\ErrorMessages;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\ErrorMessages;
 
 /**
  * The translated message of a failure (never the core's raw text) and its request id; a lapsed subscription is a
@@ -32,7 +32,7 @@ final class ErrorNotice {
 		if ( '' !== $error->request_id ) {
 			printf(
 				'<p class="description">%s <code dir="ltr">%s</code></p>',
-				esc_html__( 'Request ID (for WooNyx support):', 'woonyx' ),
+				esc_html__( 'Request ID (for Nyxify support):', 'nyxify' ),
 				esc_html( $error->request_id )
 			);
 		}

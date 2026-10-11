@@ -2,12 +2,12 @@
 /**
  * One pull at a time per site.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
 /**
  * A per-site lock around a whole pull run (pull, apply, ack), so two runs (the recurring action, an immediate one, two
@@ -26,7 +26,7 @@ final class PullLock {
 	/**
 	 * The lock's option row.
 	 */
-	public const OPTION = 'woonyx_sync_lock';
+	public const OPTION = 'nyxify_sync_lock';
 
 	/**
 	 * How long a lock holds before another run may take it over, in seconds.

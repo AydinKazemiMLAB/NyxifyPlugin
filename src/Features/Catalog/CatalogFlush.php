@@ -2,25 +2,25 @@
 /**
  * Sending the queued order and catalog changes.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Features\Orders\OrderPayloadBuilder;
-use WooNyx\Features\Orders\OrderSender;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Features\Orders\OrderPayloadBuilder;
+use Nyxify\Features\Orders\OrderSender;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
- * The Action Scheduler action `woonyx_catalog_flush`: sends the queue, kind by kind in CatalogQueue::KINDS order
+ * The Action Scheduler action `nyxify_catalog_flush`: sends the queue, kind by kind in CatalogQueue::KINDS order
  * (orders, order deletes, categories, products, product deletes, category deletes), each kind in its own requests, in
  * batches, for at most BUDGET_SECONDS per run.
  *

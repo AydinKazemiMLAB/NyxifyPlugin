@@ -2,19 +2,19 @@
 /**
  * Tests for the options encryptor.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Security;
+namespace Nyxify\Tests\Unit\Shared\Security;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Round trips, tampering, wrong keys and where the key comes from.
@@ -113,7 +113,7 @@ final class EncryptorTest extends TestCase {
 	#[RunInSeparateProcess]
 	#[PreserveGlobalState( false )]
 	public function test_site_key_comes_from_the_constant_when_defined(): void {
-		define( 'WOONYX_ENCRYPTION_KEY', 'a key from wp-config' );
+		define( 'NYXIFY_ENCRYPTION_KEY', 'a key from wp-config' );
 		Functions\expect( 'wp_salt' )->never();
 
 		$payload = Encryptor::for_site()->encrypt( 'secret' );

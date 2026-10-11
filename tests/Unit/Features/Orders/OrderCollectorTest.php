@@ -2,25 +2,25 @@
 /**
  * Tests for OrderCollector.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Orders;
+namespace Nyxify\Tests\Unit\Features\Orders;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\ChangeCollector;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PendingChanges;
-use WooNyx\Features\Catalog\Queue;
-use WooNyx\Features\Orders\OrderCollector;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\Features\Catalog\InMemoryQueue;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\ChangeCollector;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PendingChanges;
+use Nyxify\Features\Catalog\Queue;
+use Nyxify\Features\Orders\OrderCollector;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\Features\Catalog\InMemoryQueue;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The collector over orders that are strict mocks (only `get_id()`, `get_type()` and the marker can be read, so a
@@ -126,14 +126,14 @@ final class OrderCollectorTest extends TestCase {
 	 *
 	 * @param int    $id     Id.
 	 * @param string $type   Order type.
-	 * @param mixed  $marker Value of `_woonyx_order`.
+	 * @param mixed  $marker Value of `_nyxify_order`.
 	 * @return MockInterface&\WC_Order
 	 */
 	private static function order( int $id, string $type = 'shop_order', $marker = '1' ) {
 		$order = Mockery::mock( 'WC_Order' );
 		$order->allows( 'get_id' )->andReturn( $id );
 		$order->allows( 'get_type' )->andReturn( $type );
-		$order->allows( 'get_meta' )->with( '_woonyx_order' )->andReturn( $marker );
+		$order->allows( 'get_meta' )->with( '_nyxify_order' )->andReturn( $marker );
 
 		return $order;
 	}
@@ -197,13 +197,13 @@ final class OrderCollectorTest extends TestCase {
 	 */
 	public static function changed_orders(): array {
 		return array(
-			'woonyx order passed by the hook'  => array( 5, 'same', array( 'order:5' ), array() ),
+			'nyxify order passed by the hook'  => array( 5, 'same', array( 'order:5' ), array() ),
 			'id as a string'                   => array( '5', 'same', array( 'order:5' ), array() ),
-			'woonyx order read'                => array( 5, 'none', array( 'order:5' ), array( 5 ) ),
+			'nyxify order read'                => array( 5, 'none', array( 'order:5' ), array( 5 ) ),
 			'another order passed'             => array( 5, 'other', array( 'order:5' ), array( 5 ) ),
 			'refund id as the second argument' => array( 5, 'refund id', array( 'order:5' ), array( 5 ) ),
 			'previous status as the second'    => array( 5, 'status', array( 'order:5' ), array( 5 ) ),
-			'order not created by woonyx'      => array( 7, 'same', array(), array() ),
+			'order not created by nyxify'      => array( 7, 'same', array(), array() ),
 			'marker that is not a scalar'      => array( 8, 'same', array(), array() ),
 			'another order type'               => array( 9, 'same', array(), array() ),
 			'a refund'                         => array( 10, 'none', array(), array( 10 ) ),
@@ -285,9 +285,9 @@ final class OrderCollectorTest extends TestCase {
 	 */
 	public static function deleted_orders(): array {
 		return array(
-			'woonyx order passed by the hook' => array( 5, 'same', array( 'order_delete:5' ), array() ),
-			'woonyx order read'               => array( 5, 'none', array( 'order_delete:5' ), array( 5 ) ),
-			'order not created by woonyx'     => array( 7, 'same', array(), array() ),
+			'nyxify order passed by the hook' => array( 5, 'same', array( 'order_delete:5' ), array() ),
+			'nyxify order read'               => array( 5, 'none', array( 'order_delete:5' ), array( 5 ) ),
+			'order not created by nyxify'     => array( 7, 'same', array(), array() ),
 			'another order type'              => array( 9, 'same', array(), array() ),
 			'a refund'                        => array( 10, 'none', array(), array( 10 ) ),
 			'missing order'                   => array( 99, 'none', array(), array( 99 ) ),
@@ -321,9 +321,9 @@ final class OrderCollectorTest extends TestCase {
 	 */
 	public static function posts(): array {
 		return array(
-			'woonyx order'                => array( 5, array( 5 ), true ),
+			'nyxify order'                => array( 5, array( 5 ), true ),
 			'id as a string'              => array( '5', array( 5 ), true ),
-			'order not created by woonyx' => array( 7, array( 7 ), false ),
+			'order not created by nyxify' => array( 7, array( 7 ), false ),
 			'product'                     => array( 20, array(), false ),
 			'hpos placeholder'            => array( 21, array(), false ),
 			'refund post'                 => array( 22, array(), false ),
@@ -397,7 +397,7 @@ final class OrderCollectorTest extends TestCase {
 		$rows = $this->queue->rows;
 		uasort( $rows, static fn( array $a, array $b ): int => $a['queued_at'] <=> $b['queued_at'] );
 		self::assertSame( array( 'order:5', 'order_delete:6', 'product:20' ), array_keys( $rows ) );
-		self::assertSame( array( array( self::NOW, 'woonyx_catalog_flush', array(), 'woonyx', false ) ), $this->scheduled );
+		self::assertSame( array( array( self::NOW, 'nyxify_catalog_flush', array(), 'nyxify', false ) ), $this->scheduled );
 		self::assertSame( array(), $this->entries );
 	}
 
@@ -416,7 +416,7 @@ final class OrderCollectorTest extends TestCase {
 		$order = Mockery::mock( 'WC_Order' );
 		$order->expects( 'get_id' )->twice()->andReturn( 5 );
 		$order->expects( 'get_type' )->twice()->andReturn( 'shop_order' );
-		$order->expects( 'get_meta' )->twice()->with( '_woonyx_order' )->andReturn( '1' );
+		$order->expects( 'get_meta' )->twice()->with( '_nyxify_order' )->andReturn( '1' );
 		$order->shouldNotReceive( 'get_data', 'get_meta_data', 'get_billing_first_name', 'get_billing_phone', 'get_billing_email', 'get_shipping_address_1', 'get_customer_note', 'get_payment_method', 'get_checkout_payment_url', 'get_items', 'get_status', 'get_total' );
 		$pending   = $this->pending();
 		$collector = new OrderCollector( $pending );

@@ -2,15 +2,15 @@
 /**
  * An in-memory catalog queue for the flush tests.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Features\Catalog\Queue;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Features\Catalog\Queue;
 
 /**
  * The semantics of CatalogQueue's SQL (its tests pin the statements) on an array: rows keyed by kind and id, claims by

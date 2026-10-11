@@ -2,17 +2,17 @@
 /**
  * Tests for the "Rotate secret" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
-use WooNyx\Features\Store\SecretRotationHandler;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\SecretRotationHandler;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Capability and nonce first, then the rotation, the notice and the redirect.
@@ -21,7 +21,7 @@ use WooNyx\Tests\Unit\TestCase;
  */
 final class SecretRotationHandlerTest extends TestCase {
 
-	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=woonyx';
+	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=nyxify';
 
 	/**
 	 * In-memory transients: name => value.
@@ -73,7 +73,7 @@ final class SecretRotationHandlerTest extends TestCase {
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_rotate_secret' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_rotate_secret' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -127,7 +127,7 @@ final class SecretRotationHandlerTest extends TestCase {
 	 * @return array<string, mixed>
 	 */
 	private function notice(): array {
-		$notice = $this->transients['woonyx_notice_5'] ?? null;
+		$notice = $this->transients['nyxify_notice_5'] ?? null;
 		self::assertIsArray( $notice );
 
 		return $notice;
@@ -138,7 +138,7 @@ final class SecretRotationHandlerTest extends TestCase {
 
 		$handler->register();
 
-		self::assertNotFalse( has_action( 'admin_post_woonyx_rotate_secret', array( $handler, 'handle' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_rotate_secret', array( $handler, 'handle' ) ) );
 	}
 
 	public function test_without_the_capability_nothing_happens(): void {

@@ -2,35 +2,35 @@
 /**
  * Tests for the settings page.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Settings;
+namespace Nyxify\Tests\Unit\Features\Settings;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\AdminService;
-use WooNyx\Features\Bots\BotService;
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\AdminService;
+use Nyxify\Features\Bots\BotService;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Menu, plugins-list link, stylesheet and the page's three connection states.
  */
 final class SettingsPageTest extends TestCase {
 
-	private const PLUGIN_FILE = '/plugins/woonyx/woonyx.php';
+	private const PLUGIN_FILE = '/plugins/nyxify/nyxify.php';
 	private const CORE_URL    = 'https://core.example.com';
-	private const HOOK_SUFFIX = 'woocommerce_page_woonyx';
+	private const HOOK_SUFFIX = 'woocommerce_page_nyxify';
 
 	/**
 	 * In-memory wp_options.
@@ -98,7 +98,7 @@ final class SettingsPageTest extends TestCase {
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'admin_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-admin/' . $path );
-		Functions\when( 'plugin_basename' )->justReturn( 'woonyx/woonyx.php' );
+		Functions\when( 'plugin_basename' )->justReturn( 'nyxify/nyxify.php' );
 		Functions\when( 'wp_die' )->alias(
 			static function (): void {
 				throw new \RuntimeException( 'wp_die' );
@@ -190,7 +190,7 @@ final class SettingsPageTest extends TestCase {
 			'wp_version'   => '7.1.3',
 			'woo_version'  => '11.1.2',
 			'license'      => array(
-				'key_prefix'   => 'WN-ABCDEF',
+				'key_prefix'   => 'NX-ABCDEF',
 				'activated_at' => '2026-09-13T09:00:00',
 			),
 			'subscription' => array(
@@ -253,14 +253,14 @@ final class SettingsPageTest extends TestCase {
 
 		self::assertNotFalse( has_action( 'admin_menu', array( $page, 'add_menu' ) ) );
 		self::assertNotFalse( has_action( 'admin_enqueue_scripts', array( $page, 'enqueue_assets' ) ) );
-		self::assertNotFalse( has_filter( 'plugin_action_links_woonyx/woonyx.php', array( $page, 'add_settings_link' ) ) );
+		self::assertNotFalse( has_filter( 'plugin_action_links_nyxify/nyxify.php', array( $page, 'add_settings_link' ) ) );
 	}
 
 	public function test_menu_is_a_woocommerce_submenu_for_shop_managers(): void {
 		$page = $this->page();
 		Functions\expect( 'add_submenu_page' )
 			->once()
-			->with( 'woocommerce', 'WooNyx', 'WooNyx', 'manage_woocommerce', 'woonyx', array( $page, 'render' ) )
+			->with( 'woocommerce', 'Nyxify', 'Nyxify', 'manage_woocommerce', 'nyxify', array( $page, 'render' ) )
 			->andReturn( self::HOOK_SUFFIX );
 
 		$page->add_menu();
@@ -269,8 +269,8 @@ final class SettingsPageTest extends TestCase {
 	public function test_settings_link_comes_first(): void {
 		$links = $this->page()->add_settings_link( array( 'deactivate' => '<a>Deactivate</a>' ) );
 
-		self::assertSame( array( 'woonyx-settings', 'deactivate' ), array_keys( $links ) );
-		self::assertSame( '<a href="https://shop.example.com/wp-admin/admin.php?page=woonyx">Settings</a>', $links['woonyx-settings'] );
+		self::assertSame( array( 'nyxify-settings', 'deactivate' ), array_keys( $links ) );
+		self::assertSame( '<a href="https://shop.example.com/wp-admin/admin.php?page=nyxify">Settings</a>', $links['nyxify-settings'] );
 	}
 
 	public function test_no_settings_link_without_the_capability(): void {
@@ -282,17 +282,17 @@ final class SettingsPageTest extends TestCase {
 	public function test_stylesheet_and_script_only_on_this_page(): void {
 		$page = $this->page();
 		Functions\when( 'add_submenu_page' )->justReturn( self::HOOK_SUFFIX );
-		Functions\when( 'plugins_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-content/plugins/woonyx/' . $path );
+		Functions\when( 'plugins_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-content/plugins/nyxify/' . $path );
 		Functions\expect( 'wp_enqueue_style' )
 			->once()
-			->with( 'woonyx-admin', 'https://shop.example.com/wp-content/plugins/woonyx/assets/css/admin.css', array(), WOONYX_VERSION );
+			->with( 'nyxify-admin', 'https://shop.example.com/wp-content/plugins/nyxify/assets/css/admin.css', array(), NYXIFY_VERSION );
 		Functions\expect( 'wp_enqueue_script' )
 			->once()
 			->with(
-				'woonyx-admin',
-				'https://shop.example.com/wp-content/plugins/woonyx/assets/js/admin.js',
+				'nyxify-admin',
+				'https://shop.example.com/wp-content/plugins/nyxify/assets/js/admin.js',
 				array(),
-				WOONYX_VERSION,
+				NYXIFY_VERSION,
 				array(
 					'in_footer' => true,
 					'strategy'  => 'defer',
@@ -315,13 +315,13 @@ final class SettingsPageTest extends TestCase {
 	public function test_not_connected(): void {
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'woonyx-status--disconnected', $html );
+		self::assertStringContainsString( 'nyxify-status--disconnected', $html );
 		self::assertStringContainsString( 'Not connected', $html );
 		self::assertStringContainsString( 'Enter your license key to activate it.', $html );
 		self::assertStringContainsString( '<code dir="ltr">https://core.example.com</code>', $html );
-		self::assertStringContainsString( 'Nothing is sent to the WooNyx server until you enter a license key.', $html );
-		self::assertStringNotContainsString( 'WOONYX_API_BASE_URL', $html );
-		self::assertStringNotContainsString( 'Store on WooNyx', $html );
+		self::assertStringContainsString( 'Nothing is sent to the Nyxify server until you enter a license key.', $html );
+		self::assertStringNotContainsString( 'NYXIFY_API_BASE_URL', $html );
+		self::assertStringNotContainsString( 'Store on Nyxify', $html );
 		self::assertSame( array(), $this->requests, 'Nothing may be sent before a license key is entered.' );
 	}
 
@@ -331,7 +331,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'woonyx-status--connected', $html );
+		self::assertStringContainsString( 'nyxify-status--connected', $html );
 		self::assertStringContainsString( 'shop_8f2a0c1d3e4b5a69', $html );
 		self::assertStringNotContainsString( $secret, $html );
 	}
@@ -341,7 +341,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'woonyx-status--error', $html );
+		self::assertStringContainsString( 'nyxify-status--error', $html );
 		self::assertStringContainsString( 'Connection lost', $html );
 		self::assertStringContainsString( 'Enter your license key again to reconnect.', $html );
 		self::assertStringNotContainsString( 'shop_8f2a0c1d3e4b5a69', $html );
@@ -360,7 +360,7 @@ final class SettingsPageTest extends TestCase {
 	 * @param string $html Page.
 	 */
 	private static function license_form( string $html ): string {
-		return 1 === preg_match( '#<form[^>]*class="woonyx-license-form".*?</form>#s', $html, $matches ) ? $matches[0] : '';
+		return 1 === preg_match( '#<form[^>]*class="nyxify-license-form".*?</form>#s', $html, $matches ) ? $matches[0] : '';
 	}
 
 	public function test_not_connected_shows_the_license_form_open(): void {
@@ -368,9 +368,9 @@ final class SettingsPageTest extends TestCase {
 		$form = self::license_form( $html );
 
 		self::assertStringContainsString( 'action="https://shop.example.com/wp-admin/admin-post.php"', $form );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_activate" />', $form );
-		self::assertStringContainsString( 'name="_woonyx_nonce" value="nonce-for-woonyx_activate"', $form );
-		self::assertMatchesRegularExpression( '#<input type="text" id="woonyx-license-key" name="woonyx_license_key" [^>]*autocomplete="off"#', $form );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_activate" />', $form );
+		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_activate"', $form );
+		self::assertMatchesRegularExpression( '#<input type="text" id="nyxify-license-key" name="nyxify_license_key" [^>]*autocomplete="off"#', $form );
 		self::assertStringContainsString( '>Activate</button>', $form );
 		self::assertStringContainsString( 'is not stored on this site', $form );
 		self::assertStringContainsString( 'If this user or the key is deleted, the store is disconnected.', $form );
@@ -378,15 +378,15 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_the_license_field_is_never_filled(): void {
-		$_POST['woonyx_license_key'] = 'WN-ABCDEF-GHIJKL-MNOPQR-ST2345';
+		$_POST['nyxify_license_key'] = 'NX-ABCDEF-GHIJKL-MNOPQR-ST2345';
 
 		try {
 			$form = self::license_form( $this->rendered( $this->page() ) );
 		} finally {
-			unset( $_POST['woonyx_license_key'] );
+			unset( $_POST['nyxify_license_key'] );
 		}
 
-		self::assertDoesNotMatchRegularExpression( '#id="woonyx-license-key"[^>]*\bvalue=#', $form );
+		self::assertDoesNotMatchRegularExpression( '#id="nyxify-license-key"[^>]*\bvalue=#', $form );
 		self::assertStringNotContainsString( 'GHIJKL', $form );
 	}
 
@@ -395,9 +395,9 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertMatchesRegularExpression( '#<details class="woonyx-reactivate">\s*<summary>Activate again</summary>.*<form[^>]*class="woonyx-license-form".*</form>\s*</details>#s', $html );
+		self::assertMatchesRegularExpression( '#<details class="nyxify-reactivate">\s*<summary>Activate again</summary>.*<form[^>]*class="nyxify-license-form".*</form>\s*</details>#s', $html );
 		self::assertStringContainsString( '>Activate again</button>', $html );
-		self::assertStringNotContainsString( 'Nothing is sent to the WooNyx server', $html );
+		self::assertStringNotContainsString( 'Nothing is sent to the Nyxify server', $html );
 	}
 
 	public function test_connected_shows_the_rotate_button_with_a_confirmation(): void {
@@ -405,14 +405,14 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		$form = 1 === preg_match( '#<form[^>]*class="woonyx-rotate-form".*?</form>#s', $html, $matches ) ? $matches[0] : '';
+		$form = 1 === preg_match( '#<form[^>]*class="nyxify-rotate-form".*?</form>#s', $html, $matches ) ? $matches[0] : '';
 		self::assertStringContainsString( 'action="https://shop.example.com/wp-admin/admin-post.php"', $form );
-		self::assertStringContainsString( 'data-woonyx-confirm="Replace the shared secret with a new one now? The store stays connected."', $form );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_rotate_secret" />', $form );
-		self::assertStringContainsString( 'name="_woonyx_nonce" value="nonce-for-woonyx_rotate_secret"', $form );
+		self::assertStringContainsString( 'data-nyxify-confirm="Replace the shared secret with a new one now? The store stays connected."', $form );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_rotate_secret" />', $form );
+		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_rotate_secret"', $form );
 		self::assertStringContainsString( '>Rotate secret</button>', $form );
 		self::assertStringContainsString( '<h2>Shared secret</h2>', $html );
-		self::assertLessThan( (int) strpos( $html, '<details' ), (int) strpos( $html, 'woonyx-rotate-form' ) );
+		self::assertLessThan( (int) strpos( $html, '<details' ), (int) strpos( $html, 'nyxify-rotate-form' ) );
 		self::assertStringNotContainsString( str_repeat( 'e5', 32 ), $html );
 	}
 
@@ -422,21 +422,21 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertMatchesRegularExpression(
-			'#</details>\s*<div class="notice notice-warning inline woonyx-deactivation-note">\s*<p><strong>Deactivating WooNyx stops your shop’s bots\. To connect again you will need your license key\.</strong></p>#',
+			'#</details>\s*<div class="notice notice-warning inline nyxify-deactivation-note">\s*<p><strong>Deactivating Nyxify stops your shop’s bots\. To connect again you will need your license key\.</strong></p>#',
 			$html
 		);
-		self::assertStringContainsString( 'or your subscription has expired, WooNyx keeps the store connected and both stay on this site until you delete the plugin.', $html );
+		self::assertStringContainsString( 'or your subscription has expired, Nyxify keeps the store connected and both stay on this site until you delete the plugin.', $html );
 	}
 
 	public function test_no_deactivation_warning_while_not_connected(): void {
-		self::assertStringNotContainsString( 'woonyx-deactivation-note', $this->rendered( $this->page() ) );
+		self::assertStringNotContainsString( 'nyxify-deactivation-note', $this->rendered( $this->page() ) );
 	}
 
 	public function test_no_rotate_button_without_a_readable_connection(): void {
-		self::assertStringNotContainsString( 'woonyx_rotate_secret', $this->rendered( $this->page() ) );
+		self::assertStringNotContainsString( 'nyxify_rotate_secret', $this->rendered( $this->page() ) );
 
 		$this->store( 'old salts' )->save_connection( new Connection( 'shop_8f2a0c1d3e4b5a69', 'sec_' . str_repeat( 'e5', 32 ) ) );
-		self::assertStringNotContainsString( 'woonyx_rotate_secret', $this->rendered( $this->page() ) );
+		self::assertStringNotContainsString( 'nyxify_rotate_secret', $this->rendered( $this->page() ) );
 	}
 
 	public function test_lost_connection_shows_the_form_open(): void {
@@ -449,7 +449,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_a_success_notice_is_shown_once(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'success',
 			'code'       => 'activated',
 			'status'     => 0,
@@ -459,13 +459,13 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( '<div class="notice notice-success"><p>The store is connected to WooNyx.</p></div>', $html );
+		self::assertStringContainsString( '<div class="notice notice-success"><p>The store is connected to Nyxify.</p></div>', $html );
 		self::assertSame( array(), $this->transients );
 		self::assertStringNotContainsString( 'notice-success', $this->rendered( $this->page() ) );
 	}
 
 	public function test_a_rotation_notice(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'success',
 			'code'       => 'secret_rotated',
 			'status'     => 0,
@@ -480,7 +480,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_a_failed_rotation_notice_asks_to_rotate_again(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'error',
 			'code'       => 'secret_not_saved',
 			'status'     => 200,
@@ -495,7 +495,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_an_error_notice_shows_the_message_fields_and_request_id(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'error',
 			'code'       => 'validation_error',
 			'status'     => 422,
@@ -506,13 +506,13 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertStringContainsString( '<div class="notice notice-error">', $html );
-		self::assertStringContainsString( 'Some of the data sent to WooNyx is invalid.', $html );
+		self::assertStringContainsString( 'Some of the data sent to Nyxify is invalid.', $html );
 		self::assertStringContainsString( 'Invalid fields: <code dir="ltr">body.site_url, body.&lt;b&gt;</code>', $html );
-		self::assertStringContainsString( 'Request ID (for WooNyx support): <code dir="ltr">req-0001-abcd</code>', $html );
+		self::assertStringContainsString( 'Request ID (for Nyxify support): <code dir="ltr">req-0001-abcd</code>', $html );
 	}
 
 	public function test_an_unknown_error_code_falls_back_on_its_status(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'error',
 			'code'       => 'something_new',
 			'status'     => 503,
@@ -522,7 +522,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'The WooNyx server had an internal error.', $html );
+		self::assertStringContainsString( 'The Nyxify server had an internal error.', $html );
 		self::assertStringNotContainsString( 'something_new', $html );
 		self::assertStringNotContainsString( 'Request ID', $html );
 	}
@@ -534,12 +534,12 @@ final class SettingsPageTest extends TestCase {
 
 		self::assertSame( array( '/api/v1/store/status', '/api/v1/bots', '/api/v1/bots/admins' ), $this->requested_paths() );
 		self::assertSame( 'GET', $this->requests[0]['args']['method'] );
-		self::assertArrayHasKey( 'X-WooNyx-Signature', $this->requests[0]['args']['headers'] );
+		self::assertArrayHasKey( 'X-Nyxify-Signature', $this->requests[0]['args']['headers'] );
 
-		self::assertStringContainsString( 'Store on WooNyx', $html );
+		self::assertStringContainsString( 'Store on Nyxify', $html );
 		self::assertMatchesRegularExpression( '#<th scope="row">Store</th>\s*<td>\s*Active#', $html );
 		self::assertStringContainsString( '<code dir="ltr">https://shop.example.com</code>', $html );
-		self::assertStringContainsString( '<code dir="ltr">WN-ABCDEF</code>', $html );
+		self::assertStringContainsString( '<code dir="ltr">NX-ABCDEF</code>', $html );
 		self::assertStringContainsString( 'Activated 2026-09-13 09:00', $html );
 		self::assertStringContainsString( 'Expires 2026-10-13 09:00', $html );
 		self::assertStringContainsString( '<td>Telegram, Bale</td>', $html );
@@ -547,11 +547,11 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringContainsString( 'Synced', $html );
 		self::assertStringContainsString( 'Last synced 2026-09-13 09:00', $html );
 		// The deactivation note at the end is a warning too; the status itself has none.
-		$before_note = (string) strstr( $html, '<div class="notice notice-warning inline woonyx-deactivation-note">', true );
+		$before_note = (string) strstr( $html, '<div class="notice notice-warning inline nyxify-deactivation-note">', true );
 		self::assertNotSame( '', $before_note );
 		self::assertStringNotContainsString( 'notice-warning', $before_note );
 		self::assertStringNotContainsString( 'notice-error', $html );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_refresh_status" />', $html );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_refresh_status" />', $html );
 		self::assertStringContainsString( '>Check connection</button>', $html );
 		self::assertStringContainsString( 'Checked ', $html );
 	}
@@ -627,7 +627,7 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertStringContainsString( 'Deactivated', $html );
-		self::assertStringContainsString( 'This store is deactivated or suspended on WooNyx.', $html );
+		self::assertStringContainsString( 'This store is deactivated or suspended on Nyxify.', $html );
 	}
 
 	/**
@@ -661,7 +661,7 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringContainsString( '<div class="notice ' . $notice_class . ' inline">', $html );
 		self::assertStringContainsString( $message, $html );
 		self::assertStringNotContainsString( 'raw core message', $html );
-		self::assertStringContainsString( 'Request ID (for WooNyx support): <code dir="ltr">req-core-0002</code>', $html );
+		self::assertStringContainsString( 'Request ID (for Nyxify support): <code dir="ltr">req-core-0002</code>', $html );
 		self::assertStringContainsString( '>Check connection</button>', $html );
 		self::assertStringNotContainsString( 'Checked ', $html );
 		self::assertArrayNotHasKey( StatusService::TRANSIENT, $this->transients );
@@ -673,7 +673,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'Could not reach the WooNyx server.', $html );
+		self::assertStringContainsString( 'Could not reach the Nyxify server.', $html );
 	}
 
 	public function test_the_bots_come_after_the_status_and_before_the_shared_secret(): void {
@@ -681,7 +681,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		$status = (int) strpos( $html, '<h2>Store on WooNyx</h2>' );
+		$status = (int) strpos( $html, '<h2>Store on Nyxify</h2>' );
 		$bots   = (int) strpos( $html, '<h2>Bots</h2>' );
 		$pin    = (int) strpos( $html, '<h2>Admin PIN</h2>' );
 		$admins = (int) strpos( $html, '<h2>Bot admins</h2>' );
@@ -714,7 +714,7 @@ final class SettingsPageTest extends TestCase {
 
 	#[DataProvider( 'pin_notices' )]
 	public function test_pin_success_notices( string $code, string $message ): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'success',
 			'code'       => $code,
 			'status'     => 0,
@@ -753,7 +753,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_an_admin_removed_notice(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'success',
 			'code'       => 'admin_revoked',
 			'status'     => 0,
@@ -768,7 +768,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_an_admin_already_removed_notice(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'error',
 			'code'       => 'customer_not_found',
 			'status'     => 404,
@@ -787,14 +787,14 @@ final class SettingsPageTest extends TestCase {
 	 */
 	public static function bot_notices(): array {
 		return array(
-			'registered' => array( 'bot_registered', 'The bot token was accepted. WooNyx is setting the bot up; check its status below.' ),
+			'registered' => array( 'bot_registered', 'The bot token was accepted. Nyxify is setting the bot up; check its status below.' ),
 			'removed'    => array( 'bot_removed', 'The bot was removed. It no longer answers your customers.' ),
 		);
 	}
 
 	#[DataProvider( 'bot_notices' )]
 	public function test_bot_success_notices( string $code, string $message ): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'success',
 			'code'       => $code,
 			'status'     => 0,
@@ -806,7 +806,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_a_malformed_token_notice(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'error',
 			'code'       => 'bot_token_format',
 			'status'     => 0,
@@ -818,7 +818,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	public function test_an_unknown_success_code_shows_nothing(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type' => 'success',
 			'code' => 'something_new',
 		);
@@ -832,11 +832,11 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		$row = (string) strstr( (string) strstr( $html, '<th scope="row">Catalog sync</th>' ), '</tr>', true );
-		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php" class="woonyx-sync-form">', $row );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_catalog_sync" />', $row );
-		self::assertStringContainsString( '<input type="hidden" name="_woonyx_nonce" value="nonce-for-woonyx_catalog_sync" />', $row );
+		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php" class="nyxify-sync-form">', $row );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_catalog_sync" />', $row );
+		self::assertStringContainsString( '<input type="hidden" name="_nyxify_nonce" value="nonce-for-nyxify_catalog_sync" />', $row );
 		self::assertStringContainsString( '>Sync now</button>', $row );
-		self::assertStringContainsString( 'WooNyx reads every product and category of this store again.', $row );
+		self::assertStringContainsString( 'Nyxify reads every product and category of this store again.', $row );
 		// Only the status was read: the button itself sends nothing.
 		self::assertNotContains( '/api/v1/catalog/sync', $this->requested_paths() );
 	}
@@ -862,7 +862,7 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertStringContainsString( '<th scope="row">Catalog sync</th>', $html );
-		self::assertStringNotContainsString( 'woonyx_catalog_sync', $html );
+		self::assertStringNotContainsString( 'nyxify_catalog_sync', $html );
 		self::assertStringNotContainsString( 'Sync now', $html );
 	}
 
@@ -880,12 +880,12 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringNotContainsString( 'woonyx_catalog_sync', $html );
+		self::assertStringNotContainsString( 'nyxify_catalog_sync', $html );
 		self::assertStringNotContainsString( 'Sync now', $html );
 	}
 
 	public function test_no_sync_button_while_not_connected(): void {
-		self::assertStringNotContainsString( 'woonyx_catalog_sync', $this->rendered( $this->page() ) );
+		self::assertStringNotContainsString( 'nyxify_catalog_sync', $this->rendered( $this->page() ) );
 	}
 
 	/**
@@ -893,14 +893,14 @@ final class SettingsPageTest extends TestCase {
 	 */
 	public static function sync_notices(): array {
 		return array(
-			'started' => array( 'catalog_sync_started', 'WooNyx is reading your catalog again. Check the catalog sync below in a few minutes.' ),
+			'started' => array( 'catalog_sync_started', 'Nyxify is reading your catalog again. Check the catalog sync below in a few minutes.' ),
 			'running' => array( 'catalog_sync_running', 'A catalog sync is already running. Check the catalog sync below in a few minutes.' ),
 		);
 	}
 
 	#[DataProvider( 'sync_notices' )]
 	public function test_sync_success_notices( string $code, string $message ): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'       => 'success',
 			'code'       => $code,
 			'status'     => 0,
@@ -913,24 +913,24 @@ final class SettingsPageTest extends TestCase {
 
 	public function test_the_plan_limit_notice_is_shown_on_the_page_without_a_link_to_it(): void {
 		$this->connect();
-		$this->options['woonyx_catalog_plan_limit'] = array(
+		$this->options['nyxify_catalog_plan_limit'] = array(
 			'count' => 2,
 			'time'  => 1_791_000_000,
 		);
 
 		$html = $this->rendered( $this->page() );
 
-		$notice = (int) strpos( $html, '<div class="notice notice-warning woonyx-plan-limit-notice">' );
+		$notice = (int) strpos( $html, '<div class="notice notice-warning nyxify-plan-limit-notice">' );
 		self::assertGreaterThan( (int) strpos( $html, '<hr class="wp-header-end" />' ), $notice );
 		self::assertLessThan( (int) strpos( $html, '<h2>Connection</h2>' ), $notice );
 		self::assertStringContainsString( '2 products didn’t reach your bots: your plan’s product limit is reached.', $html );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_dismiss_plan_limit" />', $html );
-		self::assertStringNotContainsString( 'WooNyx settings', $html );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_dismiss_plan_limit" />', $html );
+		self::assertStringNotContainsString( 'Nyxify settings', $html );
 	}
 
 	public function test_no_plan_limit_notice_without_stored_skips(): void {
 		$this->connect();
 
-		self::assertStringNotContainsString( 'woonyx-plan-limit-notice', $this->rendered( $this->page() ) );
+		self::assertStringNotContainsString( 'nyxify-plan-limit-notice', $this->rendered( $this->page() ) );
 	}
 }

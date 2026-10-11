@@ -2,15 +2,15 @@
 /**
  * Writing a pulled change to WooCommerce.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Shared\Logging\Logger;
 
 /**
  * Applies one pulled change through WooCommerce's own REST controllers, in-process (`rest_do_request()`), as the user
@@ -18,7 +18,7 @@ use WooNyx\Shared\Logging\Logger;
  * hooks (the catalog webhooks included) are the same as for a push.
  *
  * - `product.create` -> `POST /wc/v3/products`, unless a product (in any status, the trash included) already carries
- *   the change's `_woonyx_outbox_id`: then that product is reported and nothing is created.
+ *   the change's `_nyxify_outbox_id`: then that product is reported and nothing is created.
  * - `product.update` -> `PUT /wc/v3/products/{id}`; `product.delete` -> `DELETE /wc/v3/products/{id}` without
  *   `force` (the trash); one already in the trash or gone counts as deleted.
  * - `variation.update` -> `PUT /wc/v3/products/{pid}/variations/{vid}`.

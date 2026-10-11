@@ -2,16 +2,16 @@
 /**
  * Building the order updates the core receives.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Orders;
+namespace Nyxify\Features\Orders;
 
-use WooNyx\Features\Catalog\Batch;
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Features\Catalog\Batch;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Shared\Logging\Logger;
 
 /**
  * Builds the orders the core created as a short whitelist of WooCommerce REST v3 order fields, read with the order's
@@ -20,7 +20,7 @@ use WooNyx\Shared\Logging\Logger;
  * shipping, customer, contact, notes, payment details, the payment link and `meta_data` are never built, let alone sent.
  * Orders are read at building time, so a retry always sends the current data.
  *
- * - Missing orders, refunds, other order types and orders without the `_woonyx_order` meta have nothing to send.
+ * - Missing orders, refunds, other order types and orders without the `_nyxify_order` meta have nothing to send.
  * - A deleted order goes as `{"id": N, "status": "trash"}`, without `date_modified_gmt`, so the core always applies it.
  * - Batches as Batch::collect(): at most 100 orders and about 4 MB a request; logs carry kinds, ids, sizes and
  *   exception classes, never a field.
@@ -101,7 +101,7 @@ final class OrderPayloadBuilder {
 	 */
 	private function order( int $id ): ?array {
 		$order = wc_get_order( $id );
-		if ( ! $order instanceof \WC_Order || ! OrderCollector::is_woonyx_order( $order ) ) {
+		if ( ! $order instanceof \WC_Order || ! OrderCollector::is_nyxify_order( $order ) ) {
 			return null;
 		}
 

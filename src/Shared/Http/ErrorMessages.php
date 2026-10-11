@@ -2,12 +2,12 @@
 /**
  * Owner-facing messages of the core's and the client's error codes.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Http;
+namespace Nyxify\Shared\Http;
 
 /**
  * A translated message for every `error_code` the plugin can get, so the raw response is never shown.
@@ -107,58 +107,58 @@ final class ErrorMessages {
 	public static function messages(): array {
 		return array(
 			// The client's own codes.
-			CoreError::NOT_ACTIVATED            => __( 'This store is not connected to WooNyx yet. Enter your license key to activate it.', 'woonyx' ),
-			CoreError::CONNECTION_UNREADABLE    => __( 'The saved connection to WooNyx can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect.', 'woonyx' ),
-			CoreError::INVALID_BASE_URL         => __( 'The WooNyx server address is invalid. Check WOONYX_API_BASE_URL in wp-config.php: it must be an https address.', 'woonyx' ),
-			CoreError::INVALID_PAYLOAD          => __( 'The data could not be prepared for sending to WooNyx.', 'woonyx' ),
-			CoreError::NETWORK_ERROR            => __( 'Could not reach the WooNyx server. Check this site’s internet connection and try again in a few minutes.', 'woonyx' ),
-			CoreError::UNEXPECTED_REDIRECT      => __( 'The WooNyx server answered with a redirect, which is not followed. Check the server address.', 'woonyx' ),
-			CoreError::INVALID_RESPONSE         => __( 'The WooNyx server sent an unexpected answer. Try again later.', 'woonyx' ),
-			CoreError::UNKNOWN_ERROR            => __( 'Something went wrong while talking to the WooNyx server. Try again later.', 'woonyx' ),
-			CoreError::LICENSE_KEY_FORMAT       => __( 'This is not a WooNyx license key. A license key looks like WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX.', 'woonyx' ),
-			CoreError::SITE_NOT_HTTPS           => __( 'WooNyx needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again.', 'woonyx' ),
-			CoreError::REST_URL_MISMATCH        => __( 'This site’s REST API is not on the same address as the site, so WooNyx cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port.', 'woonyx' ),
-			CoreError::REST_KEY_FAILED          => __( 'The WooCommerce REST API key WooNyx needs could not be created. Try again; if it keeps failing, check the site’s database error log.', 'woonyx' ),
-			CoreError::CONNECTION_NOT_SAVED     => __( 'The store was activated on WooNyx, but the connection could not be saved on this site. Enter your license key again to activate it once more.', 'woonyx' ),
-			CoreError::SECRET_NOT_SAVED         => __( 'WooNyx issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now.', 'woonyx' ),
-			CoreError::BOT_TOKEN_FORMAT         => __( 'This does not look like a bot token. Paste the token the messenger gave you when you created the bot, without spaces.', 'woonyx' ),
-			CoreError::PIN_NOT_SAVED            => __( 'WooNyx issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now.', 'woonyx' ),
+			CoreError::NOT_ACTIVATED            => __( 'This store is not connected to Nyxify yet. Enter your license key to activate it.', 'nyxify' ),
+			CoreError::CONNECTION_UNREADABLE    => __( 'The saved connection to Nyxify can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect.', 'nyxify' ),
+			CoreError::INVALID_BASE_URL         => __( 'The Nyxify server address is invalid. Check NYXIFY_API_BASE_URL in wp-config.php: it must be an https address.', 'nyxify' ),
+			CoreError::INVALID_PAYLOAD          => __( 'The data could not be prepared for sending to Nyxify.', 'nyxify' ),
+			CoreError::NETWORK_ERROR            => __( 'Could not reach the Nyxify server. Check this site’s internet connection and try again in a few minutes.', 'nyxify' ),
+			CoreError::UNEXPECTED_REDIRECT      => __( 'The Nyxify server answered with a redirect, which is not followed. Check the server address.', 'nyxify' ),
+			CoreError::INVALID_RESPONSE         => __( 'The Nyxify server sent an unexpected answer. Try again later.', 'nyxify' ),
+			CoreError::UNKNOWN_ERROR            => __( 'Something went wrong while talking to the Nyxify server. Try again later.', 'nyxify' ),
+			CoreError::LICENSE_KEY_FORMAT       => __( 'This is not a Nyxify license key. A license key looks like NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX.', 'nyxify' ),
+			CoreError::SITE_NOT_HTTPS           => __( 'Nyxify needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again.', 'nyxify' ),
+			CoreError::REST_URL_MISMATCH        => __( 'This site’s REST API is not on the same address as the site, so Nyxify cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port.', 'nyxify' ),
+			CoreError::REST_KEY_FAILED          => __( 'The WooCommerce REST API key Nyxify needs could not be created. Try again; if it keeps failing, check the site’s database error log.', 'nyxify' ),
+			CoreError::CONNECTION_NOT_SAVED     => __( 'The store was activated on Nyxify, but the connection could not be saved on this site. Enter your license key again to activate it once more.', 'nyxify' ),
+			CoreError::SECRET_NOT_SAVED         => __( 'Nyxify issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now.', 'nyxify' ),
+			CoreError::BOT_TOKEN_FORMAT         => __( 'This does not look like a bot token. Paste the token the messenger gave you when you created the bot, without spaces.', 'nyxify' ),
+			CoreError::PIN_NOT_SAVED            => __( 'Nyxify issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now.', 'nyxify' ),
 
 			// Global.
-			'bad_request'                       => __( 'The WooNyx server rejected the request as invalid. Update the plugin and try again.', 'woonyx' ),
-			'unauthorized'                      => __( 'The WooNyx server did not accept this store’s credentials. Activate the store again with your license key.', 'woonyx' ),
-			'method_not_allowed'                => __( 'The WooNyx server does not accept this request. Update the plugin.', 'woonyx' ),
-			'validation_error'                  => __( 'Some of the data sent to WooNyx is invalid. Check it and try again.', 'woonyx' ),
-			'request_too_large'                 => __( 'The data is too large for the WooNyx server.', 'woonyx' ),
-			'internal_server_error'             => __( 'The WooNyx server had an internal error. Try again later.', 'woonyx' ),
-			'decryption_failed'                 => __( 'The WooNyx server could not read this store’s saved credentials. Activate the store again with your license key.', 'woonyx' ),
-			'too_many_attempts'                 => __( 'Too many attempts. Wait a few minutes and try again.', 'woonyx' ),
+			'bad_request'                       => __( 'The Nyxify server rejected the request as invalid. Update the plugin and try again.', 'nyxify' ),
+			'unauthorized'                      => __( 'The Nyxify server did not accept this store’s credentials. Activate the store again with your license key.', 'nyxify' ),
+			'method_not_allowed'                => __( 'The Nyxify server does not accept this request. Update the plugin.', 'nyxify' ),
+			'validation_error'                  => __( 'Some of the data sent to Nyxify is invalid. Check it and try again.', 'nyxify' ),
+			'request_too_large'                 => __( 'The data is too large for the Nyxify server.', 'nyxify' ),
+			'internal_server_error'             => __( 'The Nyxify server had an internal error. Try again later.', 'nyxify' ),
+			'decryption_failed'                 => __( 'The Nyxify server could not read this store’s saved credentials. Activate the store again with your license key.', 'nyxify' ),
+			'too_many_attempts'                 => __( 'Too many attempts. Wait a few minutes and try again.', 'nyxify' ),
 
 			// HMAC.
-			'invalid_signature_headers'         => __( 'The request’s signature was missing or malformed. Activate the store again with your license key.', 'woonyx' ),
-			'request_timestamp_expired'         => __( 'The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again.', 'woonyx' ),
-			'invalid_request_signature'         => __( 'The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key.', 'woonyx' ),
-			'replayed_request'                  => __( 'The same request reached the WooNyx server twice and was rejected. Try again.', 'woonyx' ),
+			'invalid_signature_headers'         => __( 'The request’s signature was missing or malformed. Activate the store again with your license key.', 'nyxify' ),
+			'request_timestamp_expired'         => __( 'The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again.', 'nyxify' ),
+			'invalid_request_signature'         => __( 'The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key.', 'nyxify' ),
+			'replayed_request'                  => __( 'The same request reached the Nyxify server twice and was rejected. Try again.', 'nyxify' ),
 
 			// Activation, store and subscription.
-			'invalid_license_key'               => __( 'This license key is not valid. Check it and try again.', 'woonyx' ),
-			'license_revoked'                   => __( 'This license key has been revoked. Contact WooNyx support.', 'woonyx' ),
-			'license_already_used'              => __( 'This license key is already used by another website.', 'woonyx' ),
-			'store_already_registered'          => __( 'This website is already activated with another license key.', 'woonyx' ),
-			'store_not_active'                  => __( 'This store is deactivated or suspended on WooNyx. Activate it again with your license key; if the license was revoked, contact WooNyx support.', 'woonyx' ),
-			'no_active_subscription'            => __( 'Your WooNyx subscription is not active or has expired. Renew it to continue.', 'woonyx' ),
-			'platform_not_in_plan'              => __( 'Your WooNyx plan does not include this messenger. Upgrade your plan to use it.', 'woonyx' ),
-			'woocommerce_authentication_failed' => __( 'The WooNyx server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again.', 'woonyx' ),
-			'woocommerce_unreachable'           => __( 'The WooNyx server could not reach this store. The site must be public, use https, and its REST API must not redirect.', 'woonyx' ),
-			'woocommerce_request_rejected'      => __( 'This store’s WooCommerce REST API rejected the WooNyx server’s request. Check the firewall and security plugins.', 'woonyx' ),
-			'woocommerce_bad_response'          => __( 'This store’s WooCommerce REST API sent the WooNyx server an unexpected answer. Check for plugins that change REST API responses.', 'woonyx' ),
+			'invalid_license_key'               => __( 'This license key is not valid. Check it and try again.', 'nyxify' ),
+			'license_revoked'                   => __( 'This license key has been revoked. Contact Nyxify support.', 'nyxify' ),
+			'license_already_used'              => __( 'This license key is already used by another website.', 'nyxify' ),
+			'store_already_registered'          => __( 'This website is already activated with another license key.', 'nyxify' ),
+			'store_not_active'                  => __( 'This store is deactivated or suspended on Nyxify. Activate it again with your license key; if the license was revoked, contact Nyxify support.', 'nyxify' ),
+			'no_active_subscription'            => __( 'Your Nyxify subscription is not active or has expired. Renew it to continue.', 'nyxify' ),
+			'platform_not_in_plan'              => __( 'Your Nyxify plan does not include this messenger. Upgrade your plan to use it.', 'nyxify' ),
+			'woocommerce_authentication_failed' => __( 'The Nyxify server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again.', 'nyxify' ),
+			'woocommerce_unreachable'           => __( 'The Nyxify server could not reach this store. The site must be public, use https, and its REST API must not redirect.', 'nyxify' ),
+			'woocommerce_request_rejected'      => __( 'This store’s WooCommerce REST API rejected the Nyxify server’s request. Check the firewall and security plugins.', 'nyxify' ),
+			'woocommerce_bad_response'          => __( 'This store’s WooCommerce REST API sent the Nyxify server an unexpected answer. Check for plugins that change REST API responses.', 'nyxify' ),
 
 			// Bots.
-			'bot_already_registered'            => __( 'This bot is already connected to another WooNyx store. Create a new bot for this shop, or remove this one from the other store first.', 'woonyx' ),
-			'bot_not_found'                     => __( 'No bot is connected for this messenger.', 'woonyx' ),
-			'customer_not_found'                => __( 'This person is no longer a bot admin of this store.', 'woonyx' ),
-			'invalid_bot_token'                 => __( 'The messenger rejected this bot token. Check it and try again.', 'woonyx' ),
-			'messenger_api_unavailable'         => __( 'The messenger’s servers did not respond. Try again in a few minutes.', 'woonyx' ),
+			'bot_already_registered'            => __( 'This bot is already connected to another Nyxify store. Create a new bot for this shop, or remove this one from the other store first.', 'nyxify' ),
+			'bot_not_found'                     => __( 'No bot is connected for this messenger.', 'nyxify' ),
+			'customer_not_found'                => __( 'This person is no longer a bot admin of this store.', 'nyxify' ),
+			'invalid_bot_token'                 => __( 'The messenger rejected this bot token. Check it and try again.', 'nyxify' ),
+			'messenger_api_unavailable'         => __( 'The messenger’s servers did not respond. Try again in a few minutes.', 'nyxify' ),
 		);
 	}
 

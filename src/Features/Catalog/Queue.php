@@ -2,12 +2,12 @@
 /**
  * The catalog queue's operations.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
 /**
  * What the collector and the flush need from the queue (CatalogQueue keeps it in a table; the tests keep it in memory

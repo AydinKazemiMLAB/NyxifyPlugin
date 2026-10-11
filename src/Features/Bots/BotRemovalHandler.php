@@ -2,21 +2,21 @@
 /**
  * The bots' "Remove" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Handles `admin-post.php?action=woonyx_remove_bot`: checks the capability and nonce, reads the platform, removes its
+ * Handles `admin-post.php?action=nyxify_remove_bot`: checks the capability and nonce, reads the platform, removes its
  * bot and redirects back to the settings page with a one-time notice.
  */
 final class BotRemovalHandler {
@@ -29,7 +29,7 @@ final class BotRemovalHandler {
 	/**
 	 * Name of the hidden platform field.
 	 */
-	public const FIELD_PLATFORM = 'woonyx_platform';
+	public const FIELD_PLATFORM = 'nyxify_platform';
 
 	/**
 	 * Success code of the notice.

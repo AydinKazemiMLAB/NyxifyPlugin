@@ -2,31 +2,31 @@
 /**
  * Tests for SyncPull.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\ChangeApplier;
-use WooNyx\Features\Sync\OutboxClient;
-use WooNyx\Features\Sync\PayloadFilter;
-use WooNyx\Features\Sync\PullLock;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Features\Sync\SyncPull;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\ChangeApplier;
+use Nyxify\Features\Sync\OutboxClient;
+use Nyxify\Features\Sync\PayloadFilter;
+use Nyxify\Features\Sync\PullLock;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Features\Sync\SyncPull;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Whole runs with the real client, applier, lock and scheduler: the core over a mocked wp_remote_request(), WooCommerce
@@ -238,7 +238,7 @@ final class SyncPullTest extends TestCase {
 	 * @param string $query SQL.
 	 */
 	private function lock_query( string $query ): int {
-		if ( 1 === preg_match( "/^INSERT IGNORE .* VALUES \\('woonyx_sync_lock', '([^']+)', 'no'\\)$/", $query, $m ) ) {
+		if ( 1 === preg_match( "/^INSERT IGNORE .* VALUES \\('nyxify_sync_lock', '([^']+)', 'no'\\)$/", $query, $m ) ) {
 			if ( null !== $this->lock_row ) {
 				return 0;
 			}
@@ -557,7 +557,7 @@ final class SyncPullTest extends TestCase {
 				'change_id'  => 44,
 				'action'     => 'product.update',
 				'error_code' => 'product_invalid_sku',
-				'source'     => 'woonyx',
+				'source'     => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);
@@ -570,7 +570,7 @@ final class SyncPullTest extends TestCase {
 				'request_id'     => 'req-core-200',
 				'ack_request_id' => 'req-core-200',
 				'affected'       => 5,
-				'source'         => 'woonyx',
+				'source'         => 'nyxify',
 			),
 			$this->entries[1]['context']
 		);
@@ -654,7 +654,7 @@ final class SyncPullTest extends TestCase {
 
 		self::assertCount( 2, $this->acks );
 		self::assertSame( $this->acks[0], $this->acks[1] );
-		self::assertSame( array( 'error:WooNyx core call failed.', 'info:Pulled changes applied.' ), $this->logged() );
+		self::assertSame( array( 'error:Nyxify core call failed.', 'info:Pulled changes applied.' ), $this->logged() );
 		self::assertSame( 1, $this->entry( 'Pulled changes applied.' )['context']['affected'] );
 	}
 
@@ -665,7 +665,7 @@ final class SyncPullTest extends TestCase {
 		$this->pull()->run();
 
 		self::assertCount( 2, $this->acks );
-		self::assertSame( array( 'error:WooNyx core call failed.', 'error:WooNyx core call failed.', 'info:Pulled changes applied.' ), $this->logged() );
+		self::assertSame( array( 'error:Nyxify core call failed.', 'error:Nyxify core call failed.', 'info:Pulled changes applied.' ), $this->logged() );
 		self::assertArrayNotHasKey( 'affected', $this->entry( 'Pulled changes applied.' )['context'] );
 		self::assertArrayNotHasKey( PullScheduler::OPTION_RETRY_AT, $this->options );
 		self::assertNull( $this->lock_row );
@@ -678,7 +678,7 @@ final class SyncPullTest extends TestCase {
 		$this->pull()->run();
 
 		self::assertCount( 1, $this->acks );
-		self::assertSame( array( 'warning:WooNyx core call failed.', 'info:Pulled changes applied.' ), $this->logged() );
+		self::assertSame( array( 'warning:Nyxify core call failed.', 'info:Pulled changes applied.' ), $this->logged() );
 		self::assertArrayNotHasKey( 'affected', $this->entry( 'Pulled changes applied.' )['context'] );
 		self::assertArrayNotHasKey( PullScheduler::OPTION_RETRY_AT, $this->options );
 	}
@@ -707,7 +707,7 @@ final class SyncPullTest extends TestCase {
 
 		self::assertSame( self::NOW + SyncPull::PAUSE_SECONDS, $this->options[ PullScheduler::OPTION_RETRY_AT ] );
 		self::assertArrayNotHasKey( StatusService::TRANSIENT, $this->transients );
-		self::assertSame( array( 'warning:WooNyx core call failed.', 'warning:The core refuses the store; pulls pause for an hour.' ), $this->logged() );
+		self::assertSame( array( 'warning:Nyxify core call failed.', 'warning:The core refuses the store; pulls pause for an hour.' ), $this->logged() );
 		self::assertSame( SyncPull::OPERATION_PULL, $this->entries[0]['context']['operation'] );
 		self::assertSame( array( 'pull', 'release' ), $this->events );
 	}
@@ -747,7 +747,7 @@ final class SyncPullTest extends TestCase {
 		self::assertArrayHasKey( StatusService::TRANSIENT, $this->transients );
 		self::assertSame( array( 'pull', 'release' ), $this->events );
 		self::assertCount( 1, $this->entries );
-		self::assertSame( 'WooNyx core call failed.', $this->entries[0]['message'] );
+		self::assertSame( 'Nyxify core call failed.', $this->entries[0]['message'] );
 	}
 
 	// ------------------------------------------------------------------ failures
@@ -765,7 +765,7 @@ final class SyncPullTest extends TestCase {
 		self::assertSame(
 			array(
 				'exception' => 'RuntimeException',
-				'source'    => 'woonyx',
+				'source'    => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);
@@ -780,8 +780,8 @@ final class SyncPullTest extends TestCase {
 	}
 
 	public function test_the_hooks_are_the_schedulers(): void {
-		self::assertSame( 'woonyx_sync_pull', PullScheduler::HOOK );
-		self::assertSame( 'woonyx_sync_pull_now', PullScheduler::NOW_HOOK );
+		self::assertSame( 'nyxify_sync_pull', PullScheduler::HOOK );
+		self::assertSame( 'nyxify_sync_pull_now', PullScheduler::NOW_HOOK );
 		self::assertSame( 20, OutboxClient::LIMIT );
 	}
 }

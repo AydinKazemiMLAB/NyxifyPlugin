@@ -2,24 +2,24 @@
 /**
  * Tests for ChangeApplier.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Features\Sync\ChangeApplier;
-use WooNyx\Features\Sync\ChangeResult;
-use WooNyx\Features\Sync\PayloadFilter;
-use WooNyx\Features\Sync\PulledChange;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Features\Sync\ChangeApplier;
+use Nyxify\Features\Sync\ChangeResult;
+use Nyxify\Features\Sync\PayloadFilter;
+use Nyxify\Features\Sync\PulledChange;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * One change through a fake in-process REST dispatcher (standing in for rest_do_request() and WooCommerce's
@@ -300,7 +300,7 @@ final class ChangeApplierTest extends TestCase {
 					'name'      => 'کیف',
 					'meta_data' => array(
 						array(
-							'key'   => '_woonyx_outbox_id',
+							'key'   => '_nyxify_outbox_id',
 							'value' => '41',
 						),
 					),
@@ -419,7 +419,7 @@ final class ChangeApplierTest extends TestCase {
 			array(
 				'change_id'  => 41,
 				'product_id' => 88,
-				'source'     => 'woonyx',
+				'source'     => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);
@@ -434,7 +434,7 @@ final class ChangeApplierTest extends TestCase {
 		$args = $this->lookups[0];
 		self::assertSame( 'product', $args['post_type'] );
 		self::assertSame( array( 'any', 'trash' ), $args['post_status'] );
-		self::assertSame( '_woonyx_outbox_id', $args['meta_key'] );
+		self::assertSame( '_nyxify_outbox_id', $args['meta_key'] );
 		self::assertSame( '41', $args['meta_value'] );
 		self::assertSame( 'ids', $args['fields'] );
 		self::assertSame( 1, $args['posts_per_page'] );
@@ -597,7 +597,7 @@ final class ChangeApplierTest extends TestCase {
 				'change_id' => 41,
 				'action'    => 'product.update',
 				'exception' => 'RuntimeException',
-				'source'    => 'woonyx',
+				'source'    => 'nyxify',
 			),
 			$this->entries[0]['context']
 		);

@@ -2,21 +2,21 @@
 /**
  * The license form's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Handles `admin-post.php?action=woonyx_activate`: checks the capability and nonce, reads the license key, activates
+ * Handles `admin-post.php?action=nyxify_activate`: checks the capability and nonce, reads the license key, activates
  * the store and redirects back to the settings page with a one-time notice. The key never goes into the redirect, a
  * notice or a log.
  */
@@ -30,7 +30,7 @@ final class ActivationHandler {
 	/**
 	 * Name of the license key field.
 	 */
-	public const FIELD = 'woonyx_license_key';
+	public const FIELD = 'nyxify_license_key';
 
 	/**
 	 * Success code of the notice.

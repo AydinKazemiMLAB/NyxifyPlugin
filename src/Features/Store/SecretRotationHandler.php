@@ -2,21 +2,21 @@
 /**
  * The "Rotate secret" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
 
 /**
- * Handles `admin-post.php?action=woonyx_rotate_secret`: checks the capability and nonce, rotates the shared secret and
+ * Handles `admin-post.php?action=nyxify_rotate_secret`: checks the capability and nonce, rotates the shared secret and
  * redirects back to the settings page with a one-time notice.
  */
 final class SecretRotationHandler {

@@ -2,26 +2,26 @@
 /**
  * Tests for the warning before the plugin is deactivated.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Settings;
+namespace Nyxify\Tests\Unit\Features\Settings;
 
 use Brain\Monkey\Functions;
-use WooNyx\Features\Settings\DeactivationWarning;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Settings\DeactivationWarning;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The script is loaded on the plugins list only, and only while the store is connected (always in the network admin).
  */
 final class DeactivationWarningTest extends TestCase {
 
-	private const PLUGIN_FILE = '/var/www/wp-content/plugins/woonyx/woonyx.php';
+	private const PLUGIN_FILE = '/var/www/wp-content/plugins/nyxify/nyxify.php';
 
 	/**
 	 * In-memory wp_options.
@@ -68,8 +68,8 @@ final class DeactivationWarningTest extends TestCase {
 			fn( $value, int $flags = 0 ) => json_encode( $value, $flags ) // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 		);
 		Functions\when( 'is_network_admin' )->alias( fn(): bool => $this->network_admin );
-		Functions\when( 'plugin_basename' )->justReturn( 'woonyx/woonyx.php' );
-		Functions\when( 'plugins_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-content/plugins/woonyx/' . $path );
+		Functions\when( 'plugin_basename' )->justReturn( 'nyxify/nyxify.php' );
+		Functions\when( 'plugins_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-content/plugins/nyxify/' . $path );
 		Functions\when( 'wp_enqueue_script' )->alias(
 			function ( string $handle, ...$args ): void {
 				$this->scripts[ $handle ] = array_values( $args );
@@ -103,9 +103,9 @@ final class DeactivationWarningTest extends TestCase {
 	private function settings(): array {
 		self::assertCount( 1, $this->inline );
 		[ $handle, $code, $position ] = $this->inline[0];
-		self::assertSame( 'woonyx-plugins', $handle );
+		self::assertSame( 'nyxify-plugins', $handle );
 		self::assertSame( 'before', $position );
-		$json     = 1 === preg_match( '/^window\.woonyxPlugins = (\{.*\});$/D', $code, $matches ) ? $matches[1] : '';
+		$json     = 1 === preg_match( '/^window\.nyxifyPlugins = (\{.*\});$/D', $code, $matches ) ? $matches[1] : '';
 		$settings = json_decode( $json, true );
 		self::assertIsArray( $settings );
 
@@ -127,20 +127,20 @@ final class DeactivationWarningTest extends TestCase {
 
 		self::assertSame(
 			array(
-				'https://shop.example.com/wp-content/plugins/woonyx/assets/js/plugins.js',
+				'https://shop.example.com/wp-content/plugins/nyxify/assets/js/plugins.js',
 				array(),
-				WOONYX_VERSION,
+				NYXIFY_VERSION,
 				array(
 					'in_footer' => true,
 					'strategy'  => 'defer',
 				),
 			),
-			$this->scripts['woonyx-plugins']
+			$this->scripts['nyxify-plugins']
 		);
 		self::assertSame(
 			array(
-				'basename' => 'woonyx/woonyx.php',
-				'message'  => 'Deactivating WooNyx stops your shop’s bots. To connect again you will need your license key.',
+				'basename' => 'nyxify/nyxify.php',
+				'message'  => 'Deactivating Nyxify stops your shop’s bots. To connect again you will need your license key.',
 			),
 			$this->settings()
 		);
@@ -162,7 +162,7 @@ final class DeactivationWarningTest extends TestCase {
 		$this->connect();
 
 		$this->warning()->enqueue_assets( 'index.php' );
-		$this->warning()->enqueue_assets( 'woocommerce_page_woonyx' );
+		$this->warning()->enqueue_assets( 'woocommerce_page_nyxify' );
 
 		self::assertSame( array(), $this->scripts );
 		self::assertSame( array(), $this->inline );
@@ -187,7 +187,7 @@ final class DeactivationWarningTest extends TestCase {
 
 		$this->warning()->enqueue_assets( 'plugins.php' );
 
-		self::assertArrayHasKey( 'woonyx-plugins', $this->scripts );
-		self::assertSame( 'woonyx/woonyx.php', $this->settings()['basename'] );
+		self::assertArrayHasKey( 'nyxify-plugins', $this->scripts );
+		self::assertSame( 'nyxify/nyxify.php', $this->settings()['basename'] );
 	}
 }

@@ -2,19 +2,19 @@
 /**
  * Tests for the bot token forms' handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\BotRegistrationHandler;
-use WooNyx\Features\Bots\BotToken;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\BotRegistrationHandler;
+use Nyxify\Features\Bots\BotToken;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Capability and nonce first, then the platform and token checks, the registration, the notice and the redirect.
@@ -23,7 +23,7 @@ use WooNyx\Tests\Unit\TestCase;
  */
 final class BotRegistrationHandlerTest extends TestCase {
 
-	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=woonyx';
+	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=nyxify';
 	private const TOKEN        = '123456789:AAFsecretTokenValue_xyz';
 
 	/**
@@ -72,8 +72,8 @@ final class BotRegistrationHandlerTest extends TestCase {
 		parent::setUp();
 
 		$_POST = array(
-			'woonyx_platform'  => 'telegram',
-			'woonyx_bot_token' => self::TOKEN,
+			'nyxify_platform'  => 'telegram',
+			'nyxify_bot_token' => self::TOKEN,
 		);
 
 		Functions\stubTranslationFunctions();
@@ -82,7 +82,7 @@ final class BotRegistrationHandlerTest extends TestCase {
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_register_bot' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_register_bot' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -141,7 +141,7 @@ final class BotRegistrationHandlerTest extends TestCase {
 	 * @return array<string, mixed>
 	 */
 	private function notice(): array {
-		$notice = $this->transients['woonyx_notice_5'] ?? null;
+		$notice = $this->transients['nyxify_notice_5'] ?? null;
 		self::assertIsArray( $notice );
 
 		return $notice;
@@ -152,7 +152,7 @@ final class BotRegistrationHandlerTest extends TestCase {
 
 		$handler->register();
 
-		self::assertNotFalse( has_action( 'admin_post_woonyx_register_bot', array( $handler, 'handle' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_register_bot', array( $handler, 'handle' ) ) );
 	}
 
 	public function test_without_the_capability_nothing_happens(): void {
@@ -182,8 +182,8 @@ final class BotRegistrationHandlerTest extends TestCase {
 	}
 
 	public function test_a_token_is_registered_and_kept_out_of_the_notice_and_redirect(): void {
-		$_POST['woonyx_platform']  = 'bale';
-		$_POST['woonyx_bot_token'] = '  ' . self::TOKEN . "\n";
+		$_POST['nyxify_platform']  = 'bale';
+		$_POST['nyxify_bot_token'] = '  ' . self::TOKEN . "\n";
 
 		$this->submit();
 
@@ -223,9 +223,9 @@ final class BotRegistrationHandlerTest extends TestCase {
 	#[DataProvider( 'bad_platforms' )]
 	public function test_an_unknown_platform_sends_nothing( mixed $platform ): void {
 		if ( null === $platform ) {
-			unset( $_POST['woonyx_platform'] );
+			unset( $_POST['nyxify_platform'] );
 		} else {
-			$_POST['woonyx_platform'] = $platform;
+			$_POST['nyxify_platform'] = $platform;
 		}
 
 		$this->submit();
@@ -250,9 +250,9 @@ final class BotRegistrationHandlerTest extends TestCase {
 	#[DataProvider( 'bad_tokens' )]
 	public function test_a_malformed_token_sends_nothing( mixed $token ): void {
 		if ( null === $token ) {
-			unset( $_POST['woonyx_bot_token'] );
+			unset( $_POST['nyxify_bot_token'] );
 		} else {
-			$_POST['woonyx_bot_token'] = $token;
+			$_POST['nyxify_bot_token'] = $token;
 		}
 
 		$this->submit();

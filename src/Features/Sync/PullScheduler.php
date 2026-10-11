@@ -2,18 +2,18 @@
 /**
  * Scheduling the pull.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
- * Schedules the Action Scheduler actions that pull the changes the core couldn't push (contract §5.2), group `woonyx`,
+ * Schedules the Action Scheduler actions that pull the changes the core couldn't push (contract §5.2), group `nyxify`,
  * and keeps the pause after a refusal.
  *
  * - HOOK: recurring every INTERVAL_SECONDS while the site is connected. ensure() (on `admin_init` and after an
@@ -27,11 +27,11 @@ use WooNyx\Shared\Security\Encryptor;
  */
 final class PullScheduler {
 
-	public const HOOK = 'woonyx_sync_pull';
+	public const HOOK = 'nyxify_sync_pull';
 
-	public const NOW_HOOK = 'woonyx_sync_pull_now';
+	public const NOW_HOOK = 'nyxify_sync_pull_now';
 
-	public const GROUP = 'woonyx';
+	public const GROUP = 'nyxify';
 
 	/**
 	 * Seconds between two recurring pulls (the core claims a pulled change for 300 s).
@@ -41,7 +41,7 @@ final class PullScheduler {
 	/**
 	 * Option holding the Unix time before which no pull runs; not autoloaded.
 	 */
-	public const OPTION_RETRY_AT = 'woonyx_sync_retry_at';
+	public const OPTION_RETRY_AT = 'nyxify_sync_retry_at';
 
 	/**
 	 * Current Unix time.

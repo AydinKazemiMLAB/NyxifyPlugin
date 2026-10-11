@@ -2,22 +2,22 @@
 /**
  * Data removal when the plugin is deleted.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx;
+namespace Nyxify;
 
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Catalog\Schema;
-use WooNyx\Features\Store\RestKeys;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Sync\PullLock;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Options\SecretStore;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Catalog\Schema;
+use Nyxify\Features\Store\RestKeys;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PullLock;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Options\SecretStore;
 
 /**
  * Removes everything the plugin stored, on every site of a network: the WooCommerce REST key it created, its pending

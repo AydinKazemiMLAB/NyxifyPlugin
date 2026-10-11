@@ -1,20 +1,20 @@
 <?php
 /**
- * The settings page's "Store on WooNyx" section.
+ * The settings page's "Store on Nyxify" section.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
-use WooNyx\Features\Catalog\CatalogSyncHandler;
-use WooNyx\Features\Store\StatusRefreshHandler;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\ErrorMessages;
+use Nyxify\Features\Catalog\CatalogSyncHandler;
+use Nyxify\Features\Store\StatusRefreshHandler;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\ErrorMessages;
 
 /**
  * Shown while a connection is stored: the store's status on the core (license, plan, messengers, products, catalog
@@ -30,7 +30,7 @@ final class StatusSection {
 	 */
 	public function render( StoreStatus|CoreError $result ): void {
 		?>
-		<h2><?php esc_html_e( 'Store on WooNyx', 'woonyx' ); ?></h2>
+		<h2><?php esc_html_e( 'Store on Nyxify', 'nyxify' ); ?></h2>
 		<?php
 		if ( $result instanceof CoreError ) {
 			ErrorNotice::render( $result );
@@ -38,15 +38,15 @@ final class StatusSection {
 			self::render_status( $result );
 		}
 		?>
-		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-refresh-form">
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-refresh-form">
 			<?php AdminAction::render_fields( StatusRefreshHandler::ACTION ); ?>
 			<p>
-				<button type="submit" class="button"><?php esc_html_e( 'Check connection', 'woonyx' ); ?></button>
+				<button type="submit" class="button"><?php esc_html_e( 'Check connection', 'nyxify' ); ?></button>
 				<?php if ( $result instanceof StoreStatus ) : ?>
 					<span class="description">
 						<?php
 						/* translators: %s: date and time */
-						echo esc_html( sprintf( __( 'Checked %s', 'woonyx' ), DateFormat::timestamp( $result->checked_at ) ) );
+						echo esc_html( sprintf( __( 'Checked %s', 'nyxify' ), DateFormat::timestamp( $result->checked_at ) ) );
 						?>
 					</span>
 				<?php endif; ?>
@@ -62,10 +62,10 @@ final class StatusSection {
 	 */
 	private static function render_status( StoreStatus $status ): void {
 		?>
-		<table class="form-table woonyx-store-status" role="presentation">
+		<table class="form-table nyxify-store-status" role="presentation">
 			<tbody>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Store', 'woonyx' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Store', 'nyxify' ); ?></th>
 					<td>
 						<?php echo esc_html( self::label( self::store_labels(), $status->status ) ); ?>
 						<p class="description"><code dir="ltr"><?php echo esc_html( $status->website_url ); ?></code></p>
@@ -75,7 +75,7 @@ final class StatusSection {
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'License', 'woonyx' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'License', 'nyxify' ); ?></th>
 					<td>
 						<?php if ( null === $status->license_prefix ) : ?>
 							&mdash;
@@ -85,7 +85,7 @@ final class StatusSection {
 								<p class="description">
 									<?php
 									/* translators: %s: date and time */
-									echo esc_html( sprintf( __( 'Activated %s', 'woonyx' ), DateFormat::core_date( $status->license_activated_at ) ) );
+									echo esc_html( sprintf( __( 'Activated %s', 'nyxify' ), DateFormat::core_date( $status->license_activated_at ) ) );
 									?>
 								</p>
 							<?php endif; ?>
@@ -93,34 +93,34 @@ final class StatusSection {
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Plan', 'woonyx' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Plan', 'nyxify' ); ?></th>
 					<td>
 						<?php echo esc_html( $status->plan_name ); ?>
 						<p class="description">
 							<?php
 							/* translators: %s: date and time */
-							echo esc_html( sprintf( __( 'Expires %s', 'woonyx' ), DateFormat::core_date( $status->expires_at ) ) );
+							echo esc_html( sprintf( __( 'Expires %s', 'nyxify' ), DateFormat::core_date( $status->expires_at ) ) );
 							?>
 						</p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Messengers', 'woonyx' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Messengers', 'nyxify' ); ?></th>
 					<td><?php echo esc_html( self::platforms( $status->allowed_platforms ) ); ?></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Products', 'woonyx' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Products', 'nyxify' ); ?></th>
 					<td><?php echo esc_html( self::products( $status ) ); ?></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Catalog sync', 'woonyx' ); ?></th>
+					<th scope="row"><?php esc_html_e( 'Catalog sync', 'nyxify' ); ?></th>
 					<td>
 						<?php echo esc_html( self::label( self::catalog_labels(), $status->catalog_status ) ); ?>
 						<?php if ( null !== $status->catalog_last_synced_at ) : ?>
 							<p class="description">
 								<?php
 								/* translators: %s: date and time */
-								echo esc_html( sprintf( __( 'Last synced %s', 'woonyx' ), DateFormat::core_date( $status->catalog_last_synced_at ) ) );
+								echo esc_html( sprintf( __( 'Last synced %s', 'nyxify' ), DateFormat::core_date( $status->catalog_last_synced_at ) ) );
 								?>
 							</p>
 						<?php endif; ?>
@@ -128,7 +128,7 @@ final class StatusSection {
 							<div class="notice notice-error inline"><p><?php echo esc_html( $status->catalog_error ); ?></p></div>
 						<?php endif; ?>
 						<?php if ( $status->limit_reached ) : ?>
-							<div class="notice notice-warning inline"><p><?php esc_html_e( 'Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them.', 'woonyx' ); ?></p></div>
+							<div class="notice notice-warning inline"><p><?php esc_html_e( 'Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them.', 'nyxify' ); ?></p></div>
 						<?php endif; ?>
 						<?php if ( 'active' === $status->status ) : ?>
 							<?php self::render_sync_form(); ?>
@@ -141,15 +141,15 @@ final class StatusSection {
 	}
 
 	/**
-	 * The "Sync now" button: WooNyx reads the whole catalog again.
+	 * The "Sync now" button: Nyxify reads the whole catalog again.
 	 */
 	private static function render_sync_form(): void {
 		?>
-		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-sync-form">
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-sync-form">
 			<?php AdminAction::render_fields( CatalogSyncHandler::ACTION ); ?>
 			<p>
-				<button type="submit" class="button button-small"><?php esc_html_e( 'Sync now', 'woonyx' ); ?></button>
-				<span class="description"><?php esc_html_e( 'WooNyx reads every product and category of this store again.', 'woonyx' ); ?></span>
+				<button type="submit" class="button button-small"><?php esc_html_e( 'Sync now', 'nyxify' ); ?></button>
+				<span class="description"><?php esc_html_e( 'Nyxify reads every product and category of this store again.', 'nyxify' ); ?></span>
 			</p>
 		</form>
 		<?php
@@ -162,9 +162,9 @@ final class StatusSection {
 	 */
 	private static function store_labels(): array {
 		return array(
-			'active'      => __( 'Active', 'woonyx' ),
-			'deactivated' => __( 'Deactivated', 'woonyx' ),
-			'suspended'   => __( 'Suspended', 'woonyx' ),
+			'active'      => __( 'Active', 'nyxify' ),
+			'deactivated' => __( 'Deactivated', 'nyxify' ),
+			'suspended'   => __( 'Suspended', 'nyxify' ),
 		);
 	}
 
@@ -175,10 +175,10 @@ final class StatusSection {
 	 */
 	private static function catalog_labels(): array {
 		return array(
-			'never'     => __( 'Not synced yet', 'woonyx' ),
-			'running'   => __( 'Syncing…', 'woonyx' ),
-			'succeeded' => __( 'Synced', 'woonyx' ),
-			'failed'    => __( 'Failed', 'woonyx' ),
+			'never'     => __( 'Not synced yet', 'nyxify' ),
+			'running'   => __( 'Syncing…', 'nyxify' ),
+			'succeeded' => __( 'Synced', 'nyxify' ),
+			'failed'    => __( 'Failed', 'nyxify' ),
 		);
 	}
 
@@ -199,18 +199,18 @@ final class StatusSection {
 	 */
 	private static function platforms( array $platforms ): string {
 		if ( array() === $platforms ) {
-			return __( 'None', 'woonyx' );
+			return __( 'None', 'nyxify' );
 		}
 
 		$labels = array(
-			'telegram' => __( 'Telegram', 'woonyx' ),
-			'bale'     => __( 'Bale', 'woonyx' ),
-			'rubika'   => __( 'Rubika', 'woonyx' ),
+			'telegram' => __( 'Telegram', 'nyxify' ),
+			'bale'     => __( 'Bale', 'nyxify' ),
+			'rubika'   => __( 'Rubika', 'nyxify' ),
 		);
 
 		return implode(
 			/* translators: separator between the items of a list */
-			_x( ', ', 'list separator', 'woonyx' ),
+			_x( ', ', 'list separator', 'nyxify' ),
 			array_map( fn( string $platform ): string => self::label( $labels, $platform ), $platforms )
 		);
 	}
@@ -223,12 +223,12 @@ final class StatusSection {
 	private static function products( StoreStatus $status ): string {
 		if ( null === $status->max_products ) {
 			/* translators: %s: number of products */
-			return sprintf( __( '%s (no limit)', 'woonyx' ), number_format_i18n( $status->active_products ) );
+			return sprintf( __( '%s (no limit)', 'nyxify' ), number_format_i18n( $status->active_products ) );
 		}
 
 		return sprintf(
 			/* translators: 1: number of products, 2: the plan's limit */
-			__( '%1$s of %2$s', 'woonyx' ),
+			__( '%1$s of %2$s', 'nyxify' ),
 			number_format_i18n( $status->active_products ),
 			number_format_i18n( $status->max_products )
 		);

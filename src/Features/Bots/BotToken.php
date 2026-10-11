@@ -2,12 +2,12 @@
 /**
  * A bot token entered by the owner.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
 /**
  * A bot token as the messenger gave it: printable ASCII without spaces, at most 300 characters (the core's limit).
@@ -42,7 +42,7 @@ final class BotToken {
 	/**
 	 * Reads a token from form input (unslashed here).
 	 *
-	 * @param mixed $raw Raw request value, e.g. `$_POST['woonyx_bot_token'] ?? null`.
+	 * @param mixed $raw Raw request value, e.g. `$_POST['nyxify_bot_token'] ?? null`.
 	 * @return self|null Null when the value is missing or not a well-formed token.
 	 */
 	public static function from_input( $raw ): ?self {

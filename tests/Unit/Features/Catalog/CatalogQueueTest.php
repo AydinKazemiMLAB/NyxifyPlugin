@@ -2,19 +2,19 @@
 /**
  * Tests for the catalog queue.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\CatalogQueue;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\CatalogQueue;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The exact SQL of every operation over a mocked $wpdb: each one a single statement (or a short sequence on rows the
@@ -24,7 +24,7 @@ final class CatalogQueueTest extends TestCase {
 
 	use EmulatesPrepare;
 
-	private const TABLE = 'wp_woonyx_catalog_queue';
+	private const TABLE = 'wp_nyxify_catalog_queue';
 	private const TOKEN = '0123456789abcdef0123456789abcdef';
 	private const NOW   = 1791892800; // 2026-10-13 12:00:00 UTC.
 
@@ -119,7 +119,7 @@ final class CatalogQueueTest extends TestCase {
 
 		self::assertSame(
 			array(
-				'INSERT INTO `wp_woonyx_catalog_queue` (kind, object_id, queued_at) VALUES '
+				'INSERT INTO `wp_nyxify_catalog_queue` (kind, object_id, queued_at) VALUES '
 				. "('product', 42, '2026-10-13 12:00:00'), ('product', 7, '2026-10-13 12:00:00') "
 				. 'ON DUPLICATE KEY UPDATE dirty = IF(claim IS NULL, dirty, 1)',
 			),
@@ -181,9 +181,9 @@ final class CatalogQueueTest extends TestCase {
 
 		self::assertSame(
 			array(
-				"UPDATE `wp_woonyx_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0 WHERE claim IS NOT NULL AND claimed_at < '2026-10-13 11:45:00'",
-				"UPDATE `wp_woonyx_catalog_queue` SET claim = '0123456789abcdef0123456789abcdef', claimed_at = '2026-10-13 12:00:00', dirty = 0 WHERE kind = 'product' AND claim IS NULL ORDER BY queued_at, object_id LIMIT 100",
-				"SELECT object_id, attempts FROM `wp_woonyx_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef' ORDER BY queued_at, object_id",
+				"UPDATE `wp_nyxify_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0 WHERE claim IS NOT NULL AND claimed_at < '2026-10-13 11:45:00'",
+				"UPDATE `wp_nyxify_catalog_queue` SET claim = '0123456789abcdef0123456789abcdef', claimed_at = '2026-10-13 12:00:00', dirty = 0 WHERE kind = 'product' AND claim IS NULL ORDER BY queued_at, object_id LIMIT 100",
+				"SELECT object_id, attempts FROM `wp_nyxify_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef' ORDER BY queued_at, object_id",
 			),
 			$this->queries
 		);
@@ -263,8 +263,8 @@ final class CatalogQueueTest extends TestCase {
 
 		self::assertSame(
 			array(
-				"DELETE FROM `wp_woonyx_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef' AND dirty = 0",
-				"UPDATE `wp_woonyx_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0, attempts = 0 WHERE claim = '0123456789abcdef0123456789abcdef'",
+				"DELETE FROM `wp_nyxify_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef' AND dirty = 0",
+				"UPDATE `wp_nyxify_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0, attempts = 0 WHERE claim = '0123456789abcdef0123456789abcdef'",
 			),
 			$this->queries
 		);
@@ -280,7 +280,7 @@ final class CatalogQueueTest extends TestCase {
 		self::assertTrue( $this->queue()->release( self::TOKEN, array( 5, 6, 5, 0 ) ) );
 
 		self::assertSame(
-			array( "UPDATE `wp_woonyx_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0 WHERE claim = '0123456789abcdef0123456789abcdef' AND object_id IN (5, 6)" ),
+			array( "UPDATE `wp_nyxify_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0 WHERE claim = '0123456789abcdef0123456789abcdef' AND object_id IN (5, 6)" ),
 			$this->queries
 		);
 	}
@@ -297,9 +297,9 @@ final class CatalogQueueTest extends TestCase {
 
 		self::assertSame(
 			array(
-				"UPDATE `wp_woonyx_catalog_queue` SET attempts = attempts + 1 WHERE claim = '0123456789abcdef0123456789abcdef'",
-				"DELETE FROM `wp_woonyx_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef' AND attempts >= 5",
-				"UPDATE `wp_woonyx_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0 WHERE claim = '0123456789abcdef0123456789abcdef'",
+				"UPDATE `wp_nyxify_catalog_queue` SET attempts = attempts + 1 WHERE claim = '0123456789abcdef0123456789abcdef'",
+				"DELETE FROM `wp_nyxify_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef' AND attempts >= 5",
+				"UPDATE `wp_nyxify_catalog_queue` SET claim = NULL, claimed_at = NULL, dirty = 0 WHERE claim = '0123456789abcdef0123456789abcdef'",
 			),
 			$this->queries
 		);
@@ -314,13 +314,13 @@ final class CatalogQueueTest extends TestCase {
 	public function test_drop_deletes_the_claimed_rows(): void {
 		self::assertTrue( $this->queue()->drop( self::TOKEN ) );
 
-		self::assertSame( array( "DELETE FROM `wp_woonyx_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef'" ), $this->queries );
+		self::assertSame( array( "DELETE FROM `wp_nyxify_catalog_queue` WHERE claim = '0123456789abcdef0123456789abcdef'" ), $this->queries );
 	}
 
 	public function test_clear_deletes_every_row(): void {
 		self::assertTrue( $this->queue()->clear() );
 
-		self::assertSame( array( 'DELETE FROM `wp_woonyx_catalog_queue`' ), $this->queries );
+		self::assertSame( array( 'DELETE FROM `wp_nyxify_catalog_queue`' ), $this->queries );
 	}
 
 	public function test_clear_reports_a_failure(): void {
@@ -346,7 +346,7 @@ final class CatalogQueueTest extends TestCase {
 		$this->var = '1';
 		self::assertTrue( $this->queue()->has_unclaimed() );
 
-		self::assertSame( 'SELECT 1 FROM `wp_woonyx_catalog_queue` WHERE claim IS NULL LIMIT 1', $this->queries[0] );
+		self::assertSame( 'SELECT 1 FROM `wp_nyxify_catalog_queue` WHERE claim IS NULL LIMIT 1', $this->queries[0] );
 	}
 
 	public function test_new_tokens_are_32_lowercase_hex_characters_and_differ(): void {
@@ -368,6 +368,6 @@ final class CatalogQueueTest extends TestCase {
 			unset( $GLOBALS['wpdb'] );
 		}
 
-		self::assertSame( array( 'DELETE FROM `wp_3_woonyx_catalog_queue`' ), $this->queries );
+		self::assertSame( array( 'DELETE FROM `wp_3_nyxify_catalog_queue`' ), $this->queries );
 	}
 }

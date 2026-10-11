@@ -1,17 +1,17 @@
 <?php
 /**
- * HTTP client of the WooNyx core.
+ * HTTP client of the Nyxify core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Http;
+namespace Nyxify\Shared\Http;
 
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
 
 /**
  * Sends the plugin's requests to the core (`/api/v1/...`) with `wp_remote_request()`.
@@ -29,9 +29,9 @@ use WooNyx\Shared\Security\HmacSigner;
 final class CoreClient {
 
 	/**
-	 * The core used when WOONYX_API_BASE_URL isn't defined (the test server until a production URL exists).
+	 * The production core, used when NYXIFY_API_BASE_URL isn't defined.
 	 */
-	public const DEFAULT_BASE_URL = 'https://api.woonyx.nyxon.tech:88';
+	public const DEFAULT_BASE_URL = 'https://api.nyxify.nyxon.tech';
 
 	public const API_PREFIX = '/api/v1';
 
@@ -95,10 +95,10 @@ final class CoreClient {
 	}
 
 	/**
-	 * WOONYX_API_BASE_URL when defined and not empty, otherwise DEFAULT_BASE_URL.
+	 * NYXIFY_API_BASE_URL when defined and not empty, otherwise DEFAULT_BASE_URL.
 	 */
 	public static function configured_base_url(): string {
-		$url = defined( 'WOONYX_API_BASE_URL' ) ? (string) constant( 'WOONYX_API_BASE_URL' ) : '';
+		$url = defined( 'NYXIFY_API_BASE_URL' ) ? (string) constant( 'NYXIFY_API_BASE_URL' ) : '';
 
 		return '' !== $url ? $url : self::DEFAULT_BASE_URL;
 	}
@@ -154,10 +154,10 @@ final class CoreClient {
 	}
 
 	/**
-	 * A new request id: `wn-` + 24 random hex characters.
+	 * A new request id: `nx-` + 24 random hex characters.
 	 */
 	public static function new_request_id(): string {
-		return 'wn-' . bin2hex( random_bytes( 12 ) );
+		return 'nx-' . bin2hex( random_bytes( 12 ) );
 	}
 
 	/**
@@ -215,7 +215,7 @@ final class CoreClient {
 			'timeout'     => $timeout,
 			'redirection' => 0,
 			'httpversion' => '1.1',
-			'user-agent'  => 'WooNyx/' . WOONYX_VERSION,
+			'user-agent'  => 'Nyxify/' . NYXIFY_VERSION,
 		);
 		if ( '' !== $body ) {
 			$args['body'] = $body;

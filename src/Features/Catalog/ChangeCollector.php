@@ -2,12 +2,12 @@
 /**
  * Collecting catalog changes.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
 /**
  * Listens to product, variation, stock and product category changes and adds the changed ids to the request's

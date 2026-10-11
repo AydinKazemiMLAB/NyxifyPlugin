@@ -2,12 +2,12 @@
 /**
  * The store's connection to the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Options;
+namespace Nyxify\Shared\Options;
 
 /**
  * Store id and shared secret returned by the core's activation (contract §1.1), always kept together.
@@ -15,7 +15,7 @@ namespace WooNyx\Shared\Options;
 final class Connection {
 
 	/**
-	 * Store public id, `shop_` + 16 hex characters (sent as X-WooNyx-Shop-Id).
+	 * Store public id, `shop_` + 16 hex characters (sent as X-Nyxify-Shop-Id).
 	 *
 	 * @var string
 	 */

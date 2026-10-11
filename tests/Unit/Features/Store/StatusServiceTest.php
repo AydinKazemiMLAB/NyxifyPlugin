@@ -2,25 +2,25 @@
 /**
  * Tests for the store status and its cache.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Features\Store\StoreStatus;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Store\StoreStatus;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * `GET /store/status` over a mocked wp_remote_request(), with in-memory options and transients.
@@ -157,7 +157,7 @@ final class StatusServiceTest extends TestCase {
 			'wp_version'   => '7.1.3',
 			'woo_version'  => '11.1.2',
 			'license'      => array(
-				'key_prefix'   => 'WN-ABCDEF',
+				'key_prefix'   => 'NX-ABCDEF',
 				'activated_at' => '2026-09-13T09:00:00',
 			),
 			'subscription' => array(
@@ -205,12 +205,12 @@ final class StatusServiceTest extends TestCase {
 		self::assertInstanceOf( StoreStatus::class, $status );
 		self::assertSame( self::BASE_URL . '/api/v1/store/status', $this->requests[0]['url'] );
 		self::assertSame( 'GET', $this->requests[0]['args']['method'] );
-		self::assertSame( self::STORE_ID, $this->requests[0]['args']['headers']['X-WooNyx-Shop-Id'] );
+		self::assertSame( self::STORE_ID, $this->requests[0]['args']['headers']['X-Nyxify-Shop-Id'] );
 
 		self::assertSame( self::STORE_ID, $status->store_id );
 		self::assertSame( 'https://shop.example.com', $status->website_url );
 		self::assertSame( 'active', $status->status );
-		self::assertSame( 'WN-ABCDEF', $status->license_prefix );
+		self::assertSame( 'NX-ABCDEF', $status->license_prefix );
 		self::assertSame( '2026-09-13T09:00:00', $status->license_activated_at );
 		self::assertSame( 'Free', $status->plan_name );
 		self::assertSame( '2026-10-13T09:00:00', $status->expires_at );

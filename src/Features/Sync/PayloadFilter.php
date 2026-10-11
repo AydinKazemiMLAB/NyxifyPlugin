@@ -2,14 +2,14 @@
 /**
  * The fields a pulled change may write.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
-use WooNyx\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreClient;
 
 /**
  * Checks a pulled change against what the core can send (contract §5.1: `ProductFields`, `UpdateVariationRequest`,
@@ -19,7 +19,7 @@ use WooNyx\Shared\Http\CoreClient;
  *   outside the whitelist, or of the wrong type, fails the change with `invalid_change`. The message names the
  *   fields, never their values.
  * - Image links must be https (http only where CoreClient allows plain http to the core), without whitespace.
- * - A create's `meta_data` is the plugin's own: `_woonyx_outbox_id` = the change's id, whatever the core sent (only
+ * - A create's `meta_data` is the plugin's own: `_nyxify_outbox_id` = the change's id, whatever the core sent (only
  *   that key is accepted from it).
  * - A delete carries no fields; an update or a variation edit at least one.
  */
@@ -28,7 +28,7 @@ final class PayloadFilter {
 	/**
 	 * The meta a created product carries, to find it again instead of creating it twice.
 	 */
-	public const OUTBOX_META_KEY = '_woonyx_outbox_id';
+	public const OUTBOX_META_KEY = '_nyxify_outbox_id';
 
 	/**
 	 * The most images of a product (the core's `MAX_IMAGES`).

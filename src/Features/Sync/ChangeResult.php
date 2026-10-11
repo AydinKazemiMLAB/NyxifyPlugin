@@ -2,12 +2,12 @@
 /**
  * The outcome of one pulled change, as the ack reports it.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
 /**
  * One item of `POST /sync/outbox/ack`'s `results` (`ChangeResult`, contract §5.2), always within the core's limits so

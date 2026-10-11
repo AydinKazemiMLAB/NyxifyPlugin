@@ -2,33 +2,33 @@
 /**
  * The plugin's settings page under WooCommerce.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Settings;
+namespace Nyxify\Features\Settings;
 
-use WooNyx\Features\Bots\AdminPinHandler;
-use WooNyx\Features\Bots\AdminRemovalHandler;
-use WooNyx\Features\Bots\AdminService;
-use WooNyx\Features\Bots\BotRegistrationHandler;
-use WooNyx\Features\Bots\BotRemovalHandler;
-use WooNyx\Features\Bots\BotService;
-use WooNyx\Features\Catalog\CatalogSyncHandler;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Features\Store\ActivationHandler;
-use WooNyx\Features\Store\SecretRotationHandler;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\ErrorMessages;
-use WooNyx\Shared\Options\SecretStore;
+use Nyxify\Features\Bots\AdminPinHandler;
+use Nyxify\Features\Bots\AdminRemovalHandler;
+use Nyxify\Features\Bots\AdminService;
+use Nyxify\Features\Bots\BotRegistrationHandler;
+use Nyxify\Features\Bots\BotRemovalHandler;
+use Nyxify\Features\Bots\BotService;
+use Nyxify\Features\Catalog\CatalogSyncHandler;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Features\Store\ActivationHandler;
+use Nyxify\Features\Store\SecretRotationHandler;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\ErrorMessages;
+use Nyxify\Shared\Options\SecretStore;
 
 /**
- * WooCommerce > WooNyx: the connection status from the stored options, the core address, the result of the last
+ * WooCommerce > Nyxify: the connection status from the stored options, the core address, the result of the last
  * action, and only while connected (nothing is sent before a license key is entered): the store's status on the core
  * (fetched once per page load and shared by the sections), the bots, the admin PIN, the bot admins, the "Rotate secret"
  * button; the plan-limit notice whenever one is stored; then the license
@@ -37,11 +37,11 @@ use WooNyx\Shared\Options\SecretStore;
  */
 final class SettingsPage {
 
-	public const PAGE_SLUG = 'woonyx';
+	public const PAGE_SLUG = 'nyxify';
 
-	public const STYLE_HANDLE = 'woonyx-admin';
+	public const STYLE_HANDLE = 'nyxify-admin';
 
-	public const SCRIPT_HANDLE = 'woonyx-admin';
+	public const SCRIPT_HANDLE = 'nyxify-admin';
 
 	/**
 	 * Absolute path of the main plugin file.
@@ -137,13 +137,13 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Adds WooCommerce > WooNyx.
+	 * Adds WooCommerce > Nyxify.
 	 */
 	public function add_menu(): void {
 		$hook_suffix = add_submenu_page(
 			'woocommerce',
-			__( 'WooNyx', 'woonyx' ),
-			__( 'WooNyx', 'woonyx' ),
+			__( 'Nyxify', 'nyxify' ),
+			__( 'Nyxify', 'nyxify' ),
 			AdminAction::CAPABILITY,
 			self::PAGE_SLUG,
 			array( $this, 'render' )
@@ -170,9 +170,9 @@ final class SettingsPage {
 			return $links;
 		}
 
-		$settings = sprintf( '<a href="%s">%s</a>', esc_url( self::url() ), esc_html__( 'Settings', 'woonyx' ) );
+		$settings = sprintf( '<a href="%s">%s</a>', esc_url( self::url() ), esc_html__( 'Settings', 'nyxify' ) );
 
-		return array( 'woonyx-settings' => $settings ) + $links;
+		return array( 'nyxify-settings' => $settings ) + $links;
 	}
 
 	/**
@@ -185,12 +185,12 @@ final class SettingsPage {
 			return;
 		}
 
-		wp_enqueue_style( self::STYLE_HANDLE, plugins_url( 'assets/css/admin.css', $this->plugin_file ), array(), WOONYX_VERSION );
+		wp_enqueue_style( self::STYLE_HANDLE, plugins_url( 'assets/css/admin.css', $this->plugin_file ), array(), NYXIFY_VERSION );
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			plugins_url( 'assets/js/admin.js', $this->plugin_file ),
 			array(),
-			WOONYX_VERSION,
+			NYXIFY_VERSION,
 			array(
 				'in_footer' => true,
 				'strategy'  => 'defer',
@@ -203,31 +203,31 @@ final class SettingsPage {
 	 */
 	public function render(): void {
 		if ( ! current_user_can( AdminAction::CAPABILITY ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'woonyx' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'nyxify' ), '', array( 'response' => 403 ) );
 		}
 
 		$connected = null !== $this->store->get_connection();
 
 		?>
-		<div class="wrap woonyx-settings">
-			<h1><?php esc_html_e( 'WooNyx', 'woonyx' ); ?></h1>
+		<div class="wrap nyxify-settings">
+			<h1><?php esc_html_e( 'Nyxify', 'nyxify' ); ?></h1>
 			<hr class="wp-header-end" />
 			<?php $this->render_notice(); ?>
 			<?php PlanLimitNotice::render( false ); ?>
 
-			<h2><?php esc_html_e( 'Connection', 'woonyx' ); ?></h2>
+			<h2><?php esc_html_e( 'Connection', 'nyxify' ); ?></h2>
 			<table class="form-table" role="presentation">
 				<tbody>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Status', 'woonyx' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Status', 'nyxify' ); ?></th>
 						<td><?php $this->render_status(); ?></td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'WooNyx server', 'woonyx' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Nyxify server', 'nyxify' ); ?></th>
 						<td>
 							<code dir="ltr"><?php echo esc_html( $this->core_url ); ?></code>
-							<?php if ( defined( 'WOONYX_API_BASE_URL' ) ) : ?>
-								<p class="description"><?php esc_html_e( 'Set by WOONYX_API_BASE_URL in wp-config.php.', 'woonyx' ); ?></p>
+							<?php if ( defined( 'NYXIFY_API_BASE_URL' ) ) : ?>
+								<p class="description"><?php esc_html_e( 'Set by NYXIFY_API_BASE_URL in wp-config.php.', 'nyxify' ); ?></p>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -241,19 +241,19 @@ final class SettingsPage {
 				<?php $this->pin_section->render( $status ); ?>
 				<?php $this->admins_section->render( $status ); ?>
 				<?php $this->render_rotation_form(); ?>
-				<details class="woonyx-reactivate">
-					<summary><?php esc_html_e( 'Activate again', 'woonyx' ); ?></summary>
-					<p class="description"><?php esc_html_e( 'Use this if the connection stops working. This site keeps its store ID and gets a new shared secret.', 'woonyx' ); ?></p>
+				<details class="nyxify-reactivate">
+					<summary><?php esc_html_e( 'Activate again', 'nyxify' ); ?></summary>
+					<p class="description"><?php esc_html_e( 'Use this if the connection stops working. This site keeps its store ID and gets a new shared secret.', 'nyxify' ); ?></p>
 					<?php $this->render_license_form( $connected ); ?>
 				</details>
-				<div class="notice notice-warning inline woonyx-deactivation-note">
+				<div class="notice notice-warning inline nyxify-deactivation-note">
 					<p><strong><?php echo esc_html( DeactivationWarning::message() ); ?></strong></p>
 					<p><?php echo esc_html( DeactivationWarning::details() ); ?></p>
 				</div>
 			<?php else : ?>
-				<h2><?php esc_html_e( 'Activate', 'woonyx' ); ?></h2>
+				<h2><?php esc_html_e( 'Activate', 'nyxify' ); ?></h2>
 				<?php $this->render_license_form( $connected ); ?>
-				<p class="description"><?php esc_html_e( 'Nothing is sent to the WooNyx server until you enter a license key.', 'woonyx' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Nothing is sent to the Nyxify server until you enter a license key.', 'nyxify' ); ?></p>
 			<?php endif; ?>
 		</div>
 		<?php
@@ -264,12 +264,12 @@ final class SettingsPage {
 	 */
 	private function render_rotation_form(): void {
 		?>
-		<h2><?php esc_html_e( 'Shared secret', 'woonyx' ); ?></h2>
-		<p class="description"><?php esc_html_e( 'This site signs every request to WooNyx with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected.', 'woonyx' ); ?></p>
-		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-rotate-form" data-woonyx-confirm="<?php echo esc_attr__( 'Replace the shared secret with a new one now? The store stays connected.', 'woonyx' ); ?>">
+		<h2><?php esc_html_e( 'Shared secret', 'nyxify' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected.', 'nyxify' ); ?></p>
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-rotate-form" data-nyxify-confirm="<?php echo esc_attr__( 'Replace the shared secret with a new one now? The store stays connected.', 'nyxify' ); ?>">
 			<?php AdminAction::render_fields( SecretRotationHandler::ACTION ); ?>
 			<p class="submit">
-				<button type="submit" class="button"><?php esc_html_e( 'Rotate secret', 'woonyx' ); ?></button>
+				<button type="submit" class="button"><?php esc_html_e( 'Rotate secret', 'nyxify' ); ?></button>
 			</p>
 		</form>
 		<?php
@@ -282,24 +282,24 @@ final class SettingsPage {
 	 */
 	private function render_license_form( bool $connected ): void {
 		?>
-		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="woonyx-license-form">
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-license-form">
 			<?php AdminAction::render_fields( ActivationHandler::ACTION ); ?>
 			<table class="form-table" role="presentation">
 				<tbody>
 					<tr>
-						<th scope="row"><label for="woonyx-license-key"><?php esc_html_e( 'License key', 'woonyx' ); ?></label></th>
+						<th scope="row"><label for="nyxify-license-key"><?php esc_html_e( 'License key', 'nyxify' ); ?></label></th>
 						<td>
-							<input type="text" id="woonyx-license-key" name="<?php echo esc_attr( ActivationHandler::FIELD ); ?>" class="regular-text code" dir="ltr" autocomplete="off" spellcheck="false" required placeholder="WN-XXXXXX-XXXXXX-XXXXXX-XXXXXX" aria-describedby="woonyx-license-key-description" />
-							<div id="woonyx-license-key-description">
-								<p class="description"><?php esc_html_e( 'The key is sent once to the WooNyx server and is not stored on this site.', 'woonyx' ); ?></p>
-								<p class="description"><?php esc_html_e( 'Activating creates a WooCommerce REST API key (read/write) for your user account; WooNyx uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected.', 'woonyx' ); ?></p>
+							<input type="text" id="nyxify-license-key" name="<?php echo esc_attr( ActivationHandler::FIELD ); ?>" class="regular-text code" dir="ltr" autocomplete="off" spellcheck="false" required placeholder="NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX" aria-describedby="nyxify-license-key-description" />
+							<div id="nyxify-license-key-description">
+								<p class="description"><?php esc_html_e( 'The key is sent once to the Nyxify server and is not stored on this site.', 'nyxify' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected.', 'nyxify' ); ?></p>
 							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 			<p class="submit">
-				<button type="submit" class="button button-primary"><?php echo esc_html( $connected ? __( 'Activate again', 'woonyx' ) : __( 'Activate', 'woonyx' ) ); ?></button>
+				<button type="submit" class="button button-primary"><?php echo esc_html( $connected ? __( 'Activate again', 'nyxify' ) : __( 'Activate', 'nyxify' ) ); ?></button>
 			</p>
 		</form>
 		<?php
@@ -327,14 +327,14 @@ final class SettingsPage {
 		if ( array() !== $notice->fields ) {
 			printf(
 				'<p>%s <code dir="ltr">%s</code></p>',
-				esc_html__( 'Invalid fields:', 'woonyx' ),
+				esc_html__( 'Invalid fields:', 'nyxify' ),
 				esc_html( implode( ', ', $notice->fields ) )
 			);
 		}
 		if ( '' !== $notice->request_id ) {
 			printf(
 				'<p class="description">%s <code dir="ltr">%s</code></p>',
-				esc_html__( 'Request ID (for WooNyx support):', 'woonyx' ),
+				esc_html__( 'Request ID (for Nyxify support):', 'nyxify' ),
 				esc_html( $notice->request_id )
 			);
 		}
@@ -348,15 +348,15 @@ final class SettingsPage {
 	 */
 	private static function success_message( string $code ): ?string {
 		$messages = array(
-			ActivationHandler::ACTIVATED       => __( 'The store is connected to WooNyx.', 'woonyx' ),
-			SecretRotationHandler::ROTATED     => __( 'The shared secret was replaced with a new one. The store stays connected.', 'woonyx' ),
-			BotRegistrationHandler::REGISTERED => __( 'The bot token was accepted. WooNyx is setting the bot up; check its status below.', 'woonyx' ),
-			BotRemovalHandler::REMOVED         => __( 'The bot was removed. It no longer answers your customers.', 'woonyx' ),
-			AdminPinHandler::ISSUED            => __( 'A new admin PIN was issued; the previous one no longer works. Bot admins stay admins.', 'woonyx' ),
-			AdminPinHandler::ISSUED_REVOKED    => __( 'A new admin PIN was issued and every bot admin was logged out.', 'woonyx' ),
-			AdminRemovalHandler::REVOKED       => __( 'The bot admin was removed. The current PIN still works for them until you issue a new one.', 'woonyx' ),
-			CatalogSyncHandler::STARTED        => __( 'WooNyx is reading your catalog again. Check the catalog sync below in a few minutes.', 'woonyx' ),
-			CatalogSyncHandler::RUNNING        => __( 'A catalog sync is already running. Check the catalog sync below in a few minutes.', 'woonyx' ),
+			ActivationHandler::ACTIVATED       => __( 'The store is connected to Nyxify.', 'nyxify' ),
+			SecretRotationHandler::ROTATED     => __( 'The shared secret was replaced with a new one. The store stays connected.', 'nyxify' ),
+			BotRegistrationHandler::REGISTERED => __( 'The bot token was accepted. Nyxify is setting the bot up; check its status below.', 'nyxify' ),
+			BotRemovalHandler::REMOVED         => __( 'The bot was removed. It no longer answers your customers.', 'nyxify' ),
+			AdminPinHandler::ISSUED            => __( 'A new admin PIN was issued; the previous one no longer works. Bot admins stay admins.', 'nyxify' ),
+			AdminPinHandler::ISSUED_REVOKED    => __( 'A new admin PIN was issued and every bot admin was logged out.', 'nyxify' ),
+			AdminRemovalHandler::REVOKED       => __( 'The bot admin was removed. The current PIN still works for them until you issue a new one.', 'nyxify' ),
+			CatalogSyncHandler::STARTED        => __( 'Nyxify is reading your catalog again. Check the catalog sync below in a few minutes.', 'nyxify' ),
+			CatalogSyncHandler::RUNNING        => __( 'A catalog sync is already running. Check the catalog sync below in a few minutes.', 'nyxify' ),
 		);
 
 		return $messages[ $code ] ?? null;
@@ -370,9 +370,9 @@ final class SettingsPage {
 
 		if ( null !== $connection ) {
 			printf(
-				'<span class="woonyx-status woonyx-status--connected">%s</span><p class="description">%s <code dir="ltr">%s</code></p>',
-				esc_html__( 'Connected', 'woonyx' ),
-				esc_html__( 'Store ID:', 'woonyx' ),
+				'<span class="nyxify-status nyxify-status--connected">%s</span><p class="description">%s <code dir="ltr">%s</code></p>',
+				esc_html__( 'Connected', 'nyxify' ),
+				esc_html__( 'Store ID:', 'nyxify' ),
 				esc_html( $connection->store_id )
 			);
 			return;
@@ -381,9 +381,9 @@ final class SettingsPage {
 		$unreadable = $this->store->has_unreadable_connection();
 
 		printf(
-			'<span class="woonyx-status %s">%s</span><p class="description">%s</p>',
-			esc_attr( $unreadable ? 'woonyx-status--error' : 'woonyx-status--disconnected' ),
-			esc_html( $unreadable ? __( 'Connection lost', 'woonyx' ) : __( 'Not connected', 'woonyx' ) ),
+			'<span class="nyxify-status %s">%s</span><p class="description">%s</p>',
+			esc_attr( $unreadable ? 'nyxify-status--error' : 'nyxify-status--disconnected' ),
+			esc_html( $unreadable ? __( 'Connection lost', 'nyxify' ) : __( 'Not connected', 'nyxify' ) ),
 			esc_html( ErrorMessages::message( $unreadable ? CoreError::CONNECTION_UNREADABLE : CoreError::NOT_ACTIVATED ) )
 		);
 	}

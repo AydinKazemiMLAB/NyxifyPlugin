@@ -2,17 +2,17 @@
 /**
  * Tests for the bot token value.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\BotToken;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\BotToken;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Trimming, the format check and keeping the token out of debug output.

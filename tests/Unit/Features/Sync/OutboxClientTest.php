@@ -2,26 +2,26 @@
 /**
  * Tests for OutboxClient and PulledChange.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Sync\ChangeResult;
-use WooNyx\Features\Sync\OutboxClient;
-use WooNyx\Features\Sync\PullAnswer;
-use WooNyx\Features\Sync\PulledChange;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Sync\ChangeResult;
+use Nyxify\Features\Sync\OutboxClient;
+use Nyxify\Features\Sync\PullAnswer;
+use Nyxify\Features\Sync\PulledChange;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * GET /sync/outbox and POST /sync/outbox/ack over a mocked wp_remote_request(), with the real client and secret store.
@@ -240,7 +240,7 @@ final class OutboxClientTest extends TestCase {
 								'images'    => array( array( 'src' => 'https://media.example.com/m/abc?exp=1&sig=xyz' ) ),
 								'meta_data' => array(
 									array(
-										'key'   => '_woonyx_outbox_id',
+										'key'   => '_nyxify_outbox_id',
 										'value' => '44',
 									),
 								),

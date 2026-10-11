@@ -2,17 +2,17 @@
 /**
  * Encryption of the secrets the plugin keeps in wp_options.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Security;
+namespace Nyxify\Shared\Security;
 
 /**
  * Authenticated symmetric encryption with libsodium's secretbox (XSalsa20-Poly1305).
  *
- * Values are stored as `v1:` + base64(nonce . ciphertext). The key comes from the `WOONYX_ENCRYPTION_KEY` constant
+ * Values are stored as `v1:` + base64(nonce . ciphertext). The key comes from the `NYXIFY_ENCRYPTION_KEY` constant
  * when it is defined, otherwise from the site's salts; either is stretched with HKDF-SHA256. Changing the salts (or the
  * constant) makes stored values unreadable: decrypt() then returns null and the owner activates the plugin again.
  */
@@ -26,7 +26,7 @@ final class Encryptor {
 	/**
 	 * HKDF "info": separates this key from any other use of the same secret.
 	 */
-	private const HKDF_INFO = 'woonyx-options-v1';
+	private const HKDF_INFO = 'nyxify-options-v1';
 
 	/**
 	 * Raw 32-byte secretbox key.
@@ -50,10 +50,10 @@ final class Encryptor {
 	}
 
 	/**
-	 * The encryptor of this site: `WOONYX_ENCRYPTION_KEY` when defined and not empty, otherwise the site's salts.
+	 * The encryptor of this site: `NYXIFY_ENCRYPTION_KEY` when defined and not empty, otherwise the site's salts.
 	 */
 	public static function for_site(): self {
-		$secret = defined( 'WOONYX_ENCRYPTION_KEY' ) ? (string) constant( 'WOONYX_ENCRYPTION_KEY' ) : '';
+		$secret = defined( 'NYXIFY_ENCRYPTION_KEY' ) ? (string) constant( 'NYXIFY_ENCRYPTION_KEY' ) : '';
 
 		if ( '' === $secret ) {
 			$secret = wp_salt( 'auth' );

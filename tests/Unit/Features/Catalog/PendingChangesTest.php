@@ -5,21 +5,21 @@
  * The writing itself (one INSERT per kind in sending order, no read, failures, multisite, races) is tested through the
  * collectors in ChangeCollectorTest and OrderCollectorTest.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\FlushScheduler;
-use WooNyx\Features\Catalog\PendingChanges;
-use WooNyx\Features\Catalog\Queue;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\FlushScheduler;
+use Nyxify\Features\Catalog\PendingChanges;
+use Nyxify\Features\Catalog\Queue;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Registration, the kinds and ids accepted, and the order kinds written before the catalog kinds.

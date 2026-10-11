@@ -2,12 +2,12 @@
 /**
  * The messengers a store's bots run on.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
 /**
  * The core's `MessengerPlatform` values (contract §4.1), their labels and the public link of a bot.
@@ -55,7 +55,7 @@ final class BotPlatform {
 	/**
 	 * Reads a platform from form input.
 	 *
-	 * @param mixed $raw Raw request value, e.g. `$_POST['woonyx_platform'] ?? null`.
+	 * @param mixed $raw Raw request value, e.g. `$_POST['nyxify_platform'] ?? null`.
 	 * @return string|null Null when it isn't a known platform.
 	 */
 	public static function from_input( $raw ): ?string {
@@ -75,9 +75,9 @@ final class BotPlatform {
 	 */
 	public static function label( string $platform ): string {
 		$labels = array(
-			self::TELEGRAM => __( 'Telegram', 'woonyx' ),
-			self::BALE     => __( 'Bale', 'woonyx' ),
-			self::RUBIKA   => __( 'Rubika', 'woonyx' ),
+			self::TELEGRAM => __( 'Telegram', 'nyxify' ),
+			self::BALE     => __( 'Bale', 'nyxify' ),
+			self::RUBIKA   => __( 'Rubika', 'nyxify' ),
 		);
 
 		return $labels[ $platform ] ?? $platform;

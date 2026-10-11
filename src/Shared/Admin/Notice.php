@@ -2,14 +2,14 @@
 /**
  * The result of an admin action, shown once on the next page.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Admin;
+namespace Nyxify\Shared\Admin;
 
-use WooNyx\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreError;
 
 /**
  * A success code (e.g. `activated`) or a failure's error code with its HTTP status, request id and invalid field

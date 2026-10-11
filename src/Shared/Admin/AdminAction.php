@@ -2,15 +2,15 @@
 /**
  * Nonce and capability checks of the plugin's admin forms.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Admin;
+namespace Nyxify\Shared\Admin;
 
 /**
- * The plugin's admin forms post to `admin-post.php` with `action=woonyx_<name>`; every handler starts with verify().
+ * The plugin's admin forms post to `admin-post.php` with `action=nyxify_<name>`; every handler starts with verify().
  *
  * A form:     `<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>">` +
  *             `AdminAction::render_fields( 'activate' )`.
@@ -27,13 +27,13 @@ final class AdminAction {
 	/**
 	 * Name of the nonce field.
 	 */
-	public const NONCE_NAME = '_woonyx_nonce';
+	public const NONCE_NAME = '_nyxify_nonce';
 
-	private const PREFIX         = 'woonyx_';
+	private const PREFIX         = 'nyxify_';
 	private const ACTION_PATTERN = '/^[a-z][a-z_]{0,39}$/D';
 
 	/**
-	 * The `action` value and nonce action of a form: `woonyx_<name>`.
+	 * The `action` value and nonce action of a form: `nyxify_<name>`.
 	 *
 	 * @param string $name Action name, e.g. `activate`.
 	 * @throws \InvalidArgumentException When the name isn't lowercase letters and underscores.
@@ -74,7 +74,7 @@ final class AdminAction {
 		$hook = self::hook_name( $name );
 
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'woonyx' ), '', array( 'response' => 403 ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'nyxify' ), '', array( 'response' => 403 ) );
 		}
 
 		// Dies with "The link you followed has expired." when the nonce is missing or invalid.

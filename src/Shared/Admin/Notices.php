@@ -2,12 +2,12 @@
 /**
  * One-time notices of the plugin's admin actions.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Admin;
+namespace Nyxify\Shared\Admin;
 
 /**
  * After an action the handler redirects back to the settings page (Post/Redirect/Get); its result waits for one minute
@@ -18,7 +18,7 @@ final class Notices {
 	/**
 	 * Name of a user's notice transient, followed by the user id (the uninstall deletes them by this prefix).
 	 */
-	public const TRANSIENT_PREFIX = 'woonyx_notice_';
+	public const TRANSIENT_PREFIX = 'nyxify_notice_';
 
 	/**
 	 * Seconds a notice waits for the next page.

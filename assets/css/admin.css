@@ -1,15 +1,15 @@
 /**
- * WooNyx settings page. Logical properties only, so the same rules work in RTL (e.g. Persian) and LTR admins.
+ * Nyxify settings page. Logical properties only, so the same rules work in RTL (e.g. Persian) and LTR admins.
  */
 
-.woonyx-status {
+.nyxify-status {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.4em;
 	font-weight: 600;
 }
 
-.woonyx-status::before {
+.nyxify-status::before {
 	content: "";
 	inline-size: 0.6em;
 	block-size: 0.6em;
@@ -17,115 +17,115 @@
 	background-color: currentColor;
 }
 
-.woonyx-status--connected {
+.nyxify-status--connected {
 	color: #008a20;
 }
 
-.woonyx-status--disconnected {
+.nyxify-status--disconnected {
 	color: #646970;
 }
 
-.woonyx-status--error {
+.nyxify-status--error {
 	color: #d63638;
 }
 
-.woonyx-settings code[dir="ltr"] {
+.nyxify-settings code[dir="ltr"] {
 	display: inline-block;
 	unicode-bidi: isolate;
 }
 
-.woonyx-settings .form-table + .description {
+.nyxify-settings .form-table + .description {
 	margin-block-start: 1em;
 }
 
-.woonyx-reactivate {
+.nyxify-reactivate {
 	margin-block-start: 1.5em;
 }
 
-.woonyx-reactivate > summary {
+.nyxify-reactivate > summary {
 	cursor: pointer;
 	font-weight: 600;
 }
 
-.woonyx-reactivate > .description {
+.nyxify-reactivate > .description {
 	margin-block-start: 0.75em;
 }
 
-.woonyx-license-form input[dir="ltr"] {
+.nyxify-license-form input[dir="ltr"] {
 	text-align: start;
 	unicode-bidi: isolate;
 }
 
-.woonyx-rotate-form .submit {
+.nyxify-rotate-form .submit {
 	margin-block-start: 0;
 	padding-block-start: 0.5em;
 }
 
-.woonyx-settings .woonyx-deactivation-note {
+.nyxify-settings .nyxify-deactivation-note {
 	margin-block-start: 2em;
 }
 
-.woonyx-bot {
+.nyxify-bot {
 	margin-block-end: 1.5em;
 	padding-block-end: 0.5em;
 	border-block-end: 1px solid #dcdcde;
 }
 
-.woonyx-bot > h3 {
+.nyxify-bot > h3 {
 	margin-block-end: 0.5em;
 }
 
-.woonyx-bot .form-table th,
-.woonyx-bot .form-table td {
+.nyxify-bot .form-table th,
+.nyxify-bot .form-table td {
 	padding-block: 0.5em;
 }
 
-.woonyx-replace-bot > summary {
+.nyxify-replace-bot > summary {
 	cursor: pointer;
 }
 
-.woonyx-bot-token-form input[dir="ltr"] {
+.nyxify-bot-token-form input[dir="ltr"] {
 	text-align: start;
 	unicode-bidi: isolate;
 }
 
-.woonyx-bot-token-form .submit,
-.woonyx-bot-remove-form p {
+.nyxify-bot-token-form .submit,
+.nyxify-bot-remove-form p {
 	margin-block: 0.5em;
 	padding-block: 0;
 }
 
-.woonyx-admin-pin > summary {
+.nyxify-admin-pin > summary {
 	cursor: pointer;
 	font-weight: 600;
 }
 
-.woonyx-settings .woonyx-pin {
+.nyxify-settings .nyxify-pin {
 	font-size: 1.5em;
 	letter-spacing: 0.15em;
 	padding: 0.25em 0.5em;
 }
 
-.woonyx-admin-pin-form {
+.nyxify-admin-pin-form {
 	display: inline-block;
 	margin-block: 0.5em;
 	margin-inline-end: 0.5em;
 }
 
-.woonyx-settings .woonyx-admins {
+.nyxify-settings .nyxify-admins {
 	max-width: 50em;
 }
 
-.woonyx-admins td,
-.woonyx-admins th {
+.nyxify-admins td,
+.nyxify-admins th {
 	vertical-align: middle;
 }
 
-.woonyx-admin-remove-form {
+.nyxify-admin-remove-form {
 	margin: 0;
 	text-align: end;
 }
 
-.woonyx-sync-form p {
+.nyxify-sync-form p {
 	margin-block: 0.5em 0;
 }

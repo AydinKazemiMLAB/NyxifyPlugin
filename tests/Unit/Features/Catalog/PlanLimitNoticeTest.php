@@ -2,17 +2,17 @@
 /**
  * Tests for the plan-limit notice.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\PlanLimitNotice;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\PlanLimitNotice;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Recorded, read back, shown on the decided screens only, escaped, dismissed.
@@ -103,7 +103,7 @@ final class PlanLimitNoticeTest extends TestCase {
 		);
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_dismiss_plan_limit' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_dismiss_plan_limit' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -160,7 +160,7 @@ final class PlanLimitNoticeTest extends TestCase {
 		$notice->register();
 
 		self::assertNotFalse( has_action( 'admin_notices', array( $notice, 'render_on_screen' ) ) );
-		self::assertNotFalse( has_action( 'admin_post_woonyx_dismiss_plan_limit', array( $notice, 'dismiss' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_dismiss_plan_limit', array( $notice, 'dismiss' ) ) );
 	}
 
 	public function test_skips_are_recorded_with_their_time_and_not_autoloaded(): void {
@@ -273,7 +273,7 @@ final class PlanLimitNoticeTest extends TestCase {
 			'posts list'      => array( 'edit-post', false ),
 			'categories'      => array( 'edit-product_cat', false ),
 			'orders'          => array( 'woocommerce_page_wc-orders', false ),
-			'the WooNyx page' => array( 'woocommerce_page_woonyx', false ),
+			'the Nyxify page' => array( 'woocommerce_page_nyxify', false ),
 			'no screen (yet)' => array( null, false ),
 			'plugins list'    => array( 'plugins', false ),
 			'a coupon'        => array( 'shop_coupon', false ),
@@ -281,7 +281,7 @@ final class PlanLimitNoticeTest extends TestCase {
 	}
 
 	/**
-	 * Shown through admin_notices on the products list and editor only (the WooNyx page prints it itself).
+	 * Shown through admin_notices on the products list and editor only (the Nyxify page prints it itself).
 	 *
 	 * @param string|null $screen Screen id.
 	 * @param bool        $shown  Whether the notice shows.
@@ -293,7 +293,7 @@ final class PlanLimitNoticeTest extends TestCase {
 
 		$html = $this->on_screen();
 
-		self::assertSame( $shown, str_contains( $html, 'woonyx-plan-limit-notice' ) );
+		self::assertSame( $shown, str_contains( $html, 'nyxify-plan-limit-notice' ) );
 	}
 
 	public function test_the_notice_on_the_products_screens(): void {
@@ -301,14 +301,14 @@ final class PlanLimitNoticeTest extends TestCase {
 
 		$html = $this->on_screen();
 
-		self::assertStringContainsString( '<div class="notice notice-warning woonyx-plan-limit-notice">', $html );
+		self::assertStringContainsString( '<div class="notice notice-warning nyxify-plan-limit-notice">', $html );
 		self::assertStringContainsString( '3 products didn’t reach your bots: your plan’s product limit is reached.', $html );
 		self::assertStringContainsString( 'Upgrade your plan to include them.', $html );
 		self::assertStringContainsString( 'Last seen ' . gmdate( 'Y-m-d H:i', self::NOW ), $html );
-		self::assertStringContainsString( '<a href="https://shop.example.com/wp-admin/admin.php?page=woonyx" class="button button-small">WooNyx settings</a>', $html );
+		self::assertStringContainsString( '<a href="https://shop.example.com/wp-admin/admin.php?page=nyxify" class="button button-small">Nyxify settings</a>', $html );
 		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php">', $html );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="woonyx_dismiss_plan_limit" />', $html );
-		self::assertStringContainsString( '<input type="hidden" name="_woonyx_nonce" value="nonce-for-woonyx_dismiss_plan_limit" />', $html );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_dismiss_plan_limit" />', $html );
+		self::assertStringContainsString( '<input type="hidden" name="_nyxify_nonce" value="nonce-for-nyxify_dismiss_plan_limit" />', $html );
 		self::assertStringContainsString( '>Dismiss</button>', $html );
 	}
 
@@ -320,13 +320,13 @@ final class PlanLimitNoticeTest extends TestCase {
 		self::assertStringContainsString( '12,345 products didn’t reach your bots', $this->on_screen() );
 	}
 
-	public function test_on_the_woonyx_page_there_is_no_link_to_it(): void {
+	public function test_on_the_nyxify_page_there_is_no_link_to_it(): void {
 		$this->store();
 
 		$html = $this->rendered( false );
 
-		self::assertStringContainsString( 'woonyx-plan-limit-notice', $html );
-		self::assertStringNotContainsString( 'WooNyx settings', $html );
+		self::assertStringContainsString( 'nyxify-plan-limit-notice', $html );
+		self::assertStringNotContainsString( 'Nyxify settings', $html );
 		self::assertStringContainsString( '>Dismiss</button>', $html );
 	}
 
@@ -362,13 +362,13 @@ final class PlanLimitNoticeTest extends TestCase {
 		self::assertSame( 'https://shop.example.com/wp-admin/edit.php?post_type=product', $this->redirect );
 	}
 
-	public function test_dismiss_without_a_referer_goes_to_the_woonyx_page(): void {
+	public function test_dismiss_without_a_referer_goes_to_the_nyxify_page(): void {
 		$this->store();
 		$this->referer = false;
 
 		self::assertSame( 'redirect', $this->dismiss() );
 
-		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=woonyx', $this->redirect );
+		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=nyxify', $this->redirect );
 	}
 
 	public function test_dismiss_without_the_capability_keeps_the_option(): void {

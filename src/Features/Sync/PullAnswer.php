@@ -2,12 +2,12 @@
 /**
  * The core's answer to a pull.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
 /**
  * The changes of a valid `GET /sync/outbox` answer, oldest first and claimed by the plugin for the core's claim time

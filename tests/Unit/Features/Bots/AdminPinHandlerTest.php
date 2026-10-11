@@ -2,18 +2,18 @@
 /**
  * Tests for the admin PIN buttons' handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\AdminPinHandler;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\AdminPinHandler;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Capability and nonce first, then the revoke flag from the button, the notice and the redirect.
@@ -22,7 +22,7 @@ use WooNyx\Tests\Unit\TestCase;
  */
 final class AdminPinHandlerTest extends TestCase {
 
-	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=woonyx';
+	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=nyxify';
 
 	/**
 	 * In-memory transients: name => value.
@@ -76,7 +76,7 @@ final class AdminPinHandlerTest extends TestCase {
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_issue_admin_pin' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_issue_admin_pin' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -135,7 +135,7 @@ final class AdminPinHandlerTest extends TestCase {
 	 * @return array<string, mixed>
 	 */
 	private function notice(): array {
-		$notice = $this->transients['woonyx_notice_5'] ?? null;
+		$notice = $this->transients['nyxify_notice_5'] ?? null;
 		self::assertIsArray( $notice );
 
 		return $notice;
@@ -146,7 +146,7 @@ final class AdminPinHandlerTest extends TestCase {
 
 		$handler->register();
 
-		self::assertNotFalse( has_action( 'admin_post_woonyx_issue_admin_pin', array( $handler, 'handle' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_issue_admin_pin', array( $handler, 'handle' ) ) );
 	}
 
 	public function test_without_the_capability_nothing_happens(): void {
@@ -185,7 +185,7 @@ final class AdminPinHandlerTest extends TestCase {
 	}
 
 	public function test_new_pin_and_log_out_every_admin(): void {
-		$_POST['woonyx_revoke_admins'] = '1';
+		$_POST['nyxify_revoke_admins'] = '1';
 
 		$this->press();
 
@@ -208,7 +208,7 @@ final class AdminPinHandlerTest extends TestCase {
 
 	#[DataProvider( 'other_values' )]
 	public function test_only_the_exact_flag_revokes( mixed $value ): void {
-		$_POST['woonyx_revoke_admins'] = $value;
+		$_POST['nyxify_revoke_admins'] = $value;
 
 		$this->press();
 

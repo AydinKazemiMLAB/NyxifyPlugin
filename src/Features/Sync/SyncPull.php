@@ -2,23 +2,23 @@
 /**
  * One pull of the changes the core couldn't push.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Sync;
+namespace Nyxify\Features\Sync;
 
-use WooNyx\Features\Catalog\RetryPolicy;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Features\Catalog\RetryPolicy;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
- * The Action Scheduler actions `woonyx_sync_pull` and `woonyx_sync_pull_now`: pulls up to 20 changes, applies them in
+ * The Action Scheduler actions `nyxify_sync_pull` and `nyxify_sync_pull_now`: pulls up to 20 changes, applies them in
  * the core's order, then acknowledges them with the products' dates (contract §5.2).
  *
  * - Not connected, paused (OPTION_RETRY_AT) or another run holding the lock: nothing happens.

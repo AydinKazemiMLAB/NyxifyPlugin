@@ -2,19 +2,19 @@
 /**
  * Tests for the one-time admin notices.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Admin;
+namespace Nyxify\Tests\Unit\Shared\Admin;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Notices kept per user in an in-memory transient store.
@@ -65,7 +65,7 @@ final class NoticesTest extends TestCase {
 	public function test_a_success_is_kept_for_a_minute_and_shown_once(): void {
 		Notices::push( Notice::success( 'activated' ) );
 
-		self::assertSame( 60, $this->lifetimes['woonyx_notice_5'] );
+		self::assertSame( 60, $this->lifetimes['nyxify_notice_5'] );
 
 		$notice = Notices::take();
 		self::assertNotNull( $notice );
@@ -87,7 +87,7 @@ final class NoticesTest extends TestCase {
 				'request_id' => 'req-0001-abcd',
 				'fields'     => array( 'body.site_url' ),
 			),
-			$this->transients['woonyx_notice_5']
+			$this->transients['nyxify_notice_5']
 		);
 
 		$notice = Notices::take();
@@ -105,7 +105,7 @@ final class NoticesTest extends TestCase {
 		$this->user_id = 6;
 
 		self::assertNull( Notices::take() );
-		self::assertArrayHasKey( 'woonyx_notice_5', $this->transients );
+		self::assertArrayHasKey( 'nyxify_notice_5', $this->transients );
 	}
 
 	public function test_nothing_is_kept_without_a_user(): void {
@@ -141,14 +141,14 @@ final class NoticesTest extends TestCase {
 
 	#[DataProvider( 'malformed_values' )]
 	public function test_a_malformed_value_is_dropped( mixed $value ): void {
-		$this->transients['woonyx_notice_5'] = $value;
+		$this->transients['nyxify_notice_5'] = $value;
 
 		self::assertNull( Notices::take() );
 		self::assertSame( array(), $this->transients );
 	}
 
 	public function test_non_string_fields_are_dropped(): void {
-		$this->transients['woonyx_notice_5'] = array(
+		$this->transients['nyxify_notice_5'] = array(
 			'type'   => 'error',
 			'code'   => 'validation_error',
 			'status' => 422,

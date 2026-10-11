@@ -2,24 +2,24 @@
 /**
  * The "Sync now" button's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Features\Settings\SettingsPage;
-use WooNyx\Features\Store\StatusService;
-use WooNyx\Shared\Admin\AdminAction;
-use WooNyx\Shared\Admin\Notice;
-use WooNyx\Shared\Admin\Notices;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Http\CoreResponse;
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Features\Settings\SettingsPage;
+use Nyxify\Features\Store\StatusService;
+use Nyxify\Shared\Admin\AdminAction;
+use Nyxify\Shared\Admin\Notice;
+use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Http\CoreResponse;
+use Nyxify\Shared\Logging\Logger;
 
 /**
- * Handles `admin-post.php?action=woonyx_catalog_sync`: checks the capability and nonce, asks the core for a full
+ * Handles `admin-post.php?action=nyxify_catalog_sync`: checks the capability and nonce, asks the core for a full
  * catalog sync (`POST /catalog/sync`), forgets the cached status and redirects back to the settings page with a
  * one-time notice. A sync the core accepted (`scheduled` true) or one already running also deletes the plan-limit
  * notice: the sync brings the core's count up to date.

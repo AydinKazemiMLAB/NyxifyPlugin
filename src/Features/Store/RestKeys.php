@@ -2,12 +2,12 @@
 /**
  * The plugin's WooCommerce REST key.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
 /**
  * Creates and deletes the read/write REST key the core uses to reach the shop (contract §1.1), the way
@@ -19,7 +19,7 @@ final class RestKeys {
 	/**
 	 * Option holding the id of the key the plugin created (an integer, not secret, not autoloaded).
 	 */
-	public const OPTION_KEY_ID = 'woonyx_rest_key_id';
+	public const OPTION_KEY_ID = 'nyxify_rest_key_id';
 
 	/**
 	 * WooCommerce's table, without the site prefix.
@@ -58,7 +58,7 @@ final class RestKeys {
 			$wpdb->prefix . self::TABLE,
 			array(
 				'user_id'         => $user_id,
-				'description'     => sprintf( 'WooNyx - API (%s)', gmdate( 'Y-m-d H:i:s' ) ),
+				'description'     => sprintf( 'Nyxify - API (%s)', gmdate( 'Y-m-d H:i:s' ) ),
 				'permissions'     => self::PERMISSIONS,
 				'consumer_key'    => wc_api_hash( $consumer_key ),
 				'consumer_secret' => $consumer_secret,

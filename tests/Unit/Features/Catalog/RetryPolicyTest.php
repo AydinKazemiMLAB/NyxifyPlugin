@@ -2,17 +2,17 @@
 /**
  * Tests for RetryPolicy.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Catalog\RetryPolicy;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\RetryPolicy;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Outcomes of failed sends and the backoff.

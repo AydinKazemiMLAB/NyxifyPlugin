@@ -2,19 +2,19 @@
 /**
  * Tests for the catalog queue's table.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Catalog;
+namespace Nyxify\Tests\Unit\Features\Catalog;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use Mockery\MockInterface;
-use WooNyx\Features\Catalog\Schema;
-use WooNyx\Tests\Unit\EmulatesPrepare;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Catalog\Schema;
+use Nyxify\Tests\Unit\EmulatesPrepare;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The table is created only when the stored version differs, the version is stored only once the table exists, and
@@ -57,7 +57,7 @@ final class SchemaTest extends TestCase {
 	 *
 	 * @var string|null
 	 */
-	private ?string $found = 'wp_woonyx_catalog_queue';
+	private ?string $found = 'wp_nyxify_catalog_queue';
 
 	/**
 	 * Log entries.
@@ -136,7 +136,7 @@ final class SchemaTest extends TestCase {
 
 	public function test_the_definition_is_in_dbdeltas_format(): void {
 		self::assertSame(
-			"CREATE TABLE wp_woonyx_catalog_queue (\n"
+			"CREATE TABLE wp_nyxify_catalog_queue (\n"
 			. "kind varchar(20) NOT NULL,\n"
 			. "object_id bigint(20) unsigned NOT NULL,\n"
 			. "queued_at datetime NOT NULL,\n"
@@ -147,25 +147,25 @@ final class SchemaTest extends TestCase {
 			. "PRIMARY KEY  (kind,object_id),\n"
 			. "KEY claim (claim)\n"
 			. ') DEFAULT CHARSET=utf8mb4;',
-			Schema::definition( 'wp_woonyx_catalog_queue', 'DEFAULT CHARSET=utf8mb4' )
+			Schema::definition( 'wp_nyxify_catalog_queue', 'DEFAULT CHARSET=utf8mb4' )
 		);
 	}
 
 	public function test_the_table_name_follows_the_current_sites_prefix(): void {
-		self::assertSame( 'wp_woonyx_catalog_queue', Schema::table_name() );
+		self::assertSame( 'wp_nyxify_catalog_queue', Schema::table_name() );
 
 		$this->wpdb->prefix = 'wp_2_';
-		self::assertSame( 'wp_2_woonyx_catalog_queue', Schema::table_name() );
+		self::assertSame( 'wp_2_nyxify_catalog_queue', Schema::table_name() );
 	}
 
 	public function test_a_new_site_gets_the_table_and_the_version(): void {
 		Schema::maybe_install();
 
 		self::assertSame(
-			array( Schema::definition( 'wp_woonyx_catalog_queue', 'DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci' ) ),
+			array( Schema::definition( 'wp_nyxify_catalog_queue', 'DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci' ) ),
 			$this->deltas
 		);
-		self::assertSame( array( "SHOW TABLES LIKE 'wp\\\\_woonyx\\\\_catalog\\\\_queue'" ), $this->queries );
+		self::assertSame( array( "SHOW TABLES LIKE 'wp\\\\_nyxify\\\\_catalog\\\\_queue'" ), $this->queries );
 		self::assertSame( Schema::VERSION, $this->options[ Schema::OPTION_VERSION ] );
 		self::assertTrue( $this->autoload[ Schema::OPTION_VERSION ] );
 		self::assertTrue( Schema::is_installed() );
@@ -200,7 +200,7 @@ final class SchemaTest extends TestCase {
 		self::assertCount( 1, $this->entries );
 		self::assertSame( 'warning', $this->entries[0]['level'] );
 		self::assertSame( 'The catalog queue table could not be created.', $this->entries[0]['message'] );
-		self::assertSame( 'wp_woonyx_catalog_queue', $this->entries[0]['context']['table'] );
+		self::assertSame( 'wp_nyxify_catalog_queue', $this->entries[0]['context']['table'] );
 	}
 
 	public function test_drop_removes_the_table_and_its_version(): void {
@@ -209,7 +209,7 @@ final class SchemaTest extends TestCase {
 
 		Schema::drop();
 
-		self::assertSame( array( 'DROP TABLE IF EXISTS `wp_4_woonyx_catalog_queue`' ), $this->queries );
+		self::assertSame( array( 'DROP TABLE IF EXISTS `wp_4_nyxify_catalog_queue`' ), $this->queries );
 		self::assertArrayNotHasKey( Schema::OPTION_VERSION, $this->options );
 	}
 }

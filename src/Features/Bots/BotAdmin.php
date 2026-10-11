@@ -2,12 +2,12 @@
 /**
  * A bot admin of the store.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Bots;
+namespace Nyxify\Features\Bots;
 
 /**
  * One item of `GET /bots/admins` (`AdminView`, contract §4.1), read defensively.

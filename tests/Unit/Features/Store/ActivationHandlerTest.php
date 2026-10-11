@@ -2,18 +2,18 @@
 /**
  * Tests for the license form's handler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Store;
+namespace Nyxify\Tests\Unit\Features\Store;
 
 use Brain\Monkey\Functions;
-use WooNyx\Features\Store\ActivationHandler;
-use WooNyx\Features\Store\LicenseKey;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Store\ActivationHandler;
+use Nyxify\Features\Store\LicenseKey;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Capability and nonce first, then the key, the activation, the notice and the redirect.
@@ -22,8 +22,8 @@ use WooNyx\Tests\Unit\TestCase;
  */
 final class ActivationHandlerTest extends TestCase {
 
-	private const LICENSE_KEY  = 'WN-ABCDEF-GHIJKL-MNOPQR-ST2345';
-	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=woonyx';
+	private const LICENSE_KEY  = 'NX-ABCDEF-GHIJKL-MNOPQR-ST2345';
+	private const SETTINGS_URL = 'https://shop.example.com/wp-admin/admin.php?page=nyxify';
 
 	/**
 	 * In-memory transients: name => value.
@@ -75,7 +75,7 @@ final class ActivationHandlerTest extends TestCase {
 		Functions\when( 'current_user_can' )->alias( fn( string $capability ): bool => 'manage_woocommerce' === $capability && $this->can_manage );
 		Functions\when( 'check_admin_referer' )->alias(
 			function ( string $action, string $name ): int {
-				if ( 'woonyx_activate' !== $action || '_woonyx_nonce' !== $name || ! $this->nonce_valid ) {
+				if ( 'nyxify_activate' !== $action || '_nyxify_nonce' !== $name || ! $this->nonce_valid ) {
 					throw new \RuntimeException( 'nonce' );
 				}
 				return 1;
@@ -142,7 +142,7 @@ final class ActivationHandlerTest extends TestCase {
 	 * @return array<string, mixed>
 	 */
 	private function notice(): array {
-		$notice = $this->transients['woonyx_notice_5'] ?? null;
+		$notice = $this->transients['nyxify_notice_5'] ?? null;
 		self::assertIsArray( $notice );
 
 		return $notice;
@@ -162,7 +162,7 @@ final class ActivationHandlerTest extends TestCase {
 
 		$handler->register();
 
-		self::assertNotFalse( has_action( 'admin_post_woonyx_activate', array( $handler, 'handle' ) ) );
+		self::assertNotFalse( has_action( 'admin_post_nyxify_activate', array( $handler, 'handle' ) ) );
 	}
 
 	public function test_without_the_capability_nothing_happens(): void {
@@ -216,7 +216,7 @@ final class ActivationHandlerTest extends TestCase {
 	}
 
 	public function test_a_malformed_key_is_not_sent(): void {
-		$this->post( 'WN-ABCDEF-GHIJKL-MNOPQR' );
+		$this->post( 'NX-ABCDEF-GHIJKL-MNOPQR' );
 
 		self::assertSame( array(), $this->activations );
 		self::assertSame( CoreError::LICENSE_KEY_FORMAT, $this->notice()['code'] );

@@ -2,20 +2,20 @@
 /**
  * Store activation.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Store;
+namespace Nyxify\Features\Store;
 
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * Activates the store with a license key (contract §1.1): creates a WooCommerce REST key for the core, sends
@@ -282,7 +282,7 @@ final class Activator {
 	 */
 	private function delete_key( int $key_id ): void {
 		if ( ! $this->rest_keys->delete( $key_id ) ) {
-			$this->logger->warning( 'A WooNyx REST key could not be deleted.', array( 'key_id' => $key_id ) );
+			$this->logger->warning( 'A Nyxify REST key could not be deleted.', array( 'key_id' => $key_id ) );
 		}
 	}
 

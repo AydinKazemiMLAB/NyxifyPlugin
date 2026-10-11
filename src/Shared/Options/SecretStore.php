@@ -2,19 +2,19 @@
 /**
  * Encrypted secrets in wp_options.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Options;
+namespace Nyxify\Shared\Options;
 
-use WooNyx\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\Encryptor;
 
 /**
  * Reads and writes the plugin's secrets, encrypted, in options that are never autoloaded.
  *
- * A value that exists but can't be decrypted (the salts or WOONYX_ENCRYPTION_KEY changed, or the row was altered)
+ * A value that exists but can't be decrypted (the salts or NYXIFY_ENCRYPTION_KEY changed, or the row was altered)
  * reads as missing; has_unreadable_connection() tells the settings page to ask for a new activation.
  */
 final class SecretStore {
@@ -22,12 +22,12 @@ final class SecretStore {
 	/**
 	 * Store id and shared secret, as one encrypted JSON object so a rotation replaces them together.
 	 */
-	public const OPTION_CONNECTION = 'woonyx_connection';
+	public const OPTION_CONNECTION = 'nyxify_connection';
 
 	/**
 	 * Bot admin PIN (6 digits), encrypted.
 	 */
-	public const OPTION_ADMIN_PIN = 'woonyx_admin_pin';
+	public const OPTION_ADMIN_PIN = 'nyxify_admin_pin';
 
 	/**
 	 * Encryptor of this site.

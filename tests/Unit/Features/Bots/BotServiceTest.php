@@ -2,27 +2,27 @@
 /**
  * Tests for the bots service.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Bots;
+namespace Nyxify\Tests\Unit\Features\Bots;
 
 use Brain\Monkey\Functions;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Bots\Bot;
-use WooNyx\Features\Bots\BotService;
-use WooNyx\Features\Bots\BotToken;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Logging\Logger;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Bots\Bot;
+use Nyxify\Features\Bots\BotService;
+use Nyxify\Features\Bots\BotToken;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Logging\Logger;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * GET/POST /bots and DELETE /bots/{platform} over a mocked wp_remote_request() and WooCommerce logger, with the real
@@ -153,8 +153,8 @@ final class BotServiceTest extends TestCase {
 	private static function view( string $platform = 'telegram', string $status = 'active' ): array {
 		return array(
 			'platform'       => $platform,
-			'username'       => 'woonyx_shop_bot',
-			'name'           => 'WooNyx Shop',
+			'username'       => 'nyxify_shop_bot',
+			'name'           => 'Nyxify Shop',
 			'status'         => $status,
 			'webhook_active' => 'active' === $status,
 			'last_error'     => 'error' === $status ? 'HTTP 502, response is not JSON' : null,
@@ -228,7 +228,7 @@ final class BotServiceTest extends TestCase {
 	private function assert_logs_hold_nothing_sensitive(): void {
 		$logged = self::json( $this->entries );
 
-		foreach ( array( 'AAFsecret', '123456789', 'sec_', 'woonyx_shop_bot', 'WooNyx Shop', 'HTTP 502' ) as $sensitive ) {
+		foreach ( array( 'AAFsecret', '123456789', 'sec_', 'nyxify_shop_bot', 'Nyxify Shop', 'HTTP 502' ) as $sensitive ) {
 			self::assertStringNotContainsString( $sensitive, $logged );
 		}
 	}

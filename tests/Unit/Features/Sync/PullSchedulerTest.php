@@ -2,17 +2,17 @@
 /**
  * Tests for PullScheduler.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Features\Sync;
+namespace Nyxify\Tests\Unit\Features\Sync;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
-use WooNyx\Features\Sync\PullScheduler;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Features\Sync\PullScheduler;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * The recurring and immediate pulls over a stubbed Action Scheduler that keeps its actions in memory, and the pause
@@ -49,14 +49,14 @@ final class PullSchedulerTest extends TestCase {
 		Functions\when( 'as_has_scheduled_action' )->alias(
 			function ( string $hook, $args, string $group ): bool {
 				self::assertNull( $args );
-				self::assertSame( 'woonyx', $group );
+				self::assertSame( 'nyxify', $group );
 				return isset( $this->actions[ $hook ] );
 			}
 		);
 		Functions\when( 'as_get_scheduled_actions' )->alias(
 			function ( array $query, string $format ): array {
 				self::assertSame( 'ids', $format );
-				self::assertSame( 'woonyx', $query['group'] );
+				self::assertSame( 'nyxify', $query['group'] );
 				self::assertSame( 'pending', $query['status'] );
 				return 'pending' === ( $this->actions[ $query['hook'] ] ?? '' ) ? array( 5 ) : array();
 			}
@@ -107,7 +107,7 @@ final class PullSchedulerTest extends TestCase {
 	public function test_a_connected_site_gets_the_recurring_pull_from_now_every_five_minutes(): void {
 		self::assertTrue( $this->scheduler()->ensure( true ) );
 
-		self::assertSame( array( 'recurring woonyx_sync_pull at ' . self::NOW . ' every 300 woonyx unique:y' ), $this->calls );
+		self::assertSame( array( 'recurring nyxify_sync_pull at ' . self::NOW . ' every 300 nyxify unique:y' ), $this->calls );
 	}
 
 	/**
@@ -145,7 +145,7 @@ final class PullSchedulerTest extends TestCase {
 
 		self::assertFalse( $this->scheduler()->ensure( false ) );
 
-		self::assertSame( array( 'unschedule woonyx_sync_pull woonyx', 'unschedule woonyx_sync_pull_now woonyx' ), $this->calls );
+		self::assertSame( array( 'unschedule nyxify_sync_pull nyxify', 'unschedule nyxify_sync_pull_now nyxify' ), $this->calls );
 		self::assertSame( array(), $this->actions );
 	}
 
@@ -158,7 +158,7 @@ final class PullSchedulerTest extends TestCase {
 	public function test_schedule_now_queues_one_pull_on_its_own_hook(): void {
 		self::assertTrue( $this->scheduler()->schedule_now() );
 
-		self::assertSame( array( 'async woonyx_sync_pull_now woonyx unique:n' ), $this->calls );
+		self::assertSame( array( 'async nyxify_sync_pull_now nyxify unique:n' ), $this->calls );
 	}
 
 	public function test_schedule_now_skips_while_one_is_pending(): void {
@@ -213,6 +213,6 @@ final class PullSchedulerTest extends TestCase {
 	public function test_unschedule_all_cancels_both_hooks(): void {
 		PullScheduler::unschedule_all();
 
-		self::assertSame( array( 'unschedule woonyx_sync_pull woonyx', 'unschedule woonyx_sync_pull_now woonyx' ), $this->calls );
+		self::assertSame( array( 'unschedule nyxify_sync_pull nyxify', 'unschedule nyxify_sync_pull_now nyxify' ), $this->calls );
 	}
 }

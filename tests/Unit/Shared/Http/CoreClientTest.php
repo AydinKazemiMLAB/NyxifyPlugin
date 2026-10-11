@@ -2,24 +2,24 @@
 /**
  * Tests for the core client.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Tests\Unit\Shared\Http;
+namespace Nyxify\Tests\Unit\Shared\Http;
 
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-use WooNyx\Shared\Http\CoreClient;
-use WooNyx\Shared\Http\CoreError;
-use WooNyx\Shared\Options\Connection;
-use WooNyx\Shared\Options\SecretStore;
-use WooNyx\Shared\Security\Encryptor;
-use WooNyx\Shared\Security\HmacSigner;
-use WooNyx\Tests\Unit\TestCase;
+use Nyxify\Shared\Http\CoreClient;
+use Nyxify\Shared\Http\CoreError;
+use Nyxify\Shared\Options\Connection;
+use Nyxify\Shared\Options\SecretStore;
+use Nyxify\Shared\Security\Encryptor;
+use Nyxify\Shared\Security\HmacSigner;
+use Nyxify\Tests\Unit\TestCase;
 
 /**
  * Requests built, signed and read over a mocked wp_remote_request().
@@ -160,7 +160,7 @@ final class CoreClientTest extends TestCase {
 
 		$headers = $this->sent_headers();
 		self::assertSame( 'application/json', $headers['Content-Type'] );
-		self::assertSame( self::STORE_ID, $headers['X-WooNyx-Shop-Id'] );
+		self::assertSame( self::STORE_ID, $headers['X-Nyxify-Shop-Id'] );
 		self::assertTrue(
 			( new HmacSigner( self::secret() ) )->verify( $headers, '{"name":"چای / سبز"}', self::STORE_ID ),
 			'The signature covers exactly the body that was sent.'
@@ -193,7 +193,7 @@ final class CoreClientTest extends TestCase {
 		self::assertSame( 'DELETE', $sent['args']['method'] );
 		self::assertSame( 0, $sent['args']['redirection'] );
 		self::assertSame( CoreClient::TIMEOUT_SECONDS, $sent['args']['timeout'] );
-		self::assertSame( 'WooNyx/' . WOONYX_VERSION, $sent['args']['user-agent'] );
+		self::assertSame( 'Nyxify/' . NYXIFY_VERSION, $sent['args']['user-agent'] );
 		self::assertSame( 'application/json', $this->sent_headers()['Accept'] );
 	}
 
@@ -206,7 +206,7 @@ final class CoreClientTest extends TestCase {
 		$second = $this->requests[1]['args']['headers'];
 		self::assertIsArray( $first );
 		self::assertIsArray( $second );
-		self::assertMatchesRegularExpression( '/^wn-[a-f0-9]{24}$/D', $first['X-Request-ID'] );
+		self::assertMatchesRegularExpression( '/^nx-[a-f0-9]{24}$/D', $first['X-Request-ID'] );
 		self::assertNotSame( $first['X-Request-ID'], $second['X-Request-ID'] );
 	}
 
@@ -437,7 +437,7 @@ final class CoreClientTest extends TestCase {
 	#[RunInSeparateProcess]
 	#[PreserveGlobalState( false )]
 	public function test_base_url_from_the_constant(): void {
-		define( 'WOONYX_API_BASE_URL', 'https://api.example.org' );
+		define( 'NYXIFY_API_BASE_URL', 'https://api.example.org' );
 
 		self::assertSame( 'https://api.example.org', CoreClient::configured_base_url() );
 	}

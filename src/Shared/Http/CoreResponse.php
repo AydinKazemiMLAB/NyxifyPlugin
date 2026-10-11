@@ -2,12 +2,12 @@
 /**
  * The result of a call to the core.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Shared\Http;
+namespace Nyxify\Shared\Http;
 
 /**
  * Either the decoded JSON of a 2xx answer (an object, a list such as `GET /bots`, or nothing for a 204), or a

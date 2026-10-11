@@ -2,17 +2,17 @@
 /**
  * The catalog queue's table.
  *
- * @package WooNyx
+ * @package Nyxify
  */
 
 declare(strict_types=1);
 
-namespace WooNyx\Features\Catalog;
+namespace Nyxify\Features\Catalog;
 
-use WooNyx\Shared\Logging\Logger;
+use Nyxify\Shared\Logging\Logger;
 
 /**
- * Creates, upgrades and drops `{prefix}woonyx_catalog_queue` (one per site of a network). The table is created on
+ * Creates, upgrades and drops `{prefix}nyxify_catalog_queue` (one per site of a network). The table is created on
  * plugin activation and, because an update by upload doesn't run the activation hook, whenever the stored version
  * differs from VERSION. dbDelta() needs two spaces after PRIMARY KEY and one column per line.
  */
@@ -21,7 +21,7 @@ final class Schema {
 	/**
 	 * Table name without the site's prefix.
 	 */
-	public const TABLE = 'woonyx_catalog_queue';
+	public const TABLE = 'nyxify_catalog_queue';
 
 	/**
 	 * Version of the table's definition; raise it when the definition changes.
@@ -31,7 +31,7 @@ final class Schema {
 	/**
 	 * Option holding the version of the table this site has (autoloaded: read on every request).
 	 */
-	public const OPTION_VERSION = 'woonyx_db_version';
+	public const OPTION_VERSION = 'nyxify_db_version';
 
 	/**
 	 * The current site's table name.
