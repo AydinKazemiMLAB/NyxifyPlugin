@@ -32,7 +32,8 @@
             "@analyse",
             "@test"
         ],
-        "build": "@php bin/build-zip.php"
+        "build": "@php bin/build-zip.php",
+        "mockup": "@php bin/mockup.php"
     },
     "scripts-descriptions": {
         "lint": "PHPCS: WordPress Coding Standards, PHP 8.1+ compatibility, prefixes and text domain.",
@@ -42,7 +43,8 @@
         "i18n:pot": "Regenerate languages/nyxify.pot from the code.",
         "i18n:compile": "Merge the .pot into every .po, then build the .mo and .l10n.php files WordPress loads.",
         "check": "Every check: lint, analyse, test.",
-        "build": "Build dist/nyxify-<version>.zip (export-ignore honoured, production autoloader only)."
+        "build": "Build dist/nyxify-<version>.zip (export-ignore honoured, production autoloader only).",
+        "mockup": "Regenerate docs/mockups/admin-page.html from the settings page's own classes, with sample data."
     },
     "config": {
         "process-timeout": 0,
