@@ -15,7 +15,6 @@ use Nyxify\Features\Bots\BotService;
 use Nyxify\Features\Settings\BotsSection;
 use Nyxify\Features\Store\StoreStatus;
 use Nyxify\Shared\Http\CoreClient;
-use Nyxify\Shared\Http\CoreError;
 use Nyxify\Shared\Logging\Logger;
 use Nyxify\Shared\Options\Connection;
 use Nyxify\Shared\Options\SecretStore;
@@ -73,6 +72,7 @@ final class BotsSectionTest extends TestCase {
 			}
 		);
 		Functions\when( 'wp_date' )->alias( fn( string $format, int $timestamp ): string => gmdate( $format, $timestamp ) );
+		Functions\when( 'determine_locale' )->justReturn( 'en_US' );
 		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
 		Functions\when( 'wp_get_environment_type' )->justReturn( 'production' );
@@ -189,7 +189,7 @@ final class BotsSectionTest extends TestCase {
 		return new BotsSection( new BotService( new CoreClient( $store, self::CORE_URL ), new Logger( $wc_logger ) ) );
 	}
 
-	private function rendered( StoreStatus|CoreError $status ): string {
+	private function rendered( StoreStatus $status ): string {
 		ob_start();
 		$this->section()->render( $status );
 
@@ -203,22 +203,30 @@ final class BotsSectionTest extends TestCase {
 	 * @param string $label The messenger's heading.
 	 */
 	private static function block( string $html, string $label ): string {
-		$pattern = '#<div class="nyxify-bot">\s*<h3>' . preg_quote( $label, '#' ) . '</h3>.*?</div>\s*(?=<div class="nyxify-bot">|$)#s';
+		foreach ( (array) preg_split( '#(?=<div class="nyxify-bot(?: nyxify-bot--empty)?">)#', $html ) as $part ) {
+			if ( is_string( $part ) && str_contains( $part, '<h3>' . $label . '</h3>' ) ) {
+				return $part;
+			}
+		}
 
-		return 1 === preg_match( $pattern, $html, $matches ) ? $matches[0] : '';
+		return '';
 	}
 
 	public function test_one_block_per_platform_of_the_plan_with_open_forms(): void {
 		$html = $this->rendered( self::store_status() );
 
 		self::assertSame( array( self::CORE_URL . '/api/v1/bots' ), array_column( $this->requests, 'url' ) );
-		self::assertStringContainsString( '<h2>Bots</h2>', $html );
+		self::assertStringContainsString( '<section class="nyxify-card nyxify-bots-card" aria-labelledby="nyxify-bots-heading">', $html );
+		self::assertStringContainsString( '<h2 id="nyxify-bots-heading">Bots</h2>', $html );
 		self::assertStringContainsString( 'A bot token is sent once to Nyxify and is not stored on this site.', $html );
 		self::assertLessThan( (int) strpos( $html, '<h3>Bale</h3>' ), (int) strpos( $html, '<h3>Telegram</h3>' ) );
 		self::assertLessThan( (int) strpos( $html, '<h3>Rubika</h3>' ), (int) strpos( $html, '<h3>Bale</h3>' ) );
 
 		$block = self::block( $html, 'Bale' );
-		self::assertStringContainsString( 'No bot is connected.', $block );
+		self::assertStringStartsWith( '<div class="nyxify-bot nyxify-bot--empty">', $block );
+		self::assertStringContainsString( '<span class="nyxify-bot__avatar" aria-hidden="true">B</span>', $block );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--off">Not connected</span>', $block );
+		self::assertStringNotContainsString( 'No bot is connected.', $block );
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_register_bot" />', $block );
 		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_register_bot"', $block );
 		self::assertStringContainsString( '<input type="hidden" name="nyxify_platform" value="bale" />', $block );
@@ -227,6 +235,14 @@ final class BotsSectionTest extends TestCase {
 		self::assertStringContainsString( '>Connect bot</button>', $block );
 		self::assertStringNotContainsString( 'data-nyxify-confirm', $block );
 		self::assertStringNotContainsString( '<details', $block );
+	}
+
+	public function test_the_avatar_is_the_first_letter_of_the_translated_name(): void {
+		Functions\when( '__' )->alias( fn( string $text ): string => 'Telegram' === $text ? 'تلگرام' : $text );
+
+		$block = self::block( $this->rendered( self::store_status( array( 'telegram' ) ) ), 'تلگرام' );
+
+		self::assertStringContainsString( '<span class="nyxify-bot__avatar" aria-hidden="true">ت</span>', $block );
 	}
 
 	public function test_only_the_plans_platforms(): void {
@@ -243,17 +259,18 @@ final class BotsSectionTest extends TestCase {
 		$block = self::block( $this->rendered( self::store_status() ), 'Telegram' );
 
 		self::assertStringContainsString( '<a href="https://t.me/nyxify_shop_bot" target="_blank" rel="noopener noreferrer" dir="ltr">@nyxify_shop_bot</a>', $block );
-		self::assertStringContainsString( '<p class="description">Nyxify Shop</p>', $block );
-		self::assertMatchesRegularExpression( '#<th scope="row">Status</th>\s*<td>\s*Active#', $block );
-		self::assertMatchesRegularExpression( '#<th scope="row">Webhook</th>\s*<td>Set</td>#', $block );
-		self::assertMatchesRegularExpression( '#<th scope="row">Set up</th>\s*<td>2026-10-07 10:15</td>#', $block );
+		self::assertStringStartsWith( '<div class="nyxify-bot">', $block );
+		self::assertStringContainsString( '<br /><span class="description">Nyxify Shop</span>', $block );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--ok">Active</span>', $block );
+		self::assertMatchesRegularExpression( '#<dt>Webhook</dt>\s*<dd>Set</dd>#', $block );
+		self::assertMatchesRegularExpression( '#<dt>Set up</dt>\s*<dd>2026-10-07</dd>#', $block );
 		self::assertStringNotContainsString( 'Check again', $block );
 
 		self::assertMatchesRegularExpression( '#<form[^>]*class="nyxify-bot-remove-form" data-nyxify-confirm="Remove the Telegram bot\? It stops answering your customers\.">#', $block );
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_remove_bot" />', $block );
-		self::assertStringContainsString( '>Remove bot</button>', $block );
+		self::assertStringContainsString( '<button type="submit" class="button-link button-link-delete">Remove bot</button>', $block );
 
-		self::assertMatchesRegularExpression( '#<details class="nyxify-replace-bot">\s*<summary>Replace with another bot</summary>\s*<form[^>]*class="nyxify-bot-token-form" data-nyxify-confirm="Replace the Telegram bot with the bot of this token\?#', $block );
+		self::assertMatchesRegularExpression( '#<details class="nyxify-replace-bot">\s*<summary>Replace with another bot</summary>\s*<form[^>]*class="nyxify-bot-token-form nyxify-field" data-nyxify-confirm="Replace the Telegram bot with the bot of this token\?#', $block );
 		self::assertStringContainsString( '>Replace bot</button>', $block );
 	}
 
@@ -298,10 +315,11 @@ final class BotsSectionTest extends TestCase {
 
 		$block = self::block( $this->rendered( self::store_status() ), 'Telegram' );
 
-		self::assertStringContainsString( 'Setting up…', $block );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--info nyxify-pill--busy">Setting up…</span>', $block );
+		self::assertStringContainsString( '<p class="nyxify-callout nyxify-callout--info">', $block );
 		self::assertStringContainsString( '<a href="https://shop.example.com/wp-admin/admin.php?page=nyxify">Check again</a>', $block );
-		self::assertMatchesRegularExpression( '#<th scope="row">Webhook</th>\s*<td>Not set</td>#', $block );
-		self::assertStringNotContainsString( 'Set up</th>', $block );
+		self::assertMatchesRegularExpression( '#<dt>Webhook</dt>\s*<dd>Not set</dd>#', $block );
+		self::assertStringNotContainsString( 'Set up</dt>', $block );
 	}
 
 	public function test_a_failed_bot_shows_the_translated_message_and_the_escaped_details(): void {
@@ -319,8 +337,8 @@ final class BotsSectionTest extends TestCase {
 
 		$block = self::block( $this->rendered( self::store_status() ), 'Telegram' );
 
-		self::assertStringContainsString( 'Failed', $block );
-		self::assertStringContainsString( '<div class="notice notice-error inline">', $block );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--error">Failed</span>', $block );
+		self::assertStringContainsString( '<div class="nyxify-callout nyxify-callout--error">', $block );
 		self::assertStringContainsString( 'Setting up the bot failed. Nyxify tries again every hour, up to five times', $block );
 		self::assertStringContainsString( 'Details: <code dir="ltr">Bad Request: &lt;b&gt;bad webhook&lt;/b&gt; &amp; more</code>', $block );
 		self::assertStringNotContainsString( '<b>', $block );
@@ -346,7 +364,8 @@ final class BotsSectionTest extends TestCase {
 		self::assertStringNotContainsString( '<img', $block );
 		self::assertStringNotContainsString( '<u>', $block );
 		self::assertStringContainsString( '<code dir="ltr">@&lt;script&gt;x&lt;/script&gt;</code>', $block );
-		self::assertMatchesRegularExpression( '#<th scope="row">Status</th>\s*<td>\s*paused#', $block );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--off">paused</span>', $block );
+		self::assertMatchesRegularExpression( '#<dt>Set up</dt>\s*<dd>not a date &lt;u&gt;</dd>#', $block );
 	}
 
 	public function test_a_bot_without_names(): void {
@@ -361,7 +380,7 @@ final class BotsSectionTest extends TestCase {
 			)
 		);
 
-		self::assertMatchesRegularExpression( '#<th scope="row">Bot</th>\s*<td>\s*&mdash;#', self::block( $this->rendered( self::store_status() ), 'Telegram' ) );
+		self::assertMatchesRegularExpression( '#<dt>Bot</dt>\s*<dd>&mdash;</dd>#', self::block( $this->rendered( self::store_status() ), 'Telegram' ) );
 	}
 
 	public function test_a_bot_outside_the_plan_can_only_be_removed(): void {
@@ -371,7 +390,8 @@ final class BotsSectionTest extends TestCase {
 		$block = self::block( $html, 'Rubika' );
 
 		self::assertLessThan( (int) strpos( $html, '<h3>Rubika</h3>' ), (int) strpos( $html, '<h3>Telegram</h3>' ) );
-		self::assertStringContainsString( 'This messenger isn’t in your plan, so the bot doesn’t work.', $block );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--warning">Not in your plan</span>', $block );
+		self::assertStringContainsString( '<p class="nyxify-callout nyxify-callout--warning">This messenger isn’t in your plan, so the bot doesn’t work.', $block );
 		self::assertStringContainsString( 'nyxify-bot-remove-form', $block );
 		self::assertStringNotContainsString( 'nyxify-bot-token-form', $block );
 		self::assertStringNotContainsString( '<details', $block );
@@ -383,6 +403,7 @@ final class BotsSectionTest extends TestCase {
 		$block = self::block( $this->rendered( self::store_status( array( 'telegram', 'eitaa' ) ) ), 'eitaa' );
 
 		self::assertStringContainsString( '@nyxify_shop_bot', $block );
+		self::assertStringContainsString( '<span class="nyxify-bot__avatar" aria-hidden="true">e</span>', $block );
 		self::assertStringNotContainsString( '<form', $block );
 		self::assertStringNotContainsString( '<a href', $block );
 	}
@@ -391,14 +412,6 @@ final class BotsSectionTest extends TestCase {
 		$html = $this->rendered( self::store_status( array() ) );
 
 		self::assertStringContainsString( 'Your plan doesn’t include any messenger.', $html );
-		self::assertStringNotContainsString( '<form', $html );
-	}
-
-	public function test_a_status_error_sends_nothing(): void {
-		$html = $this->rendered( new CoreError( 'no_active_subscription', 403, 'req-1' ) );
-
-		self::assertSame( array(), $this->requests );
-		self::assertStringContainsString( 'The bots can be managed here once the store’s status above can be read.', $html );
 		self::assertStringNotContainsString( '<form', $html );
 	}
 

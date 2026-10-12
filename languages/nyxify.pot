@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-11T11:53:04+00:00\n"
+"POT-Creation-Date: 2026-10-12T17:54:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: nyxify\n"
@@ -34,17 +34,14 @@ msgid "Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin 
 msgstr ""
 
 #: src/Features/Bots/BotPlatform.php:78
-#: src/Features/Settings/StatusSection.php:206
 msgid "Telegram"
 msgstr ""
 
 #: src/Features/Bots/BotPlatform.php:79
-#: src/Features/Settings/StatusSection.php:207
 msgid "Bale"
 msgstr ""
 
 #: src/Features/Bots/BotPlatform.php:80
-#: src/Features/Settings/StatusSection.php:208
 msgid "Rubika"
 msgstr ""
 
@@ -74,213 +71,240 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: src/Features/Settings/AdminPinSection.php:50
+#: src/Features/Settings/AdminPinSection.php:52
 msgid "Admin PIN"
 msgstr ""
 
-#: src/Features/Settings/AdminPinSection.php:51
+#: src/Features/Settings/AdminPinSection.php:53
 msgid "Anyone who sends this PIN to one of your bots becomes a bot admin and can manage your shop from the bot. Share it only with people you trust."
 msgstr ""
 
-#: src/Features/Settings/AdminPinSection.php:53
+#: src/Features/Settings/AdminPinSection.php:55
 msgid "No PIN has been issued from this site yet."
 msgstr ""
 
-#: src/Features/Settings/AdminPinSection.php:56
-msgid "Show PIN"
-msgstr ""
-
-#: src/Features/Settings/AdminPinSection.php:58
-msgid "The last PIN issued from this site. Issuing a new one makes it stop working."
-msgstr ""
-
-#: src/Features/Settings/AdminPinSection.php:63
-msgid "A new PIN can be issued here once the store is active and its status above can be read."
-msgstr ""
-
-#: src/Features/Settings/AdminPinSection.php:79
-msgid "Issue a new PIN and log out every bot admin? Everyone will need the new PIN to become an admin again."
+#: src/Features/Settings/AdminPinSection.php:61
+msgid "A new PIN can be issued here once the store is active and its status can be read."
 msgstr ""
 
 #: src/Features/Settings/AdminPinSection.php:80
+#: src/Features/Settings/AdminPinSection.php:82
+msgid "Show"
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:80
+msgid "Hide"
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:80
+msgid "Copied"
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:80
+msgid "Select the PIN and copy it."
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:81
+msgid "PIN hidden"
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:83
+msgid "Copy"
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:87
+msgid "Show PIN"
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:90
+msgid "The last PIN issued from this site. Issuing a new one makes it stop working."
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:102
+msgid "Issue a new PIN and log out every bot admin? Everyone will need the new PIN to become an admin again."
+msgstr ""
+
+#: src/Features/Settings/AdminPinSection.php:103
 msgid "Issue a new PIN? The current PIN stops working; current bot admins stay admins."
 msgstr ""
 
-#: src/Features/Settings/AdminPinSection.php:88
+#: src/Features/Settings/AdminPinSection.php:111
 msgid "New PIN and log out every admin"
 msgstr ""
 
-#: src/Features/Settings/AdminPinSection.php:88
+#: src/Features/Settings/AdminPinSection.php:111
 msgid "New PIN"
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:53
+#: src/Features/Settings/AdminsSection.php:54
 msgid "Bot admins"
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:56
-msgid "The bot admins can be managed here once the store’s status above can be read."
-msgstr ""
-
-#: src/Features/Settings/AdminsSection.php:61
+#: src/Features/Settings/AdminsSection.php:67
 msgid "The bot admins can be managed here once the store is active on Nyxify again."
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:71
+#: src/Features/Settings/AdminsSection.php:77
 msgid "People who sent the admin PIN to one of your bots. Removing one takes away their admin access, but the current PIN still works for them: issue a new PIN too if they shouldn’t come back."
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:74
+#: src/Features/Settings/AdminsSection.php:80
 msgid "No one is a bot admin yet."
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:82
+#: src/Features/Settings/AdminsSection.php:88
 msgid "Messenger"
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:83
+#: src/Features/Settings/AdminsSection.php:89
 msgid "Name"
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:84
+#: src/Features/Settings/AdminsSection.php:90
 msgid "Username"
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:85
+#: src/Features/Settings/AdminsSection.php:91
 msgid "Actions"
 msgstr ""
 
 #. translators: %s: the bot admin's name, username or messenger user id
-#: src/Features/Settings/AdminsSection.php:107
+#: src/Features/Settings/AdminsSection.php:113
 #, php-format
 msgid "Remove %s as a bot admin? The current PIN still works for them until you issue a new one."
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:117
+#: src/Features/Settings/AdminsSection.php:123
 msgid "Messenger ID:"
 msgstr ""
 
-#: src/Features/Settings/AdminsSection.php:136
+#: src/Features/Settings/AdminsSection.php:142
 msgid "Remove"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:56
+#: src/Features/Settings/BotsSection.php:57
 msgid "Bots"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:59
-msgid "The bots can be managed here once the store’s status above can be read."
-msgstr ""
-
-#: src/Features/Settings/BotsSection.php:64
+#: src/Features/Settings/BotsSection.php:70
 msgid "The bots can be managed here once the store is active on Nyxify again."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:81
+#: src/Features/Settings/BotsSection.php:87
 msgid "Your plan doesn’t include any messenger. Upgrade your plan to connect a bot."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:85
+#: src/Features/Settings/BotsSection.php:91
 msgid "One bot per messenger. A bot token is sent once to Nyxify and is not stored on this site."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:125
+#: src/Features/Settings/BotsSection.php:142
 msgid "No bot is connected."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:134
+#: src/Features/Settings/BotsSection.php:148
 msgid "This messenger isn’t in your plan, so the bot doesn’t work. Remove it, or upgrade your plan."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:143
+#: src/Features/Settings/BotsSection.php:154
 msgid "Replace with another bot"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:162
-msgid "Bot"
-msgstr ""
-
-#: src/Features/Settings/BotsSection.php:168
-#: src/Features/Settings/SettingsPage.php:222
-msgid "Status"
-msgstr ""
-
-#: src/Features/Settings/BotsSection.php:173
-msgid "Nyxify is setting the bot up; this usually takes a few seconds."
-msgstr ""
-
 #: src/Features/Settings/BotsSection.php:174
-msgid "Check again"
+#: src/Features/Settings/SettingsPage.php:278
+msgid "Not connected"
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:179
-msgid "Setting up the bot failed. Nyxify tries again every hour, up to five times; you can also enter its token again."
+msgid "Not in your plan"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:181
-msgid "Details:"
+#: src/Features/Settings/BotsSection.php:200
+msgid "Bot"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:188
+#: src/Features/Settings/BotsSection.php:202
 msgid "Webhook"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:189
+#: src/Features/Settings/BotsSection.php:203
 msgid "Set"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:189
+#: src/Features/Settings/BotsSection.php:203
 msgid "Not set"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:193
+#: src/Features/Settings/BotsSection.php:205
 msgid "Set up"
 msgstr ""
 
+#: src/Features/Settings/BotsSection.php:211
+msgid "Nyxify is setting the bot up; this usually takes a few seconds."
+msgstr ""
+
+#: src/Features/Settings/BotsSection.php:212
+msgid "Check again"
+msgstr ""
+
+#: src/Features/Settings/BotsSection.php:217
+msgid "Setting up the bot failed. Nyxify tries again every hour, up to five times; you can also enter its token again."
+msgstr ""
+
+#: src/Features/Settings/BotsSection.php:219
+msgid "Details:"
+msgstr ""
+
 #. translators: %s: messenger name, e.g. Telegram
-#: src/Features/Settings/BotsSection.php:241
+#: src/Features/Settings/BotsSection.php:265
 #, php-format
 msgid "Replace the %s bot with the bot of this token? The current bot stops answering your customers."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:249
+#: src/Features/Settings/BotsSection.php:272
 msgid "Bot token"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:252
+#: src/Features/Settings/BotsSection.php:274
 msgid "The token the messenger gave you when you created the bot (for example with BotFather). It is sent once to Nyxify and is not stored on this site."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:254
+#: src/Features/Settings/BotsSection.php:275
 msgid "Replace bot"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:254
+#: src/Features/Settings/BotsSection.php:275
 msgid "Connect bot"
 msgstr ""
 
 #. translators: %s: messenger name, e.g. Telegram
-#: src/Features/Settings/BotsSection.php:267
+#: src/Features/Settings/BotsSection.php:287
 #, php-format
 msgid "Remove the %s bot? It stops answering your customers."
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:273
+#: src/Features/Settings/BotsSection.php:293
 msgid "Remove bot"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:285
+#: src/Features/Settings/BotsSection.php:305
 msgid "Setting up…"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:286
-#: src/Features/Settings/StatusSection.php:165
+#: src/Features/Settings/BotsSection.php:306
+#: src/Features/Settings/StatusSection.php:63
 msgid "Active"
 msgstr ""
 
-#: src/Features/Settings/BotsSection.php:287
-#: src/Features/Settings/StatusSection.php:181
+#: src/Features/Settings/BotsSection.php:307
+#: src/Features/Settings/StatusSection.php:183
 msgid "Failed"
+msgstr ""
+
+#. translators: 1: date, 2: time
+#: src/Features/Settings/DateFormat.php:121
+#, php-format
+msgid "%1$s at %2$s"
 msgstr ""
 
 #: src/Features/Settings/DeactivationWarning.php:62
@@ -292,244 +316,362 @@ msgid "When the plugin is deactivated, Nyxify is told and this site’s connecti
 msgstr ""
 
 #: src/Features/Settings/ErrorNotice.php:35
-#: src/Features/Settings/SettingsPage.php:337
+#: src/Features/Settings/SettingsPage.php:460
 msgid "Request ID (for Nyxify support):"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:145
-#: src/Features/Settings/SettingsPage.php:146
-#: src/Features/Settings/SettingsPage.php:213
+#: src/Features/Settings/JalaliCalendar.php:61
+msgctxt "Jalali month"
+msgid "Farvardin"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:62
+msgctxt "Jalali month"
+msgid "Ordibehesht"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:63
+msgctxt "Jalali month"
+msgid "Khordad"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:64
+msgctxt "Jalali month"
+msgid "Tir"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:65
+msgctxt "Jalali month"
+msgid "Mordad"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:66
+msgctxt "Jalali month"
+msgid "Shahrivar"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:67
+msgctxt "Jalali month"
+msgid "Mehr"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:68
+msgctxt "Jalali month"
+msgid "Aban"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:69
+msgctxt "Jalali month"
+msgid "Azar"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:70
+msgctxt "Jalali month"
+msgid "Dey"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:71
+msgctxt "Jalali month"
+msgid "Bahman"
+msgstr ""
+
+#: src/Features/Settings/JalaliCalendar.php:72
+msgctxt "Jalali month"
+msgid "Esfand"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:150
+#: src/Features/Settings/SettingsPage.php:151
+#: src/Features/Settings/SettingsPage.php:266
 msgid "Nyxify"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:173
+#: src/Features/Settings/SettingsPage.php:178
 msgid "Settings"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:206
+#: src/Features/Settings/SettingsPage.php:211
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:218
-msgid "Connection"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:226
-msgid "Nyxify server"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:230
-msgid "Set by NYXIFY_API_BASE_URL in wp-config.php."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:245
-#: src/Features/Settings/SettingsPage.php:302
-msgid "Activate again"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:246
-msgid "Use this if the connection stops working. This site keeps its store ID and gets a new shared secret."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:254
-#: src/Features/Settings/SettingsPage.php:302
-msgid "Activate"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:256
-msgid "Nothing is sent to the Nyxify server until you enter a license key."
+#: src/Features/Settings/SettingsPage.php:235
+msgid "The bots and the bot admins can be managed here once the store’s status can be read."
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:267
-msgid "Shared secret"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:268
-msgid "This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:269
-msgid "Replace the shared secret with a new one now? The store stays connected."
+msgid "Shop bots for WooCommerce on Telegram, Bale and Rubika"
 msgstr ""
 
 #: src/Features/Settings/SettingsPage.php:272
-msgid "Rotate secret"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:290
-msgid "License key"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:294
-msgid "The key is sent once to the Nyxify server and is not stored on this site."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:295
-msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:330
-msgid "Invalid fields:"
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:351
-msgid "The store is connected to Nyxify."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:352
-msgid "The shared secret was replaced with a new one. The store stays connected."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:353
-msgid "The bot token was accepted. Nyxify is setting the bot up; check its status below."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:354
-msgid "The bot was removed. It no longer answers your customers."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:355
-msgid "A new admin PIN was issued; the previous one no longer works. Bot admins stay admins."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:356
-msgid "A new admin PIN was issued and every bot admin was logged out."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:357
-msgid "The bot admin was removed. The current PIN still works for them until you issue a new one."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:358
-msgid "Nyxify is reading your catalog again. Check the catalog sync below in a few minutes."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:359
-msgid "A catalog sync is already running. Check the catalog sync below in a few minutes."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:374
 msgid "Connected"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:375
-msgid "Store ID:"
+#: src/Features/Settings/SettingsPage.php:274
+msgid "Status unavailable"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:386
+#: src/Features/Settings/SettingsPage.php:276
 msgid "Connection lost"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:386
-msgid "Not connected"
+#: src/Features/Settings/SettingsPage.php:292
+msgid "Enter your license key"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:33
-msgid "Store on Nyxify"
+#: src/Features/Settings/SettingsPage.php:292
+msgid "It connects this shop to Nyxify."
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:44
+#: src/Features/Settings/SettingsPage.php:293
+msgid "Connect your bots"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:293
+msgid "Paste the token each messenger gave you."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:294
+msgid "Issue an admin PIN"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:294
+msgid "Send it to your bot to manage the shop from there."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:299
+#: src/Features/Settings/SettingsPage.php:421
+msgid "Activate"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:311
+msgid "Nothing is sent to the Nyxify server until you enter a license key."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:312
+msgid "Nyxify server:"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:327
+msgid "Connection"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:329
+msgid "Store ID"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:331
+msgid "Nyxify server"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:334
+msgid "License"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:340
 msgid "Check connection"
 msgstr ""
 
 #. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:49
+#: src/Features/Settings/SettingsPage.php:345
 #, php-format
 msgid "Checked %s"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:352
+msgid "Shared secret"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:356
+#: src/Features/Settings/SettingsPage.php:421
+msgid "Activate again"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:357
+msgid "Use this if the connection stops working. This site keeps its store ID and gets a new shared secret."
+msgstr ""
+
+#. translators: %s: date
+#: src/Features/Settings/SettingsPage.php:381
+#, php-format
+msgid "Activated %s"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:392
+msgid "Set by NYXIFY_API_BASE_URL in wp-config.php."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:401
+msgid "This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:402
+msgid "Replace the shared secret with a new one now? The store stays connected."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:404
+msgid "Rotate secret"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:418
+msgid "License key"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:424
+msgid "The key is sent once to the Nyxify server and is not stored on this site."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:425
+msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:453
+msgid "Invalid fields:"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:474
+msgid "The store is connected to Nyxify."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:475
+msgid "The shared secret was replaced with a new one. The store stays connected."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:476
+msgid "The bot token was accepted. Nyxify is setting the bot up; check its status below."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:477
+msgid "The bot was removed. It no longer answers your customers."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:478
+msgid "A new admin PIN was issued; the previous one no longer works. Bot admins stay admins."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:479
+msgid "A new admin PIN was issued and every bot admin was logged out."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:480
+msgid "The bot admin was removed. The current PIN still works for them until you issue a new one."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:481
+msgid "Nyxify is reading your catalog again. Check the catalog sync below in a few minutes."
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:482
+msgid "A catalog sync is already running. Check the catalog sync below in a few minutes."
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:64
+msgid "Deactivated"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:65
+msgid "Suspended"
 msgstr ""
 
 #: src/Features/Settings/StatusSection.php:68
 msgid "Store"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:78
-msgid "License"
-msgstr ""
-
-#. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:88
-#, php-format
-msgid "Activated %s"
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:96
+#: src/Features/Settings/StatusSection.php:85
 msgid "Plan"
 msgstr ""
 
-#. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:102
+#. translators: %s: date
+#: src/Features/Settings/StatusSection.php:100
 #, php-format
 msgid "Expires %s"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:108
-msgid "Messengers"
+#. translators: %s: list of messengers, e.g. "Telegram, Bale"
+#: src/Features/Settings/StatusSection.php:105
+#, php-format
+msgid "Messengers: %s"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:112
+#: src/Features/Settings/StatusSection.php:128
+msgid "The plan has ended: renew it to keep your bots running."
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:132
+msgid "Ends today: renew to keep your bots running."
+msgstr ""
+
+#. translators: %s: number of days
+#: src/Features/Settings/StatusSection.php:138
+#, php-format
+msgid "Ends in %s day: renew to keep your bots running."
+msgid_plural "Ends in %s days: renew to keep your bots running."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of days
+#: src/Features/Settings/StatusSection.php:144
+#, php-format
+msgid "%s day left"
+msgid_plural "%s days left"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Settings/StatusSection.php:153
 msgid "Products"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:116
+#: src/Features/Settings/StatusSection.php:168
+msgid "Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them."
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:180
+msgid "Not synced yet"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:181
+msgid "Syncing…"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:182
+msgid "Synced"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:191
 msgid "Catalog sync"
 msgstr ""
 
 #. translators: %s: date and time
-#: src/Features/Settings/StatusSection.php:123
+#: src/Features/Settings/StatusSection.php:199
 #, php-format
 msgid "Last synced %s"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:131
-msgid "Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them."
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:151
+#: src/Features/Settings/StatusSection.php:218
 msgid "Sync now"
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:152
+#: src/Features/Settings/StatusSection.php:219
 msgid "Nyxify reads every product and category of this store again."
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:166
-msgid "Deactivated"
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:167
-msgid "Suspended"
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:178
-msgid "Not synced yet"
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:179
-msgid "Syncing…"
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:180
-msgid "Synced"
-msgstr ""
-
-#: src/Features/Settings/StatusSection.php:202
+#: src/Features/Settings/StatusSection.php:254
 msgid "None"
 msgstr ""
 
 #. translators: separator between the items of a list
-#: src/Features/Settings/StatusSection.php:213
+#: src/Features/Settings/StatusSection.php:259
 msgctxt "list separator"
 msgid ", "
 msgstr ""
 
 #. translators: %s: number of products
-#: src/Features/Settings/StatusSection.php:226
+#: src/Features/Settings/StatusSection.php:272
 #, php-format
 msgid "%s (no limit)"
 msgstr ""
 
 #. translators: 1: number of products, 2: the plan's limit
-#: src/Features/Settings/StatusSection.php:231
+#: src/Features/Settings/StatusSection.php:277
 #, php-format
 msgid "%1$s of %2$s"
 msgstr ""

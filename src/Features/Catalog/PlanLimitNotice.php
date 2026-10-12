@@ -138,7 +138,7 @@ final class PlanLimitNotice {
 				$skips['count'],
 				'nyxify'
 			),
-			number_format_i18n( $skips['count'] )
+			DateFormat::number( $skips['count'] )
 		);
 
 		?>

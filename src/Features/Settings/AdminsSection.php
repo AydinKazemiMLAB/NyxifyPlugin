@@ -18,12 +18,12 @@ use Nyxify\Shared\Admin\AdminAction;
 use Nyxify\Shared\Http\CoreError;
 
 /**
- * Shown while connected: the people who became bot admins with the PIN (messenger, name, username; the messenger
+ * Shown while connected, in a card: the people who became bot admins with the PIN (messenger, name, username; the messenger
  * user id only when they have neither a name nor a username), each with a "Remove" button and its confirmation.
  *
  * This page is the only place their personal data is shown: fetched on every page load, never cached or logged, and
- * escaped. Nothing is sent while the store's status can't be read or the store isn't active (the core would refuse;
- * the status section explains why).
+ * escaped. Nothing is sent while the store isn't active (the core would refuse; the overview explains why); the page
+ * doesn't show this section while the store's status can't be read.
  */
 final class AdminsSection {
 
@@ -46,19 +46,25 @@ final class AdminsSection {
 	/**
 	 * Prints the section.
 	 *
-	 * @param StoreStatus|CoreError $status The store's status, fetched once by the page.
+	 * @param StoreStatus $status The store's status, fetched once by the page.
 	 */
-	public function render( StoreStatus|CoreError $status ): void {
+	public function render( StoreStatus $status ): void {
 		?>
-		<h2><?php esc_html_e( 'Bot admins', 'nyxify' ); ?></h2>
+		<section class="nyxify-card nyxify-admins-card" aria-labelledby="nyxify-admins-heading">
+			<?php Markup::card_heading( 'admins', __( 'Bot admins', 'nyxify' ), 'nyxify-admins-heading' ); ?>
+			<?php $this->render_body( $status ); ?>
+		</section>
 		<?php
-		if ( $status instanceof CoreError ) {
-			printf( '<p class="description">%s</p>', esc_html__( 'The bot admins can be managed here once the store’s status above can be read.', 'nyxify' ) );
-			return;
-		}
+	}
 
+	/**
+	 * The card's content.
+	 *
+	 * @param StoreStatus $status The store's status.
+	 */
+	private function render_body( StoreStatus $status ): void {
 		if ( 'active' !== $status->status ) {
-			printf( '<p class="description">%s</p>', esc_html__( 'The bot admins can be managed here once the store is active on Nyxify again.', 'nyxify' ) );
+			printf( '<p class="nyxify-empty">%s</p>', esc_html__( 'The bot admins can be managed here once the store is active on Nyxify again.', 'nyxify' ) );
 			return;
 		}
 
@@ -71,12 +77,12 @@ final class AdminsSection {
 		printf( '<p class="description">%s</p>', esc_html__( 'People who sent the admin PIN to one of your bots. Removing one takes away their admin access, but the current PIN still works for them: issue a new PIN too if they shouldn’t come back.', 'nyxify' ) );
 
 		if ( array() === $admins ) {
-			printf( '<p>%s</p>', esc_html__( 'No one is a bot admin yet.', 'nyxify' ) );
+			printf( '<p class="nyxify-empty">%s</p>', esc_html__( 'No one is a bot admin yet.', 'nyxify' ) );
 			return;
 		}
 
 		?>
-		<table class="widefat striped nyxify-admins">
+		<table class="nyxify-table nyxify-admins">
 			<thead>
 				<tr>
 					<th scope="col"><?php esc_html_e( 'Messenger', 'nyxify' ); ?></th>
@@ -108,7 +114,7 @@ final class AdminsSection {
 
 		?>
 		<tr>
-			<td><?php echo esc_html( BotPlatform::label( $admin->platform ) ); ?></td>
+			<td><span class="nyxify-tag"><?php echo esc_html( BotPlatform::label( $admin->platform ) ); ?></span></td>
 			<td>
 				<?php
 				if ( '' !== $name ) {

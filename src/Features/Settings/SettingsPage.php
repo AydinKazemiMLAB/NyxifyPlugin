@@ -19,7 +19,9 @@ use Nyxify\Features\Catalog\CatalogSyncHandler;
 use Nyxify\Features\Catalog\PlanLimitNotice;
 use Nyxify\Features\Store\ActivationHandler;
 use Nyxify\Features\Store\SecretRotationHandler;
+use Nyxify\Features\Store\StatusRefreshHandler;
 use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Store\StoreStatus;
 use Nyxify\Shared\Admin\AdminAction;
 use Nyxify\Shared\Admin\Notice;
 use Nyxify\Shared\Admin\Notices;
@@ -28,12 +30,15 @@ use Nyxify\Shared\Http\ErrorMessages;
 use Nyxify\Shared\Options\SecretStore;
 
 /**
- * WooCommerce > Nyxify: the connection status from the stored options, the core address, the result of the last
- * action, and only while connected (nothing is sent before a license key is entered): the store's status on the core
- * (fetched once per page load and shared by the sections), the bots, the admin PIN, the bot admins, the "Rotate secret"
- * button; the plan-limit notice whenever one is stored; then the license
- * form (open while not connected, folded into "Activate again" once connected) and, while connected, the deactivation
- * warning.
+ * WooCommerce > Nyxify: a header with the connection's state, the result of the last action and the plan-limit notice
+ * whenever one is stored, then:
+ *
+ * - while not connected (nothing is sent before a license key is entered): the three steps to start and the license
+ *   form;
+ * - while connected: the store's status on the core (fetched once per page load and shared by the sections) in four
+ *   cards, the bots and the bot admins (only while that status can be read), and aside the admin PIN and the connection
+ *   (store id, server, license, "Check connection", "Rotate secret" and the license form folded into "Activate
+ *   again"), then the deactivation warning.
  */
 final class SettingsPage {
 
@@ -206,57 +211,186 @@ final class SettingsPage {
 			wp_die( esc_html__( 'Sorry, you are not allowed to access this page.', 'nyxify' ), '', array( 'response' => 403 ) );
 		}
 
-		$connected = null !== $this->store->get_connection();
+		$connection = $this->store->get_connection();
+		$status     = null === $connection ? null : $this->status_service->get();
 
 		?>
 		<div class="wrap nyxify-settings">
-			<h1><?php esc_html_e( 'Nyxify', 'nyxify' ); ?></h1>
+			<?php $this->render_header( $status ); ?>
 			<hr class="wp-header-end" />
 			<?php $this->render_notice(); ?>
 			<?php PlanLimitNotice::render( false ); ?>
 
-			<h2><?php esc_html_e( 'Connection', 'nyxify' ); ?></h2>
-			<table class="form-table" role="presentation">
-				<tbody>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Status', 'nyxify' ); ?></th>
-						<td><?php $this->render_status(); ?></td>
-					</tr>
-					<tr>
-						<th scope="row"><?php esc_html_e( 'Nyxify server', 'nyxify' ); ?></th>
-						<td>
-							<code dir="ltr"><?php echo esc_html( $this->core_url ); ?></code>
-							<?php if ( defined( 'NYXIFY_API_BASE_URL' ) ) : ?>
-								<p class="description"><?php esc_html_e( 'Set by NYXIFY_API_BASE_URL in wp-config.php.', 'nyxify' ); ?></p>
-							<?php endif; ?>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<?php if ( $connected ) : ?>
-				<?php $status = $this->status_service->get(); ?>
-				<?php $this->status_section->render( $status ); ?>
-				<?php $this->bots_section->render( $status ); ?>
-				<?php $this->pin_section->render( $status ); ?>
-				<?php $this->admins_section->render( $status ); ?>
-				<?php $this->render_rotation_form(); ?>
-				<details class="nyxify-reactivate">
-					<summary><?php esc_html_e( 'Activate again', 'nyxify' ); ?></summary>
-					<p class="description"><?php esc_html_e( 'Use this if the connection stops working. This site keeps its store ID and gets a new shared secret.', 'nyxify' ); ?></p>
-					<?php $this->render_license_form( $connected ); ?>
-				</details>
-				<div class="notice notice-warning inline nyxify-deactivation-note">
-					<p><strong><?php echo esc_html( DeactivationWarning::message() ); ?></strong></p>
-					<p><?php echo esc_html( DeactivationWarning::details() ); ?></p>
-				</div>
+			<?php if ( null === $connection || null === $status ) : ?>
+				<?php $this->render_setup(); ?>
 			<?php else : ?>
-				<h2><?php esc_html_e( 'Activate', 'nyxify' ); ?></h2>
-				<?php $this->render_license_form( $connected ); ?>
-				<p class="description"><?php esc_html_e( 'Nothing is sent to the Nyxify server until you enter a license key.', 'nyxify' ); ?></p>
+				<?php $this->status_section->render( $status ); ?>
+				<div class="nyxify-layout">
+					<div class="nyxify-layout__main">
+						<?php if ( $status instanceof StoreStatus ) : ?>
+							<?php $this->bots_section->render( $status ); ?>
+							<?php $this->admins_section->render( $status ); ?>
+						<?php else : ?>
+							<section class="nyxify-card">
+								<p class="nyxify-empty"><?php esc_html_e( 'The bots and the bot admins can be managed here once the store’s status can be read.', 'nyxify' ); ?></p>
+							</section>
+						<?php endif; ?>
+					</div>
+					<div class="nyxify-layout__side">
+						<?php $this->pin_section->render( $status ); ?>
+						<?php $this->render_connection( $connection->store_id, $status ); ?>
+					</div>
+				</div>
+				<div class="nyxify-footer-note nyxify-deactivation-note">
+					<?php Markup::icon( 'alert' ); ?>
+					<div>
+						<p><strong><?php echo esc_html( DeactivationWarning::message() ); ?></strong></p>
+						<p><?php echo esc_html( DeactivationWarning::details() ); ?></p>
+					</div>
+				</div>
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * The header: the logo, the name, what Nyxify does and the connection's state.
+	 *
+	 * @param StoreStatus|CoreError|null $status The store's status, or null while not connected.
+	 */
+	private function render_header( StoreStatus|CoreError|null $status ): void {
+		?>
+		<div class="nyxify-header">
+			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<div class="nyxify-header__title">
+				<h1><?php esc_html_e( 'Nyxify', 'nyxify' ); ?></h1>
+				<p><?php esc_html_e( 'Shop bots for WooCommerce on Telegram, Bale and Rubika', 'nyxify' ); ?></p>
+			</div>
+			<div class="nyxify-header__end">
+				<?php
+				if ( $status instanceof StoreStatus ) {
+					Markup::pill( Markup::OK, __( 'Connected', 'nyxify' ) );
+				} elseif ( $status instanceof CoreError ) {
+					Markup::pill( Markup::WARNING, __( 'Status unavailable', 'nyxify' ) );
+				} elseif ( $this->store->has_unreadable_connection() ) {
+					Markup::pill( Markup::ERROR, __( 'Connection lost', 'nyxify' ) );
+				} else {
+					Markup::pill( Markup::OFF, __( 'Not connected', 'nyxify' ) );
+				}
+				?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * While not connected: why, the three steps to start, the license form and the core address.
+	 */
+	private function render_setup(): void {
+		$unreadable = $this->store->has_unreadable_connection();
+		$steps      = array(
+			array( __( 'Enter your license key', 'nyxify' ), __( 'It connects this shop to Nyxify.', 'nyxify' ) ),
+			array( __( 'Connect your bots', 'nyxify' ), __( 'Paste the token each messenger gave you.', 'nyxify' ) ),
+			array( __( 'Issue an admin PIN', 'nyxify' ), __( 'Send it to your bot to manage the shop from there.', 'nyxify' ) ),
+		);
+
+		?>
+		<section class="nyxify-card nyxify-setup" aria-labelledby="nyxify-setup-heading">
+			<?php Markup::card_heading( 'connection', __( 'Activate', 'nyxify' ), 'nyxify-setup-heading' ); ?>
+			<?php if ( $unreadable ) : ?>
+				<div class="notice notice-error inline"><p><?php echo esc_html( ErrorMessages::message( CoreError::CONNECTION_UNREADABLE ) ); ?></p></div>
+			<?php else : ?>
+				<p class="description"><?php echo esc_html( ErrorMessages::message( CoreError::NOT_ACTIVATED ) ); ?></p>
+				<ol class="nyxify-steps">
+					<?php foreach ( $steps as $index => $step ) : ?>
+						<li<?php echo 0 === $index ? ' aria-current="step"' : ''; ?>><div><strong><?php echo esc_html( $step[0] ); ?></strong> <?php echo esc_html( $step[1] ); ?></div></li>
+					<?php endforeach; ?>
+				</ol>
+			<?php endif; ?>
+			<?php $this->render_license_form( false ); ?>
+			<p class="nyxify-privacy"><?php Markup::icon( 'lock' ); ?><span><?php esc_html_e( 'Nothing is sent to the Nyxify server until you enter a license key.', 'nyxify' ); ?></span></p>
+			<p class="description"><?php esc_html_e( 'Nyxify server:', 'nyxify' ); ?> <?php $this->render_core_url(); ?></p>
+		</section>
+		<?php
+	}
+
+	/**
+	 * The connection's card: the store id, the core address, the license, "Check connection", then "Shared secret" and
+	 * "Activate again" folded.
+	 *
+	 * @param string                $store_id The store's id.
+	 * @param StoreStatus|CoreError $status   The store's status.
+	 */
+	private function render_connection( string $store_id, StoreStatus|CoreError $status ): void {
+		?>
+		<section class="nyxify-card nyxify-connection" aria-labelledby="nyxify-connection-heading">
+			<?php Markup::card_heading( 'connection', __( 'Connection', 'nyxify' ), 'nyxify-connection-heading' ); ?>
+			<dl class="nyxify-details">
+				<dt><?php esc_html_e( 'Store ID', 'nyxify' ); ?></dt>
+				<dd><code dir="ltr"><?php echo esc_html( $store_id ); ?></code></dd>
+				<dt><?php esc_html_e( 'Nyxify server', 'nyxify' ); ?></dt>
+				<dd><?php $this->render_core_url(); ?></dd>
+				<?php if ( $status instanceof StoreStatus ) : ?>
+					<dt><?php esc_html_e( 'License', 'nyxify' ); ?></dt>
+					<dd><?php self::render_license( $status ); ?></dd>
+				<?php endif; ?>
+			</dl>
+			<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-refresh-form nyxify-actions">
+				<?php AdminAction::render_fields( StatusRefreshHandler::ACTION ); ?>
+				<button type="submit" class="button"><?php Markup::icon( 'sync' ); ?><?php esc_html_e( 'Check connection', 'nyxify' ); ?></button>
+				<?php if ( $status instanceof StoreStatus ) : ?>
+					<span class="description">
+						<?php
+						/* translators: %s: date and time */
+						echo esc_html( sprintf( __( 'Checked %s', 'nyxify' ), DateFormat::timestamp( $status->checked_at ) ) );
+						?>
+					</span>
+				<?php endif; ?>
+			</form>
+			<div class="nyxify-folds">
+				<details class="nyxify-rotate">
+					<summary><?php esc_html_e( 'Shared secret', 'nyxify' ); ?></summary>
+					<?php $this->render_rotation_form(); ?>
+				</details>
+				<details class="nyxify-reactivate">
+					<summary><?php esc_html_e( 'Activate again', 'nyxify' ); ?></summary>
+					<p class="description"><?php esc_html_e( 'Use this if the connection stops working. This site keeps its store ID and gets a new shared secret.', 'nyxify' ); ?></p>
+					<?php $this->render_license_form( true ); ?>
+				</details>
+			</div>
+		</section>
+		<?php
+	}
+
+	/**
+	 * The license's prefix and activation date.
+	 *
+	 * @param StoreStatus $status The store's status.
+	 */
+	private static function render_license( StoreStatus $status ): void {
+		if ( null === $status->license_prefix ) {
+			echo '&mdash;';
+			return;
+		}
+
+		printf( '<code dir="ltr">%s</code>', esc_html( $status->license_prefix ) );
+		if ( null !== $status->license_activated_at ) {
+			printf(
+				'<br /><span class="description">%s</span>',
+				/* translators: %s: date */
+				esc_html( sprintf( __( 'Activated %s', 'nyxify' ), DateFormat::core_date( $status->license_activated_at, false ) ) )
+			);
+		}
+	}
+
+	/**
+	 * The core address, and where it was set when it isn't the default.
+	 */
+	private function render_core_url(): void {
+		printf( '<code dir="ltr">%s</code>', esc_html( $this->core_url ) );
+		if ( defined( 'NYXIFY_API_BASE_URL' ) ) {
+			printf( '<br /><span class="description">%s</span>', esc_html__( 'Set by NYXIFY_API_BASE_URL in wp-config.php.', 'nyxify' ) );
+		}
 	}
 
 	/**
@@ -264,13 +398,10 @@ final class SettingsPage {
 	 */
 	private function render_rotation_form(): void {
 		?>
-		<h2><?php esc_html_e( 'Shared secret', 'nyxify' ); ?></h2>
 		<p class="description"><?php esc_html_e( 'This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected.', 'nyxify' ); ?></p>
 		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-rotate-form" data-nyxify-confirm="<?php echo esc_attr__( 'Replace the shared secret with a new one now? The store stays connected.', 'nyxify' ); ?>">
 			<?php AdminAction::render_fields( SecretRotationHandler::ACTION ); ?>
-			<p class="submit">
-				<button type="submit" class="button"><?php esc_html_e( 'Rotate secret', 'nyxify' ); ?></button>
-			</p>
+			<p><button type="submit" class="button button-small"><?php esc_html_e( 'Rotate secret', 'nyxify' ); ?></button></p>
 		</form>
 		<?php
 	}
@@ -282,25 +413,17 @@ final class SettingsPage {
 	 */
 	private function render_license_form( bool $connected ): void {
 		?>
-		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-license-form">
+		<form method="post" action="<?php echo esc_url( AdminAction::form_url() ); ?>" class="nyxify-license-form nyxify-field">
 			<?php AdminAction::render_fields( ActivationHandler::ACTION ); ?>
-			<table class="form-table" role="presentation">
-				<tbody>
-					<tr>
-						<th scope="row"><label for="nyxify-license-key"><?php esc_html_e( 'License key', 'nyxify' ); ?></label></th>
-						<td>
-							<input type="text" id="nyxify-license-key" name="<?php echo esc_attr( ActivationHandler::FIELD ); ?>" class="regular-text code" dir="ltr" autocomplete="off" spellcheck="false" required placeholder="NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX" aria-describedby="nyxify-license-key-description" />
-							<div id="nyxify-license-key-description">
-								<p class="description"><?php esc_html_e( 'The key is sent once to the Nyxify server and is not stored on this site.', 'nyxify' ); ?></p>
-								<p class="description"><?php esc_html_e( 'Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected.', 'nyxify' ); ?></p>
-							</div>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<p class="submit">
+			<label for="nyxify-license-key"><?php esc_html_e( 'License key', 'nyxify' ); ?></label>
+			<div class="nyxify-inline">
+				<input type="text" id="nyxify-license-key" name="<?php echo esc_attr( ActivationHandler::FIELD ); ?>" class="code" dir="ltr" autocomplete="off" spellcheck="false" required placeholder="NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX" aria-describedby="nyxify-license-key-description" />
 				<button type="submit" class="button button-primary"><?php echo esc_html( $connected ? __( 'Activate again', 'nyxify' ) : __( 'Activate', 'nyxify' ) ); ?></button>
-			</p>
+			</div>
+			<div id="nyxify-license-key-description">
+				<p class="description"><?php esc_html_e( 'The key is sent once to the Nyxify server and is not stored on this site.', 'nyxify' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected.', 'nyxify' ); ?></p>
+			</div>
 		</form>
 		<?php
 	}
@@ -360,31 +483,5 @@ final class SettingsPage {
 		);
 
 		return $messages[ $code ] ?? null;
-	}
-
-	/**
-	 * The connection state as stored here: connected (with the store id), unreadable, or not connected.
-	 */
-	private function render_status(): void {
-		$connection = $this->store->get_connection();
-
-		if ( null !== $connection ) {
-			printf(
-				'<span class="nyxify-status nyxify-status--connected">%s</span><p class="description">%s <code dir="ltr">%s</code></p>',
-				esc_html__( 'Connected', 'nyxify' ),
-				esc_html__( 'Store ID:', 'nyxify' ),
-				esc_html( $connection->store_id )
-			);
-			return;
-		}
-
-		$unreadable = $this->store->has_unreadable_connection();
-
-		printf(
-			'<span class="nyxify-status %s">%s</span><p class="description">%s</p>',
-			esc_attr( $unreadable ? 'nyxify-status--error' : 'nyxify-status--disconnected' ),
-			esc_html( $unreadable ? __( 'Connection lost', 'nyxify' ) : __( 'Not connected', 'nyxify' ) ),
-			esc_html( ErrorMessages::message( $unreadable ? CoreError::CONNECTION_UNREADABLE : CoreError::NOT_ACTIVATED ) )
-		);
 	}
 }

@@ -96,6 +96,7 @@ final class PlanLimitNoticeTest extends TestCase {
 		Functions\when( 'admin_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-admin/' . $path );
 		Functions\when( 'number_format_i18n' )->alias( fn( $number ): string => number_format( (float) $number ) );
 		Functions\when( 'wp_date' )->alias( fn( string $format, int $timestamp ): string => gmdate( $format, $timestamp ) );
+		Functions\when( 'determine_locale' )->justReturn( 'en_US' );
 		Functions\when( 'wp_nonce_field' )->alias(
 			static function ( string $action, string $name ): void {
 				printf( '<input type="hidden" name="%s" value="nonce-for-%s" />', $name, $action ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -304,7 +305,7 @@ final class PlanLimitNoticeTest extends TestCase {
 		self::assertStringContainsString( '<div class="notice notice-warning nyxify-plan-limit-notice">', $html );
 		self::assertStringContainsString( '3 products didn’t reach your bots: your plan’s product limit is reached.', $html );
 		self::assertStringContainsString( 'Upgrade your plan to include them.', $html );
-		self::assertStringContainsString( 'Last seen ' . gmdate( 'Y-m-d H:i', self::NOW ), $html );
+		self::assertStringContainsString( 'Last seen ' . gmdate( 'Y-m-d', self::NOW ) . ' at ' . gmdate( 'H:i', self::NOW ), $html );
 		self::assertStringContainsString( '<a href="https://shop.example.com/wp-admin/admin.php?page=nyxify" class="button button-small">Nyxify settings</a>', $html );
 		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php">', $html );
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_dismiss_plan_limit" />', $html );

@@ -112,26 +112,36 @@ final class AdminPinSectionTest extends TestCase {
 	public function test_without_a_pin(): void {
 		$html = $this->rendered( self::store_status() );
 
-		self::assertStringContainsString( '<h2>Admin PIN</h2>', $html );
+		self::assertStringContainsString( '<section class="nyxify-card nyxify-pin-card" aria-labelledby="nyxify-pin-heading">', $html );
+		self::assertStringContainsString( '<h2 id="nyxify-pin-heading">Admin PIN</h2>', $html );
 		self::assertStringContainsString( 'No PIN has been issued from this site yet.', $html );
 		self::assertStringNotContainsString( '<details', $html );
+		self::assertStringNotContainsString( 'data-nyxify-pin', $html );
 
 		$forms = self::forms( $html );
 		self::assertCount( 2, $forms );
 		self::assertStringContainsString( 'class="button button-primary">New PIN</button>', $forms[0] );
 	}
 
-	public function test_the_pin_is_masked_in_details(): void {
+	public function test_the_pin_is_masked_with_show_and_copy(): void {
 		$this->store()->save_admin_pin( self::PIN );
 
 		$html = $this->rendered( self::store_status() );
 
+		// With the script: masked, with "Show" and "Copy" (the script reads the PIN from the fallback below).
+		self::assertMatchesRegularExpression( '#<div class="nyxify-pin hide-if-no-js" data-nyxify-pin data-nyxify-show="Show" data-nyxify-hide="Hide" data-nyxify-copied="Copied" #', $html );
+		self::assertStringContainsString( '<code class="nyxify-pin__value" dir="ltr" id="nyxify-pin-value" data-nyxify-pin-value aria-label="PIN hidden">&bull;&bull;&bull;&bull;&bull;&bull;</code>', $html );
+		self::assertStringContainsString( '<button type="button" class="button button-small" data-nyxify-pin-toggle aria-controls="nyxify-pin-value" aria-pressed="false">Show</button>', $html );
+		self::assertStringContainsString( '<button type="button" class="button button-small" data-nyxify-pin-copy>Copy</button>', $html );
+		self::assertStringContainsString( '<span class="nyxify-pin__status" role="status" aria-live="polite"></span>', $html );
+
+		// Without it: folded in a <details>.
 		self::assertMatchesRegularExpression(
-			'#<details class="nyxify-admin-pin">\s*<summary>Show PIN</summary>\s*<p><code dir="ltr" class="nyxify-pin">042917</code></p>#',
+			'#<details class="nyxify-admin-pin hide-if-js">\s*<summary>Show PIN</summary>\s*<p><code dir="ltr" class="nyxify-pin__value" data-nyxify-pin-secret>042917</code></p>#',
 			$html
 		);
 		self::assertSame( 1, substr_count( $html, self::PIN ) );
-		self::assertStringNotContainsString( '<details class="nyxify-admin-pin" open', $html );
+		self::assertStringNotContainsString( ' open', $html );
 		self::assertStringNotContainsString( 'No PIN has been issued', $html );
 		self::assertStringContainsString( 'class="button">New PIN</button>', self::forms( $html )[0] );
 	}
@@ -151,7 +161,7 @@ final class AdminPinSectionTest extends TestCase {
 
 		self::assertStringContainsString( 'data-nyxify-confirm="Issue a new PIN and log out every bot admin?', $forms[1] );
 		self::assertStringContainsString( '<input type="hidden" name="nyxify_revoke_admins" value="1" />', $forms[1] );
-		self::assertStringContainsString( '>New PIN and log out every admin</button>', $forms[1] );
+		self::assertStringContainsString( '<button type="submit" class="button-link button-link-delete">New PIN and log out every admin</button>', $forms[1] );
 	}
 
 	public function test_no_buttons_while_the_status_is_unreadable_but_the_pin_stays(): void {
@@ -160,7 +170,7 @@ final class AdminPinSectionTest extends TestCase {
 		$html = $this->rendered( new CoreError( 'no_active_subscription', 403 ) );
 
 		self::assertSame( array(), self::forms( $html ) );
-		self::assertStringContainsString( 'A new PIN can be issued here once the store is active and its status above can be read.', $html );
+		self::assertStringContainsString( 'A new PIN can be issued here once the store is active and its status can be read.', $html );
 		self::assertStringContainsString( self::PIN, $html );
 	}
 

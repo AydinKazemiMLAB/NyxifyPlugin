@@ -24,7 +24,8 @@ use Nyxify\Shared\Security\Encryptor;
 use Nyxify\Tests\Unit\TestCase;
 
 /**
- * Menu, plugins-list link, stylesheet and the page's three connection states.
+ * Menu, plugins-list link, stylesheet and script, and the page: the header, the setup card while not connected, the
+ * overview, the cards and their order while connected, notices.
  */
 final class SettingsPageTest extends TestCase {
 
@@ -125,6 +126,7 @@ final class SettingsPageTest extends TestCase {
 		);
 		Functions\when( 'number_format_i18n' )->alias( fn( $number ): string => (string) $number );
 		Functions\when( 'wp_date' )->alias( fn( string $format, int $timestamp ): string => gmdate( $format, $timestamp ) );
+		Functions\when( 'determine_locale' )->justReturn( 'en_US' );
 
 		// The core: only reached for the status, and only while connected.
 		$this->next_response   = self::response( 200, self::json( self::status_answer() ) );
@@ -315,13 +317,17 @@ final class SettingsPageTest extends TestCase {
 	public function test_not_connected(): void {
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'nyxify-status--disconnected', $html );
-		self::assertStringContainsString( 'Not connected', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--off">Not connected</span>', $html );
+		self::assertStringContainsString( '<h1>Nyxify</h1>', $html );
+		self::assertStringContainsString( 'Shop bots for WooCommerce on Telegram, Bale and Rubika', $html );
+		self::assertStringContainsString( '<section class="nyxify-card nyxify-setup" aria-labelledby="nyxify-setup-heading">', $html );
 		self::assertStringContainsString( 'Enter your license key to activate it.', $html );
-		self::assertStringContainsString( '<code dir="ltr">https://core.example.com</code>', $html );
+		self::assertMatchesRegularExpression( '#<ol class="nyxify-steps">\s*<li aria-current="step"><div><strong>Enter your license key</strong> It connects this shop to Nyxify\.</div></li>\s*<li><div><strong>Connect your bots</strong>#', $html );
+		self::assertStringContainsString( '<strong>Issue an admin PIN</strong>', $html );
+		self::assertStringContainsString( 'Nyxify server: <code dir="ltr">https://core.example.com</code>', $html );
 		self::assertStringContainsString( 'Nothing is sent to the Nyxify server until you enter a license key.', $html );
 		self::assertStringNotContainsString( 'NYXIFY_API_BASE_URL', $html );
-		self::assertStringNotContainsString( 'Store on Nyxify', $html );
+		self::assertStringNotContainsString( 'nyxify-overview', $html );
 		self::assertSame( array(), $this->requests, 'Nothing may be sent before a license key is entered.' );
 	}
 
@@ -331,8 +337,9 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'nyxify-status--connected', $html );
-		self::assertStringContainsString( 'shop_8f2a0c1d3e4b5a69', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--ok">Connected</span>', $html );
+		self::assertMatchesRegularExpression( '#<dt>Store ID</dt>\s*<dd><code dir="ltr">shop_8f2a0c1d3e4b5a69</code></dd>#', $html );
+		self::assertMatchesRegularExpression( '#<dt>Nyxify server</dt>\s*<dd><code dir="ltr">https://core\.example\.com</code></dd>#', $html );
 		self::assertStringNotContainsString( $secret, $html );
 	}
 
@@ -341,9 +348,10 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'nyxify-status--error', $html );
-		self::assertStringContainsString( 'Connection lost', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--error">Connection lost</span>', $html );
+		self::assertStringContainsString( '<div class="notice notice-error inline"><p>The saved connection to Nyxify can no longer be read', $html );
 		self::assertStringContainsString( 'Enter your license key again to reconnect.', $html );
+		self::assertStringNotContainsString( 'nyxify-steps', $html );
 		self::assertStringNotContainsString( 'shop_8f2a0c1d3e4b5a69', $html );
 		self::assertSame( array(), $this->requests );
 	}
@@ -360,7 +368,7 @@ final class SettingsPageTest extends TestCase {
 	 * @param string $html Page.
 	 */
 	private static function license_form( string $html ): string {
-		return 1 === preg_match( '#<form[^>]*class="nyxify-license-form".*?</form>#s', $html, $matches ) ? $matches[0] : '';
+		return 1 === preg_match( '#<form[^>]*class="nyxify-license-form nyxify-field".*?</form>#s', $html, $matches ) ? $matches[0] : '';
 	}
 
 	public function test_not_connected_shows_the_license_form_open(): void {
@@ -370,8 +378,8 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringContainsString( 'action="https://shop.example.com/wp-admin/admin-post.php"', $form );
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_activate" />', $form );
 		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_activate"', $form );
-		self::assertMatchesRegularExpression( '#<input type="text" id="nyxify-license-key" name="nyxify_license_key" [^>]*autocomplete="off"#', $form );
-		self::assertStringContainsString( '>Activate</button>', $form );
+		self::assertMatchesRegularExpression( '#<label for="nyxify-license-key">License key</label>\s*<div class="nyxify-inline">\s*<input type="text" id="nyxify-license-key" name="nyxify_license_key" [^>]*autocomplete="off"#', $form );
+		self::assertStringContainsString( '<button type="submit" class="button button-primary">Activate</button>', $form );
 		self::assertStringContainsString( 'is not stored on this site', $form );
 		self::assertStringContainsString( 'If this user or the key is deleted, the store is disconnected.', $form );
 		self::assertStringNotContainsString( '<details', $html );
@@ -395,7 +403,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertMatchesRegularExpression( '#<details class="nyxify-reactivate">\s*<summary>Activate again</summary>.*<form[^>]*class="nyxify-license-form".*</form>\s*</details>#s', $html );
+		self::assertMatchesRegularExpression( '#<details class="nyxify-reactivate">\s*<summary>Activate again</summary>.*<form[^>]*class="nyxify-license-form nyxify-field".*</form>\s*</details>#s', $html );
 		self::assertStringContainsString( '>Activate again</button>', $html );
 		self::assertStringNotContainsString( 'Nothing is sent to the Nyxify server', $html );
 	}
@@ -411,8 +419,8 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_rotate_secret" />', $form );
 		self::assertStringContainsString( 'name="_nyxify_nonce" value="nonce-for-nyxify_rotate_secret"', $form );
 		self::assertStringContainsString( '>Rotate secret</button>', $form );
-		self::assertStringContainsString( '<h2>Shared secret</h2>', $html );
-		self::assertLessThan( (int) strpos( $html, '<details' ), (int) strpos( $html, 'nyxify-rotate-form' ) );
+		self::assertMatchesRegularExpression( '#<details class="nyxify-rotate">\s*<summary>Shared secret</summary>\s*<p class="description">This site signs every request#', $html );
+		self::assertLessThan( (int) strpos( $html, '<details class="nyxify-reactivate">' ), (int) strpos( $html, 'nyxify-rotate-form' ) );
 		self::assertStringNotContainsString( str_repeat( 'e5', 32 ), $html );
 	}
 
@@ -422,7 +430,7 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertMatchesRegularExpression(
-			'#</details>\s*<div class="notice notice-warning inline nyxify-deactivation-note">\s*<p><strong>Deactivating Nyxify stops your shop’s bots\. To connect again you will need your license key\.</strong></p>#',
+			'#</section>\s*</div>\s*</div>\s*<div class="nyxify-footer-note nyxify-deactivation-note">\s*<span class="nyxify-icon nyxify-icon--alert" aria-hidden="true"></span>\s*<div>\s*<p><strong>Deactivating Nyxify stops your shop’s bots\. To connect again you will need your license key\.</strong></p>#',
 			$html
 		);
 		self::assertStringContainsString( 'or your subscription has expired, Nyxify keeps the store connected and both stay on this site until you delete the plugin.', $html );
@@ -536,23 +544,21 @@ final class SettingsPageTest extends TestCase {
 		self::assertSame( 'GET', $this->requests[0]['args']['method'] );
 		self::assertArrayHasKey( 'X-Nyxify-Signature', $this->requests[0]['args']['headers'] );
 
-		self::assertStringContainsString( 'Store on Nyxify', $html );
-		self::assertMatchesRegularExpression( '#<th scope="row">Store</th>\s*<td>\s*Active#', $html );
+		self::assertStringContainsString( '<div class="nyxify-overview">', $html );
+		self::assertMatchesRegularExpression( '#<h2 id="nyxify-store-status">Store</h2></div><div class="nyxify-stat__value"><span class="nyxify-pill nyxify-pill--ok">Active</span></div>#', $html );
 		self::assertStringContainsString( '<code dir="ltr">https://shop.example.com</code>', $html );
-		self::assertStringContainsString( '<code dir="ltr">NX-ABCDEF</code>', $html );
-		self::assertStringContainsString( 'Activated 2026-09-13 09:00', $html );
-		self::assertStringContainsString( 'Expires 2026-10-13 09:00', $html );
-		self::assertStringContainsString( '<td>Telegram, Bale</td>', $html );
-		self::assertStringContainsString( '<td>42 of 50</td>', $html );
-		self::assertStringContainsString( 'Synced', $html );
-		self::assertStringContainsString( 'Last synced 2026-09-13 09:00', $html );
-		// The deactivation note at the end is a warning too; the status itself has none.
-		$before_note = (string) strstr( $html, '<div class="notice notice-warning inline nyxify-deactivation-note">', true );
-		self::assertNotSame( '', $before_note );
-		self::assertStringNotContainsString( 'notice-warning', $before_note );
+		self::assertMatchesRegularExpression( '#<dt>License</dt>\s*<dd><code dir="ltr">NX-ABCDEF</code><br /><span class="description">Activated 2026-09-13</span></dd>#', $html );
+		self::assertStringContainsString( '<div class="nyxify-stat__value">Free</div>', $html );
+		self::assertStringContainsString( 'Expires 2026-10-13</p>', $html );
+		self::assertStringContainsString( 'Messengers: Telegram, Bale', $html );
+		self::assertStringContainsString( '<div class="nyxify-stat__value">42 of 50</div>', $html );
+		self::assertStringContainsString( '<div class="nyxify-bar" role="progressbar" aria-labelledby="nyxify-products-status" aria-valuemin="0" aria-valuemax="50" aria-valuenow="42"><span style="inline-size: 84%"></span></div>', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--ok">Synced</span>', $html );
+		self::assertStringContainsString( 'Last synced 2026-09-13 at 09:00', $html );
+		self::assertStringNotContainsString( 'nyxify-stat__meta--error', $html );
 		self::assertStringNotContainsString( 'notice-error', $html );
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_refresh_status" />', $html );
-		self::assertStringContainsString( '>Check connection</button>', $html );
+		self::assertStringContainsString( 'Check connection</button>', $html );
 		self::assertStringContainsString( 'Checked ', $html );
 	}
 
@@ -567,7 +573,7 @@ final class SettingsPageTest extends TestCase {
 			array( '/api/v1/store/status', '/api/v1/bots', '/api/v1/bots/admins', '/api/v1/bots', '/api/v1/bots/admins' ),
 			$this->requested_paths()
 		);
-		self::assertStringContainsString( '<td>42 of 50</td>', $html );
+		self::assertStringContainsString( '<div class="nyxify-stat__value">42 of 50</div>', $html );
 	}
 
 	public function test_dates_follow_the_site_formats(): void {
@@ -577,7 +583,8 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'Expires 13/10/2026 9:00 am', $html );
+		self::assertStringContainsString( 'Expires 13/10/2026</p>', $html );
+		self::assertStringContainsString( 'Last synced 13/09/2026 at 9:00 am', $html );
 	}
 
 	public function test_core_strings_are_escaped(): void {
@@ -596,8 +603,9 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringNotContainsString( '<i>', $html );
 		self::assertStringNotContainsString( '<u>', $html );
 		self::assertStringContainsString( '&lt;script&gt;', $html );
-		self::assertStringContainsString( 'Could not read &lt;b&gt;products&lt;/b&gt;', $html );
-		self::assertStringContainsString( 'Failed', $html );
+		self::assertStringContainsString( '<p class="nyxify-stat__meta nyxify-stat__meta--error">Could not read &lt;b&gt;products&lt;/b&gt;</p>', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--error">Failed</span>', $html );
+		self::assertStringContainsString( 'Expires not a date &lt;u&gt;', $html );
 	}
 
 	public function test_no_limit_unknown_values_and_the_limit_notice(): void {
@@ -612,12 +620,13 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( '<td>42 (no limit)</td>', $html );
-		self::assertStringContainsString( '<td>Rubika, whatsapp</td>', $html );
-		self::assertMatchesRegularExpression( '#<th scope="row">License</th>\s*<td>\s*&mdash;#', $html );
-		self::assertStringContainsString( 'paused', $html );
+		self::assertStringContainsString( '<div class="nyxify-stat__value">42 (no limit)</div>', $html );
+		self::assertStringNotContainsString( 'role="progressbar"', $html );
+		self::assertStringContainsString( 'Messengers: Rubika, whatsapp', $html );
+		self::assertMatchesRegularExpression( '#<dt>License</dt>\s*<dd>&mdash;</dd>#', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--off">paused</span>', $html );
 		self::assertStringNotContainsString( 'Last synced', $html );
-		self::assertStringContainsString( 'product limit was reached', $html );
+		self::assertStringContainsString( '<p class="nyxify-stat__meta nyxify-stat__meta--warning">Your plan’s product limit was reached', $html );
 	}
 
 	public function test_a_deactivated_store_asks_to_activate_again(): void {
@@ -626,8 +635,8 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( 'Deactivated', $html );
-		self::assertStringContainsString( 'This store is deactivated or suspended on Nyxify.', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--error">Deactivated</span>', $html );
+		self::assertStringContainsString( '<p class="nyxify-stat__meta nyxify-stat__meta--error">This store is deactivated or suspended on Nyxify.', $html );
 	}
 
 	/**
@@ -662,8 +671,10 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringContainsString( $message, $html );
 		self::assertStringNotContainsString( 'raw core message', $html );
 		self::assertStringContainsString( 'Request ID (for Nyxify support): <code dir="ltr">req-core-0002</code>', $html );
-		self::assertStringContainsString( '>Check connection</button>', $html );
+		self::assertStringContainsString( 'Check connection</button>', $html );
+		self::assertStringContainsString( '<span class="nyxify-pill nyxify-pill--warning">Status unavailable</span>', $html );
 		self::assertStringNotContainsString( 'Checked ', $html );
+		self::assertStringNotContainsString( 'nyxify-overview', $html );
 		self::assertArrayNotHasKey( StatusService::TRANSIENT, $this->transients );
 	}
 
@@ -676,21 +687,29 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringContainsString( 'Could not reach the Nyxify server.', $html );
 	}
 
-	public function test_the_bots_come_after_the_status_and_before_the_shared_secret(): void {
+	public function test_the_cards_and_their_order(): void {
 		$this->connect();
 
 		$html = $this->rendered( $this->page() );
 
-		$status = (int) strpos( $html, '<h2>Store on Nyxify</h2>' );
-		$bots   = (int) strpos( $html, '<h2>Bots</h2>' );
-		$pin    = (int) strpos( $html, '<h2>Admin PIN</h2>' );
-		$admins = (int) strpos( $html, '<h2>Bot admins</h2>' );
-		$secret = (int) strpos( $html, '<h2>Shared secret</h2>' );
-		self::assertGreaterThan( 0, $status );
-		self::assertGreaterThan( $status, $bots );
-		self::assertGreaterThan( $bots, $pin );
-		self::assertGreaterThan( $pin, $admins );
-		self::assertGreaterThan( $admins, $secret );
+		$overview   = (int) strpos( $html, '<div class="nyxify-overview">' );
+		$main       = (int) strpos( $html, '<div class="nyxify-layout__main">' );
+		$bots       = (int) strpos( $html, '<h2 id="nyxify-bots-heading">Bots</h2>' );
+		$admins     = (int) strpos( $html, '<h2 id="nyxify-admins-heading">Bot admins</h2>' );
+		$side       = (int) strpos( $html, '<div class="nyxify-layout__side">' );
+		$pin        = (int) strpos( $html, '<h2 id="nyxify-pin-heading">Admin PIN</h2>' );
+		$connection = (int) strpos( $html, '<h2 id="nyxify-connection-heading">Connection</h2>' );
+		$secret     = (int) strpos( $html, '<summary>Shared secret</summary>' );
+		$note       = (int) strpos( $html, 'nyxify-deactivation-note' );
+		self::assertGreaterThan( 0, $overview );
+		self::assertGreaterThan( $overview, $main );
+		self::assertGreaterThan( $main, $bots );
+		self::assertGreaterThan( $bots, $admins );
+		self::assertGreaterThan( $admins, $side );
+		self::assertGreaterThan( $side, $pin );
+		self::assertGreaterThan( $pin, $connection );
+		self::assertGreaterThan( $connection, $secret );
+		self::assertGreaterThan( $secret, $note );
 	}
 
 	public function test_no_pin_section_while_not_connected(): void {
@@ -728,8 +747,8 @@ final class SettingsPageTest extends TestCase {
 	public function test_no_bots_or_admins_section_while_not_connected(): void {
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringNotContainsString( '<h2>Bots</h2>', $html );
-		self::assertStringNotContainsString( '<h2>Bot admins</h2>', $html );
+		self::assertStringNotContainsString( 'nyxify-bots-heading', $html );
+		self::assertStringNotContainsString( 'nyxify-admins-heading', $html );
 		self::assertSame( array(), $this->requests );
 	}
 
@@ -748,8 +767,13 @@ final class SettingsPageTest extends TestCase {
 		$html = $this->rendered( $this->page() );
 
 		self::assertSame( array( '/api/v1/store/status' ), $this->requested_paths() );
-		self::assertStringContainsString( 'The bots can be managed here once the store’s status above can be read.', $html );
-		self::assertStringContainsString( 'The bot admins can be managed here once the store’s status above can be read.', $html );
+		self::assertStringContainsString( '<p class="nyxify-empty">The bots and the bot admins can be managed here once the store’s status can be read.</p>', $html );
+		self::assertStringNotContainsString( 'nyxify-bots-heading', $html );
+		self::assertStringNotContainsString( 'nyxify-admins-heading', $html );
+		// The PIN card and the connection card stay, without the PIN buttons.
+		self::assertStringContainsString( 'nyxify-pin-heading', $html );
+		self::assertStringContainsString( 'nyxify-connection-heading', $html );
+		self::assertStringNotContainsString( 'nyxify_issue_admin_pin', $html );
 	}
 
 	public function test_an_admin_removed_notice(): void {
@@ -826,17 +850,17 @@ final class SettingsPageTest extends TestCase {
 		self::assertStringNotContainsString( 'notice', $this->rendered( $this->page() ) );
 	}
 
-	public function test_an_active_store_has_the_sync_button_in_the_catalog_row(): void {
+	public function test_an_active_store_has_the_sync_button_in_the_catalog_card(): void {
 		$this->connect();
 
 		$html = $this->rendered( $this->page() );
 
-		$row = (string) strstr( (string) strstr( $html, '<th scope="row">Catalog sync</th>' ), '</tr>', true );
-		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php" class="nyxify-sync-form">', $row );
-		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_catalog_sync" />', $row );
-		self::assertStringContainsString( '<input type="hidden" name="_nyxify_nonce" value="nonce-for-nyxify_catalog_sync" />', $row );
-		self::assertStringContainsString( '>Sync now</button>', $row );
-		self::assertStringContainsString( 'Nyxify reads every product and category of this store again.', $row );
+		$card = (string) strstr( (string) strstr( $html, '<h2 id="nyxify-catalog-status">Catalog sync</h2>' ), '</section>', true );
+		self::assertStringContainsString( '<form method="post" action="https://shop.example.com/wp-admin/admin-post.php" class="nyxify-sync-form">', $card );
+		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_catalog_sync" />', $card );
+		self::assertStringContainsString( '<input type="hidden" name="_nyxify_nonce" value="nonce-for-nyxify_catalog_sync" />', $card );
+		self::assertStringContainsString( '<button type="submit" class="button button-small" aria-describedby="nyxify-sync-description"><span class="nyxify-icon nyxify-icon--sync" aria-hidden="true"></span>Sync now</button>', $card );
+		self::assertStringContainsString( 'Nyxify reads every product and category of this store again.', $card );
 		// Only the status was read: the button itself sends nothing.
 		self::assertNotContains( '/api/v1/catalog/sync', $this->requested_paths() );
 	}
@@ -861,7 +885,7 @@ final class SettingsPageTest extends TestCase {
 
 		$html = $this->rendered( $this->page() );
 
-		self::assertStringContainsString( '<th scope="row">Catalog sync</th>', $html );
+		self::assertStringContainsString( '<h2 id="nyxify-catalog-status">Catalog sync</h2>', $html );
 		self::assertStringNotContainsString( 'nyxify_catalog_sync', $html );
 		self::assertStringNotContainsString( 'Sync now', $html );
 	}
@@ -922,7 +946,7 @@ final class SettingsPageTest extends TestCase {
 
 		$notice = (int) strpos( $html, '<div class="notice notice-warning nyxify-plan-limit-notice">' );
 		self::assertGreaterThan( (int) strpos( $html, '<hr class="wp-header-end" />' ), $notice );
-		self::assertLessThan( (int) strpos( $html, '<h2>Connection</h2>' ), $notice );
+		self::assertLessThan( (int) strpos( $html, '<div class="nyxify-overview">' ), $notice );
 		self::assertStringContainsString( '2 products didn’t reach your bots: your plan’s product limit is reached.', $html );
 		self::assertStringContainsString( '<input type="hidden" name="action" value="nyxify_dismiss_plan_limit" />', $html );
 		self::assertStringNotContainsString( 'Nyxify settings', $html );

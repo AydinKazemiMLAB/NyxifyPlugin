@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nyxify admin page mockup</title>
+<style>
+/* ---- Mockup only: the WordPress admin around the page and the state switcher ---- */
+:root {
+	--wp-text: #1d2327;
+	--wp-muted: #646970;
+	--wp-border: #dcdcde;
+	--wp-bg: #f0f0f1;
+	--wp-blue: #2271b1;
+	--wp-blue-dark: #135e96;
+	--accent: #5b3cc4;
+	--accent-dark: #4527a0;
+	--accent-soft: #f1edfc;
+	--ok: #00701a;
+	--ok-soft: #edfaef;
+	--warn: #8a5a00;
+	--warn-soft: #fcf9e8;
+	--err: #b32d2e;
+	--err-soft: #fcf0f1;
+	--info: #135e96;
+	--info-soft: #f0f6fc;
+	--neutral-soft: #f6f7f7;
+}
+* { box-sizing: border-box; }
+body {
+	margin: 0;
+	background: var(--wp-bg);
+	color: var(--wp-text);
+	font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+html[dir="rtl"] body { font-family: Tahoma, Arial, sans-serif; }
+.mock-switcher {
+	position: sticky; inset-block-start: 0; z-index: 10;
+	display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;
+	padding: 8px 16px; background: #fffbe6; border-block-end: 1px solid #e6c200; font-size: 12px;
+}
+.mock-switcher strong { margin-inline-end: 4px; }
+.mock-switcher button {
+	font: inherit; padding: 3px 10px; border: 1px solid #c3c4c7; border-radius: 3px; background: #fff; cursor: pointer;
+}
+.mock-switcher button[aria-pressed="true"] { background: var(--wp-text); color: #fff; border-color: var(--wp-text); }
+.wp-adminbar { height: 32px; background: #1d2327; }
+.wp-shell { display: flex; min-height: calc(100vh - 32px); }
+.wp-menu { flex: 0 0 160px; background: #1d2327; color: #f0f0f1; padding-block: 12px; font-size: 14px; }
+.wp-menu div { padding: 6px 12px; color: #c3c4c7; }
+.wp-menu .open { background: #2c3338; color: #fff; }
+.wp-menu .sub { padding-inline-start: 24px; font-size: 13px; }
+.wp-menu .current { color: #fff; font-weight: 600; }
+.wp-content { flex: 1; min-width: 0; padding: 0 20px 40px; }
+@media (max-width: 782px) { .wp-menu { display: none; } .wp-content { padding-inline: 10px; } }
+
+/* ---- The page (what the plugin would ship) ---- */
+.nyxify-settings { max-width: 1200px; }
+.nx-header {
+	display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+	margin-inline: -20px; padding: 14px 20px; background: #fff; border-block-end: 1px solid var(--wp-border);
+}
+.nx-logo {
+	flex: 0 0 40px; width: 40px; height: 40px; border-radius: 10px;
+	display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 20px;
+	background: linear-gradient(135deg, var(--accent), #2b1a6b);
+}
+.nx-header h1 { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.3; }
+.nx-header p { margin: 0; color: var(--wp-muted); }
+.nx-header__end { margin-inline-start: auto; }
+
+.nx-pill {
+	display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+	font-size: 12px; font-weight: 600; line-height: 1.4; white-space: nowrap;
+}
+.nx-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.nx-pill--ok { color: var(--ok); background: var(--ok-soft); }
+.nx-pill--warn { color: var(--warn); background: var(--warn-soft); }
+.nx-pill--err { color: var(--err); background: var(--err-soft); }
+.nx-pill--info { color: var(--info); background: var(--info-soft); }
+.nx-pill--off { color: var(--wp-muted); background: var(--neutral-soft); }
+.nx-pill--busy::before { animation: nx-pulse 1.2s ease-in-out infinite; }
+@keyframes nx-pulse { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .nx-pill--busy::before { animation: none; } }
+
+.nx-notice { margin: 16px 0 0; padding: 10px 12px; background: #fff; border: 1px solid var(--wp-border); border-inline-start: 4px solid var(--wp-blue); }
+.nx-notice p { margin: 0.2em 0; }
+.nx-notice--success { border-inline-start-color: #00a32a; }
+.nx-notice--error { border-inline-start-color: #d63638; }
+.nx-notice--warning { border-inline-start-color: #dba617; }
+
+.nx-overview { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-block-start: 20px; }
+.nx-layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); margin-block-start: 16px; align-items: start; }
+.nx-layout > div { display: grid; gap: 16px; }
+@media (max-width: 1100px) { .nx-layout { grid-template-columns: minmax(0, 1fr); } }
+
+.nx-card { background: #fff; border: 1px solid var(--wp-border); border-radius: 8px; padding: 16px 20px; box-shadow: 0 1px 2px rgba(0, 0, 0, .04); min-width: 0; }
+.nx-card__head { display: flex; align-items: center; gap: 8px; margin-block-end: 12px; }
+.nx-card__head h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.nx-card__head .nx-pill { margin-inline-start: auto; }
+.nx-card__head svg, .nx-stat__label svg { color: var(--accent); flex: none; }
+.nx-card > .nx-desc:first-of-type { margin-block-start: -4px; }
+.nx-desc { color: var(--wp-muted); margin: 0.5em 0; }
+
+.nx-stat__label { display: flex; align-items: center; gap: 6px; color: var(--wp-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+html[dir="rtl"] .nx-stat__label { text-transform: none; letter-spacing: 0; }
+.nx-stat__value { font-size: 20px; font-weight: 600; margin: 6px 0 2px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nx-stat__meta { color: var(--wp-muted); margin: 0; }
+.nx-stat__meta--warn { color: var(--warn); font-weight: 600; }
+.nx-stat__meta--err { color: var(--err); }
+.nx-bar { height: 6px; border-radius: 3px; background: #e7e7ea; overflow: hidden; margin: 10px 0 6px; }
+.nx-bar > span { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+.nx-bar--full > span { background: #dba617; }
+.nx-stat form { margin-block-start: 10px; }
+
+.nx-steps { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); counter-reset: nx-step; }
+@media (max-width: 782px) { .nx-steps { grid-template-columns: minmax(0, 1fr); } }
+.nx-steps li { counter-increment: nx-step; display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 8px; background: var(--neutral-soft); color: var(--wp-muted); }
+.nx-steps li::before {
+	content: counter(nx-step); flex: 0 0 26px; width: 26px; height: 26px; border-radius: 50%;
+	display: grid; place-items: center; font-weight: 700; background: #fff; border: 1px solid var(--wp-border);
+}
+.nx-steps li[aria-current="step"] { background: var(--accent-soft); color: var(--wp-text); }
+.nx-steps li[aria-current="step"]::before { background: var(--accent); border-color: var(--accent); color: #fff; }
+.nx-steps strong { display: block; color: var(--wp-text); }
+
+.nx-field label { display: block; font-weight: 600; margin-block-end: 6px; }
+.nx-field input {
+	width: 100%; max-width: 30em; padding: 6px 8px; font: 14px/1.5 Consolas, Monaco, monospace;
+	border: 1px solid #8c8f94; border-radius: 4px; direction: ltr; text-align: start; unicode-bidi: isolate;
+}
+.nx-field input:focus { border-color: var(--wp-blue); box-shadow: 0 0 0 1px var(--wp-blue); outline: 2px solid transparent; }
+.nx-inline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.nx-inline input { flex: 1 1 18em; }
+
+.button {
+	display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 10px; font: inherit; font-size: 13px;
+	color: var(--wp-blue); border: 1px solid var(--wp-blue); border-radius: 3px; background: #f6f7f7; cursor: pointer; text-decoration: none;
+}
+.button:hover { background: #f0f0f1; color: var(--wp-blue-dark); border-color: var(--wp-blue-dark); }
+.button:focus-visible, .nx-link:focus-visible, summary:focus-visible { outline: 2px solid var(--wp-blue); outline-offset: 2px; }
+.button-primary { background: var(--wp-blue); color: #fff; }
+.button-primary:hover { background: var(--wp-blue-dark); color: #fff; }
+.button-small { min-height: 26px; font-size: 12px; padding: 0 8px; }
+.nx-link { color: var(--wp-blue); background: none; border: 0; padding: 0; font: inherit; cursor: pointer; text-decoration: underline; }
+.nx-link--danger { color: var(--err); }
+.nx-actions { display: flex; gap: 8px 16px; flex-wrap: wrap; align-items: center; margin-block-start: 12px; }
+
+.nx-bots { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.nx-bot { border: 1px solid var(--wp-border); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.nx-bot--off { background: var(--neutral-soft); }
+.nx-bot__head { display: flex; align-items: center; gap: 10px; }
+.nx-bot__avatar { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--accent); background: var(--accent-soft); }
+.nx-bot__head h3 { margin: 0; font-size: 14px; }
+.nx-bot__head .nx-pill { margin-inline-start: auto; }
+.nx-bot dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; }
+.nx-bot dt { color: var(--wp-muted); }
+.nx-bot dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.nx-bot .nx-actions { margin-block-start: auto; padding-block-start: 4px; }
+.nx-bot details summary { cursor: pointer; color: var(--wp-blue); }
+.nx-callout { border-radius: 6px; padding: 8px 10px; margin: 0; }
+.nx-callout p { margin: 0.2em 0; }
+.nx-callout--err { background: var(--err-soft); color: #8a2424; }
+.nx-callout--warn { background: var(--warn-soft); color: #6b4700; }
+.nx-callout--info { background: var(--info-soft); color: #0a4b78; }
+code, .nx-code { font-family: Consolas, Monaco, monospace; font-size: 12px; background: #f0f0f1; padding: 1px 5px; border-radius: 3px; direction: ltr; unicode-bidi: isolate; display: inline-block; }
+
+.nx-pin { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 8px; }
+.nx-pin__value {
+	font: 600 26px/1 Consolas, Monaco, monospace; letter-spacing: .2em; padding: 10px 14px; border-radius: 8px;
+	background: var(--neutral-soft); border: 1px dashed #c3c4c7; direction: ltr; unicode-bidi: isolate;
+}
+.nx-copied { color: var(--ok); font-weight: 600; }
+
+.nx-table { width: 100%; border-collapse: collapse; }
+.nx-table th, .nx-table td { padding: 8px 10px; text-align: start; border-block-end: 1px solid #f0f0f1; vertical-align: middle; }
+.nx-table th { color: var(--wp-muted); font-weight: 600; font-size: 12px; }
+.nx-table td:last-child { text-align: end; }
+.nx-table tbody tr:hover { background: #fafafa; }
+.nx-tag { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--accent-soft); color: var(--accent-dark); }
+.nx-empty { text-align: center; color: var(--wp-muted); padding: 16px; border: 1px dashed var(--wp-border); border-radius: 8px; margin: 0; }
+
+.nx-kv { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; }
+.nx-kv dt { color: var(--wp-muted); }
+.nx-kv dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.nx-advanced details { border-block-start: 1px solid #f0f0f1; padding-block: 10px; }
+.nx-advanced details:first-of-type { border-block-start: 0; padding-block-start: 0; }
+.nx-advanced summary { cursor: pointer; font-weight: 600; }
+.nx-footer-note { display: flex; gap: 10px; align-items: flex-start; margin-block-start: 16px; padding: 12px 16px; border-radius: 8px; background: #fff; border: 1px solid var(--wp-border); color: var(--wp-muted); }
+.nx-footer-note svg { flex: none; color: #dba617; margin-block-start: 2px; }
+.nx-footer-note strong { color: var(--wp-text); }
+.nx-privacy { display: flex; gap: 8px; align-items: flex-start; color: var(--wp-muted); margin: 12px 0 0; }
+.nx-privacy svg { flex: none; color: var(--ok); margin-block-start: 1px; }
+.screen-reader-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="mock-switcher" role="toolbar" aria-label="Mockup controls">
+	<strong>Mockup:</strong>
+	<span data-group="lang"><button data-lang="en">English</button> <button data-lang="fa">فارسی</button></span>
+	<span data-group="state">
+		<button data-state="setup">Not connected</button>
+		<button data-state="setup-error">Activation failed</button>
+		<button data-state="active">Connected, all fine</button>
+		<button data-state="attention">Connected, needs attention</button>
+		<button data-state="unreachable">Server unreachable</button>
+	</span>
+</div>
+<div class="wp-adminbar"></div>
+<div class="wp-shell">
+	<nav class="wp-menu" aria-label="WordPress menu (mockup)">
+		<div data-t="m_dashboard"></div>
+		<div class="open" data-t="m_woo"></div>
+		<div class="sub" data-t="m_orders"></div>
+		<div class="sub" data-t="m_settings"></div>
+		<div class="sub current" data-t="m_nyxify"></div>
+		<div data-t="m_products"></div>
+		<div data-t="m_plugins"></div>
+	</nav>
+	<main class="wp-content" id="page"></main>
+</div>
+
+<script>
+const T = {
+	en: {
+		m_dashboard: 'Dashboard', m_woo: 'WooCommerce', m_orders: 'Orders', m_settings: 'Settings', m_nyxify: 'Nyxify', m_products: 'Products', m_plugins: 'Plugins',
+		title: 'Nyxify', tagline: 'Shop bots for WooCommerce on Telegram, Bale and Rubika',
+		connected: 'Connected', not_connected: 'Not connected', unreachable: 'Server unreachable',
+		steps: [['Enter your license key', 'Connects this shop to Nyxify.'], ['Connect your bots', 'Paste the token each messenger gave you.'], ['Issue an admin PIN', 'Send it to your bot to manage the shop from there.']],
+		activate_title: 'Activate', license_key: 'License key', activate: 'Activate',
+		license_help: 'The key is sent once to the Nyxify server and is not stored on this site.',
+		rest_help: 'Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected.',
+		privacy: 'Nothing is sent to the Nyxify server until you enter a license key.',
+		err_license: 'This license key is already used by another website.', request_id: 'Request ID (for Nyxify support):',
+		ok_connected: 'The store is connected to Nyxify.',
+		store: 'Store', active: 'Active', plan: 'Plan', products: 'Products', catalog: 'Catalog sync',
+		plan_name: 'Free', days_left: n => `${n} days left`, expires: d => `Expires ${d}`, renew_soon: n => `Expires in ${n} days: renew to keep your bots running.`,
+		of: (a, b) => `${a} of ${b}`, limit_reached: 'Limit reached: some products are not in your bots.',
+		synced: 'Synced', sync_failed: 'Failed', last_synced: d => `Last synced ${d}`, sync_now: 'Sync now',
+		sync_error: 'WooCommerce answered with an error while Nyxify read the catalog.',
+		limit_notice: 'Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them.',
+		bots: 'Bots', bots_help: 'One bot per messenger. A bot token is sent once to Nyxify and is not stored on this site.',
+		telegram: 'Telegram', bale: 'Bale', rubika: 'Rubika',
+		st_active: 'Active', st_pending: 'Setting up…', st_error: 'Failed', st_none: 'Not connected', st_noplan: 'Not in your plan',
+		bot: 'Bot', set_up: 'Set up', webhook: 'Webhook', set: 'Set', not_set: 'Not set',
+		bot_token: 'Bot token', connect_bot: 'Connect bot', token_help: 'The token the messenger gave you when you created the bot (for example with BotFather).',
+		replace: 'Replace with another bot', replace_bot: 'Replace bot', remove_bot: 'Remove bot',
+		pending_help: 'Nyxify is setting the bot up; this usually takes a few seconds.', check_again: 'Check again',
+		error_help: 'Setting up the bot failed. Nyxify tries again every hour, up to five times; you can also enter its token again.', details: 'Details:',
+		noplan_help: 'This messenger isn’t in your plan, so the bot doesn’t work. Remove it, or upgrade your plan.',
+		pin: 'Admin PIN', pin_help: 'Anyone who sends this PIN to one of your bots becomes a bot admin and can manage your shop from the bot. Share it only with people you trust.',
+		show: 'Show', hide: 'Hide', copy: 'Copy', copied: 'Copied', new_pin: 'New PIN', new_pin_all: 'New PIN and log out every admin',
+		admins: 'Bot admins', admins_help: 'People who sent the admin PIN to one of your bots. Removing one takes away their admin access; issue a new PIN too if they shouldn’t come back.',
+		messenger: 'Messenger', name: 'Name', username: 'Username', remove: 'Remove', actions: 'Actions',
+		connection: 'Connection', server: 'Nyxify server', store_id: 'Store ID', license: 'License', activated: 'Activated', checked: d => `Checked ${d}`, check: 'Check connection',
+		secret: 'Shared secret', secret_help: 'This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected.', rotate: 'Rotate secret',
+		again: 'Activate again', again_help: 'Use this if the connection stops working. This site keeps its store ID and gets a new shared secret.',
+		deact: 'Deactivating Nyxify stops your shop’s bots. To connect again you will need your license key.',
+		unreach_msg: 'The Nyxify server couldn’t be reached. Try again in a few minutes.', unreach_wait: 'Bots, the admin PIN and bot admins can be managed here once the store’s status can be read.',
+		d1: 'October 12, 2026', d2: 'October 12, 2026 at 10:41', d3: 'October 17, 2027', d4: 'October 12, 2026 at 11:02',
+		admins_list: [['T', 'Telegram', 'Sara Ahmadi', '@sara_shop'], ['B', 'Bale', 'Reza', '—']],
+	},
+	fa: {
+		m_dashboard: 'پیشخوان', m_woo: 'ووکامرس', m_orders: 'سفارش‌ها', m_settings: 'پیکربندی', m_nyxify: 'Nyxify', m_products: 'محصولات', m_plugins: 'افزونه‌ها',
+		title: 'Nyxify', tagline: 'ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا',
+		connected: 'متصل', not_connected: 'متصل نیست', unreachable: 'سرور در دسترس نیست',
+		steps: [['کلید لایسنس را وارد کنید', 'این فروشگاه را به Nyxify وصل می‌کند.'], ['ربات‌ها را وصل کنید', 'توکنی را که هر پیام‌رسان داده وارد کنید.'], ['PIN ادمین بگیرید', 'آن را به ربات بفرستید تا فروشگاه را از آنجا مدیریت کنید.']],
+		activate_title: 'فعال‌سازی', license_key: 'کلید لایسنس', activate: 'فعال‌سازی',
+		license_help: 'کلید فقط یک بار به سرور Nyxify فرستاده می‌شود و در این سایت ذخیره نمی‌شود.',
+		rest_help: 'فعال‌سازی یک کلید REST API ووکامرس (خواندن/نوشتن) برای حساب کاربری شما می‌سازد؛ Nyxify با آن کاتالوگ را می‌خواند و سفارش ثبت می‌کند. اگر این کاربر یا کلید حذف شود، اتصال فروشگاه قطع می‌شود.',
+		privacy: 'تا وقتی کلید لایسنس را وارد نکنید، هیچ داده‌ای به سرور Nyxify فرستاده نمی‌شود.',
+		err_license: 'این کلید لایسنس پیش‌تر برای سایت دیگری استفاده شده است.', request_id: 'شناسهٔ درخواست (برای پشتیبانی Nyxify):',
+		ok_connected: 'فروشگاه به Nyxify متصل شد.',
+		store: 'فروشگاه', active: 'فعال', plan: 'پلن', products: 'محصولات', catalog: 'همگام‌سازی کاتالوگ',
+		plan_name: 'رایگان', days_left: n => `${n} روز مانده`, expires: d => `انقضا: ${d}`, renew_soon: n => `${n} روز تا پایان اشتراک: برای کار کردن ربات‌ها تمدید کنید.`,
+		of: (a, b) => `${a} از ${b}`, limit_reached: 'سقف پر شده: برخی محصولات در ربات‌ها نیستند.',
+		synced: 'همگام شد', sync_failed: 'ناموفق', last_synced: d => `آخرین همگام‌سازی: ${d}`, sync_now: 'همگام‌سازی اکنون',
+		sync_error: 'هنگام خواندن کاتالوگ، ووکامرس خطا برگرداند.',
+		limit_notice: 'سقف محصولات پلن شما پر شده و برخی محصولات در ربات‌ها نیستند. برای افزودن آن‌ها پلن خود را ارتقا دهید.',
+		bots: 'ربات‌ها', bots_help: 'برای هر پیام‌رسان یک ربات. توکن ربات یک بار به Nyxify فرستاده می‌شود و در این سایت ذخیره نمی‌شود.',
+		telegram: 'تلگرام', bale: 'بله', rubika: 'روبیکا',
+		st_active: 'فعال', st_pending: 'در حال راه‌اندازی…', st_error: 'ناموفق', st_none: 'وصل نیست', st_noplan: 'در پلن شما نیست',
+		bot: 'ربات', set_up: 'راه‌اندازی', webhook: 'وب‌هوک', set: 'تنظیم شده', not_set: 'تنظیم نشده',
+		bot_token: 'توکن ربات', connect_bot: 'وصل کردن ربات', token_help: 'توکنی که پیام‌رسان هنگام ساختن ربات به شما داد (مثلاً BotFather).',
+		replace: 'جایگزینی با ربات دیگر', replace_bot: 'جایگزینی ربات', remove_bot: 'حذف ربات',
+		pending_help: 'Nyxify در حال راه‌اندازی ربات است؛ معمولاً چند ثانیه طول می‌کشد.', check_again: 'بررسی دوباره',
+		error_help: 'راه‌اندازی ربات ناموفق بود. Nyxify هر ساعت، تا پنج بار، دوباره تلاش می‌کند؛ می‌توانید توکن آن را هم دوباره وارد کنید.', details: 'جزئیات:',
+		noplan_help: 'این پیام‌رسان در پلن شما نیست، پس ربات کار نمی‌کند. آن را حذف کنید یا پلن خود را ارتقا دهید.',
+		pin: 'PIN ادمین', pin_help: 'هر کس این PIN را به یکی از ربات‌های شما بفرستد، ادمین ربات می‌شود و می‌تواند فروشگاه شما را از داخل ربات مدیریت کند. آن را فقط به افراد مورد اعتماد بدهید.',
+		show: 'نمایش', hide: 'پنهان', copy: 'کپی', copied: 'کپی شد', new_pin: 'PIN جدید', new_pin_all: 'PIN جدید و خروج همهٔ ادمین‌ها',
+		admins: 'ادمین‌های ربات', admins_help: 'کسانی که PIN ادمین را به یکی از ربات‌های شما فرستاده‌اند. حذف هر نفر دسترسی ادمینش را می‌گیرد؛ اگر نباید برگردد، PIN جدید هم بگیرید.',
+		messenger: 'پیام‌رسان', name: 'نام', username: 'نام کاربری', remove: 'حذف', actions: 'عملیات',
+		connection: 'اتصال', server: 'سرور Nyxify', store_id: 'شناسهٔ فروشگاه', license: 'لایسنس', activated: 'فعال‌شده', checked: d => `بررسی‌شده در ${d}`, check: 'بررسی اتصال',
+		secret: 'کلید مشترک', secret_help: 'این سایت هر درخواست به Nyxify را با یک کلید مشترک امضا می‌کند که رمزنگاری‌شده نگه داشته می‌شود و هرگز نمایش داده نمی‌شود. اگر فکر می‌کنید لو رفته، آن را عوض کنید؛ فروشگاه متصل می‌ماند.', rotate: 'تعویض کلید مشترک',
+		again: 'فعال‌سازی دوباره', again_help: 'اگر اتصال کار نکرد از این استفاده کنید. این سایت شناسهٔ فروشگاهش را نگه می‌دارد و کلید مشترک تازه می‌گیرد.',
+		deact: 'غیرفعال کردن Nyxify ربات‌های فروشگاه شما را متوقف می‌کند. برای اتصال دوباره به کلید لایسنس خود نیاز خواهید داشت.',
+		unreach_msg: 'سرور Nyxify در دسترس نبود. چند دقیقهٔ دیگر دوباره امتحان کنید.', unreach_wait: 'ربات‌ها، PIN ادمین و ادمین‌های ربات وقتی وضعیت فروشگاه خوانده شود اینجا قابل مدیریت‌اند.',
+		d1: '12 اکتبر 2026', d2: '12 اکتبر 2026 ساعت 10:41', d3: '17 اکتبر 2027', d4: '12 اکتبر 2026 ساعت 11:02',
+		admins_list: [['T', 'تلگرام', 'سارا احمدی', '@sara_shop'], ['B', 'بله', 'رضا', '—']],
+	},
+};
+
+const ICON = {
+	store: '<path d="M3 9l1.5-5h15L21 9M4 9v11h16V9M3 9h18M9 20v-6h6v6"/>',
+	plan: '<path d="M4 7h16v12H4zM4 11h16M8 3v4M16 3v4"/>',
+	box: '<path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7M12 11v10"/>',
+	sync: '<path d="M20 11a8 8 0 0 0-14.9-3.5M4 4v4h4M4 13a8 8 0 0 0 14.9 3.5M20 20v-4h-4"/>',
+	chat: '<path d="M4 5h16v11H9l-5 4V5z"/>',
+	key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
+	users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 20a6 6 0 0 0-2.5-4.9"/>',
+	plug: '<path d="M9 3v5M15 3v5M6 8h12v4a6 6 0 0 1-12 0V8zM12 18v3"/>',
+	lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+	alert: '<path d="M12 3l10 18H2L12 3zM12 10v5M12 18v.5"/>',
+};
+const icon = (name, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name]}</svg>`;
+
+let lang = 'en';
+let state = 'active';
+
+function header(t, pill) {
+	return `<div class="nx-header">
+		<div class="nx-logo" aria-hidden="true">N</div>
+		<div><h1>${t.title}</h1><p>${t.tagline}</p></div>
+		<div class="nx-header__end">${pill}</div>
+	</div>`;
+}
+
+function setupPage(t, failed) {
+	return header(t, `<span class="nx-pill nx-pill--off">${t.not_connected}</span>`) +
+	(failed ? `<div class="nx-notice nx-notice--error" role="alert"><p>${t.err_license}</p><p class="nx-desc">${t.request_id} <code>nx-3f9a1c0b7d2e</code></p></div>` : '') +
+	`<div class="nx-card" style="margin-top:20px">
+		<ol class="nx-steps" aria-label="${t.activate_title}">
+			${t.steps.map((s, i) => `<li${i === 0 ? ' aria-current="step"' : ''}><div><strong>${s[0]}</strong>${s[1]}</div></li>`).join('')}
+		</ol>
+		<form class="nx-field" onsubmit="return false">
+			<label for="nx-license">${t.license_key}</label>
+			<div class="nx-inline">
+				<input id="nx-license" placeholder="NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX" autocomplete="off" spellcheck="false" aria-describedby="nx-license-help" />
+				<button class="button button-primary">${t.activate}</button>
+			</div>
+			<div id="nx-license-help"><p class="nx-desc">${t.license_help}</p><p class="nx-desc">${t.rest_help}</p></div>
+		</form>
+		<p class="nx-privacy">${icon('lock', 16)}<span>${t.privacy}</span></p>
+	</div>`;
+}
+
+function stat(iconName, label, value, meta, extra = '') {
+	return `<div class="nx-card nx-stat"><div class="nx-stat__label">${icon(iconName, 16)}${label}</div>
+		<div class="nx-stat__value">${value}</div>${meta}${extra}</div>`;
+}
+
+function overview(t, attention) {
+	const used = attention ? 50 : 19, max = 50, pct = Math.round(used / max * 100);
+	return `<div class="nx-overview">
+		${stat('store', t.store, `<span class="nx-pill nx-pill--ok">${t.active}</span>`, `<p class="nx-stat__meta"><code>https://shop.nyxify.nyxon.tech</code></p>`)}
+		${stat('plan', t.plan, t.plan_name, attention
+			? `<p class="nx-stat__meta nx-stat__meta--warn">${t.renew_soon(5)}</p>`
+			: `<p class="nx-stat__meta">${t.days_left(370)} · ${t.expires(t.d3)}</p>`)}
+		${stat('box', t.products, t.of(used, max), `<div class="nx-bar${attention ? ' nx-bar--full' : ''}" role="progressbar" aria-valuenow="${used}" aria-valuemin="0" aria-valuemax="${max}" aria-label="${t.products}"><span style="width:${pct}%"></span></div>` +
+			(attention ? `<p class="nx-stat__meta nx-stat__meta--warn">${t.limit_reached}</p>` : ''))}
+		${stat('sync', t.catalog, attention ? `<span class="nx-pill nx-pill--err">${t.sync_failed}</span>` : `<span class="nx-pill nx-pill--ok">${t.synced}</span>`,
+			`<p class="nx-stat__meta">${t.last_synced(t.d2)}</p>` + (attention ? `<p class="nx-stat__meta nx-stat__meta--err">${t.sync_error}</p>` : ''),
+			`<form onsubmit="return false"><button class="button button-small">${icon('sync', 14)}${t.sync_now}</button></form>`)}
+	</div>`;
+}
+
+function botCard(t, key, kind) {
+	const name = t[key], letter = { telegram: 'T', bale: 'B', rubika: 'R' }[key];
+	const pills = {
+		active: `<span class="nx-pill nx-pill--ok">${t.st_active}</span>`,
+		pending: `<span class="nx-pill nx-pill--info nx-pill--busy">${t.st_pending}</span>`,
+		error: `<span class="nx-pill nx-pill--err">${t.st_error}</span>`,
+		none: `<span class="nx-pill nx-pill--off">${t.st_none}</span>`,
+		noplan: `<span class="nx-pill nx-pill--warn">${t.st_noplan}</span>`,
+	};
+	const head = `<div class="nx-bot__head"><span class="nx-bot__avatar" aria-hidden="true">${letter}</span><h3>${name}</h3>${pills[kind]}</div>`;
+	if (kind === 'none') {
+		return `<div class="nx-bot nx-bot--off">${head}
+			<form class="nx-field" onsubmit="return false">
+				<label for="tok-${key}">${t.bot_token}</label>
+				<input id="tok-${key}" type="password" autocomplete="off" aria-describedby="tok-${key}-help" />
+				<p class="nx-desc" id="tok-${key}-help">${t.token_help}</p>
+				<button class="button button-primary">${t.connect_bot}</button>
+			</form></div>`;
+	}
+	const user = { telegram: '@nyxify_test_bot', bale: '@nyxify_bale_bot', rubika: '@nyxify_rubika_test_bot' }[key];
+	let note = '';
+	if (kind === 'pending') note = `<p class="nx-callout nx-callout--info">${t.pending_help} <a class="nx-link" href="#">${t.check_again}</a></p>`;
+	if (kind === 'error') note = `<div class="nx-callout nx-callout--err"><p>${t.error_help}</p><p>${t.details} <code>updateBotEndpoints: InvalidUrl</code></p></div>`;
+	if (kind === 'noplan') note = `<p class="nx-callout nx-callout--warn">${t.noplan_help}</p>`;
+	return `<div class="nx-bot">${head}
+		<dl>
+			<dt>${t.bot}</dt><dd><a class="nx-link" href="#" dir="ltr">${user}</a></dd>
+			<dt>${t.webhook}</dt><dd>${kind === 'active' ? t.set : t.not_set}</dd>
+			${kind === 'active' ? `<dt>${t.set_up}</dt><dd>${t.d1}</dd>` : ''}
+		</dl>
+		${note}
+		<div class="nx-actions">
+			${kind === 'noplan' ? '' : `<details><summary>${t.replace}</summary>
+				<form class="nx-field" onsubmit="return false" style="margin-top:8px">
+					<label for="rep-${key}">${t.bot_token}</label><input id="rep-${key}" type="password" autocomplete="off" />
+					<p><button class="button button-primary button-small">${t.replace_bot}</button></p>
+				</form></details>`}
+			<button class="nx-link nx-link--danger">${t.remove_bot}</button>
+		</div></div>`;
+}
+
+function botsCard(t, attention) {
+	const kinds = attention ? { telegram: 'pending', bale: 'error', rubika: 'noplan' } : { telegram: 'active', bale: 'none', rubika: 'active' };
+	return `<section class="nx-card" aria-labelledby="nx-bots-h">
+		<div class="nx-card__head">${icon('chat')}<h2 id="nx-bots-h">${t.bots}</h2></div>
+		<p class="nx-desc">${t.bots_help}</p>
+		<div class="nx-bots">${Object.entries(kinds).map(([k, v]) => botCard(t, k, v)).join('')}</div>
+	</section>`;
+}
+
+function pinCard(t) {
+	return `<section class="nx-card" aria-labelledby="nx-pin-h">
+		<div class="nx-card__head">${icon('key')}<h2 id="nx-pin-h">${t.pin}</h2></div>
+		<p class="nx-desc">${t.pin_help}</p>
+		<div class="nx-pin">
+			<span class="nx-pin__value" id="nx-pin" data-pin="042917">••••••</span>
+			<button class="button button-small" id="nx-pin-toggle" aria-controls="nx-pin" aria-pressed="false">${t.show}</button>
+			<button class="button button-small" id="nx-pin-copy">${t.copy}</button>
+			<span class="nx-copied" id="nx-pin-copied" role="status" aria-live="polite"></span>
+		</div>
+		<div class="nx-actions">
+			<button class="button">${t.new_pin}</button>
+			<button class="nx-link nx-link--danger">${t.new_pin_all}</button>
+		</div>
+	</section>`;
+}
+
+function adminsCard(t) {
+	return `<section class="nx-card" aria-labelledby="nx-admins-h">
+		<div class="nx-card__head">${icon('users')}<h2 id="nx-admins-h">${t.admins}</h2></div>
+		<p class="nx-desc">${t.admins_help}</p>
+		<table class="nx-table">
+			<thead><tr><th scope="col">${t.messenger}</th><th scope="col">${t.name}</th><th scope="col">${t.username}</th><td><span class="screen-reader-text">${t.actions}</span></td></tr></thead>
+			<tbody>${t.admins_list.map(a => `<tr><td><span class="nx-tag">${a[1]}</span></td><td>${a[2]}</td><td><span dir="ltr">${a[3]}</span></td><td><button class="button button-small">${t.remove}</button></td></tr>`).join('')}</tbody>
+		</table>
+	</section>`;
+}
+
+function connectionCard(t, unreachable) {
+	return `<section class="nx-card nx-advanced" aria-labelledby="nx-conn-h">
+		<div class="nx-card__head">${icon('plug')}<h2 id="nx-conn-h">${t.connection}</h2></div>
+		<dl class="nx-kv">
+			<dt>${t.store_id}</dt><dd><code>shop_8f2a0c1d3e4b5a69</code></dd>
+			<dt>${t.server}</dt><dd><code>https://api.nyxify.nyxon.tech</code></dd>
+			${unreachable ? '' : `<dt>${t.license}</dt><dd><code>NX-ABCDEF</code> · ${t.activated} ${t.d1}</dd>`}
+		</dl>
+		<div class="nx-actions"><button class="button">${icon('sync', 14)}${t.check}</button>${unreachable ? '' : `<span class="nx-desc">${t.checked(t.d4)}</span>`}</div>
+		<div style="margin-top:14px">
+			<details><summary>${t.secret}</summary><p class="nx-desc">${t.secret_help}</p><button class="button button-small">${t.rotate}</button></details>
+			<details><summary>${t.again}</summary><p class="nx-desc">${t.again_help}</p>
+				<div class="nx-field"><label for="nx-again">${t.license_key}</label><input id="nx-again" placeholder="NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX" autocomplete="off" />
+				<p><button class="button button-primary button-small">${t.again}</button></p></div></details>
+		</div>
+	</section>`;
+}
+
+function connectedPage(t, mode) {
+	const attention = mode === 'attention', unreachable = mode === 'unreachable';
+	const pill = unreachable ? `<span class="nx-pill nx-pill--err">${t.unreachable}</span>` : `<span class="nx-pill nx-pill--ok">${t.connected}</span>`;
+	let html = header(t, pill);
+	if (mode === 'active') html += `<div class="nx-notice nx-notice--success" role="status"><p>${t.ok_connected}</p></div>`;
+	if (attention) html += `<div class="nx-notice nx-notice--warning"><p>${t.limit_notice}</p></div>`;
+	if (unreachable) {
+		html += `<div class="nx-notice nx-notice--error" role="alert"><p>${t.unreach_msg}</p><p class="nx-desc">${t.request_id} <code>nx-81c0d4e2a9f3</code></p></div>`;
+		html += `<div class="nx-layout"><div><section class="nx-card"><p class="nx-empty">${t.unreach_wait}</p></section></div><div>${connectionCard(t, true)}</div></div>`;
+	} else {
+		html += overview(t, attention);
+		html += `<div class="nx-layout"><div>${botsCard(t, attention)}${adminsCard(t)}</div><div>${pinCard(t)}${connectionCard(t, false)}</div></div>`;
+	}
+	html += `<div class="nx-footer-note">${icon('alert', 18)}<p style="margin:0"><strong>${t.deact}</strong></p></div>`;
+	return html;
+}
+
+function render() {
+	const t = T[lang];
+	document.documentElement.lang = lang;
+	document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+	document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t[el.dataset.t]; });
+	const page = state === 'setup' || state === 'setup-error' ? setupPage(t, state === 'setup-error') : connectedPage(t, state);
+	document.getElementById('page').innerHTML = `<div class="wrap nyxify-settings">${page}</div>`;
+	document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+	document.querySelectorAll('[data-state]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.state === state)));
+	const pin = document.getElementById('nx-pin');
+	if (pin) {
+		const toggle = document.getElementById('nx-pin-toggle');
+		toggle.onclick = () => {
+			const shown = toggle.getAttribute('aria-pressed') === 'true';
+			pin.textContent = shown ? '••••••' : pin.dataset.pin;
+			toggle.setAttribute('aria-pressed', String(!shown));
+			toggle.textContent = shown ? t.show : t.hide;
+		};
+		document.getElementById('nx-pin-copy').onclick = () => {
+			const done = () => { document.getElementById('nx-pin-copied').textContent = t.copied; };
+			(navigator.clipboard ? navigator.clipboard.writeText(pin.dataset.pin) : Promise.resolve()).then(done, done);
+		};
+	}
+}
+
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => { lang = b.dataset.lang; render(); });
+document.querySelectorAll('[data-state]').forEach(b => b.onclick = () => { state = b.dataset.state; render(); });
+render();
+</script>
+</body>
+</html>

@@ -15,7 +15,6 @@ use Nyxify\Features\Bots\AdminService;
 use Nyxify\Features\Settings\AdminsSection;
 use Nyxify\Features\Store\StoreStatus;
 use Nyxify\Shared\Http\CoreClient;
-use Nyxify\Shared\Http\CoreError;
 use Nyxify\Shared\Logging\Logger;
 use Nyxify\Shared\Options\Connection;
 use Nyxify\Shared\Options\SecretStore;
@@ -185,7 +184,7 @@ final class AdminsSectionTest extends TestCase {
 		return $status;
 	}
 
-	private function rendered( StoreStatus|CoreError|null $status = null ): string {
+	private function rendered( ?StoreStatus $status = null ): string {
 		$store     = new SecretStore( Encryptor::from_secret( 'site secret' ) );
 		$wc_logger = Mockery::mock( 'WC_Logger_Interface' );
 		$wc_logger->shouldReceive( 'log' )->andReturnUsing(
@@ -250,14 +249,16 @@ final class AdminsSectionTest extends TestCase {
 
 		self::assertCount( 1, $this->requests );
 		self::assertSame( self::CORE_URL . '/api/v1/bots/admins', $this->requests[0]['url'] );
-		self::assertStringContainsString( '<h2>Bot admins</h2>', $html );
+		self::assertStringContainsString( '<section class="nyxify-card nyxify-admins-card" aria-labelledby="nyxify-admins-heading">', $html );
+		self::assertStringContainsString( '<h2 id="nyxify-admins-heading">Bot admins</h2>', $html );
+		self::assertStringContainsString( '<table class="nyxify-table nyxify-admins">', $html );
 		self::assertStringNotContainsString( 'No one is a bot admin yet.', $html );
 
 		$rows = self::rows( $html );
 		self::assertCount( 2, $rows );
 
 		$first = self::cells( $rows[0] );
-		self::assertSame( 'Telegram', $first[0] );
+		self::assertSame( '<span class="nyxify-tag">Telegram</span>', $first[0] );
 		self::assertSame( 'Sara Ahmadi', $first[1] );
 		self::assertSame( '<span dir="ltr">@sara_shop</span>', $first[2] );
 		self::assertStringContainsString( 'action="https://shop.example.com/wp-admin/admin-post.php"', $first[3] );
@@ -268,7 +269,7 @@ final class AdminsSectionTest extends TestCase {
 		self::assertStringContainsString( '>Remove</button>', $first[3] );
 
 		$second = self::cells( $rows[1] );
-		self::assertSame( 'Bale', $second[0] );
+		self::assertSame( '<span class="nyxify-tag">Bale</span>', $second[0] );
 		self::assertSame( 'Reza', $second[1] );
 		self::assertSame( '&mdash;', $second[2] );
 		self::assertStringContainsString( 'name="nyxify_admin_id" value="12"', $second[3] );
@@ -351,7 +352,7 @@ final class AdminsSectionTest extends TestCase {
 		self::assertStringContainsString( '&lt;script&gt;alert(1)&lt;/script&gt; &quot;quoted&quot;', $html );
 		self::assertStringContainsString( '@&lt;b&gt;user&lt;/b&gt;', $html );
 		self::assertStringContainsString( '<code dir="ltr">&lt;img src=x onerror=alert(2)&gt;</code>', $html );
-		self::assertSame( 'eitaa', self::cells( self::rows( $html )[0] )[0] );
+		self::assertSame( '<span class="nyxify-tag">eitaa</span>', self::cells( self::rows( $html )[0] )[0] );
 	}
 
 	public function test_without_admins(): void {
@@ -395,15 +396,6 @@ final class AdminsSectionTest extends TestCase {
 
 		self::assertStringContainsString( 'notice-error', $html );
 		self::assertStringNotContainsString( '<table', $html );
-	}
-
-	public function test_nothing_is_sent_while_the_status_is_unreadable(): void {
-		$html = $this->rendered( new CoreError( 'store_not_active', 403 ) );
-
-		self::assertSame( array(), $this->requests );
-		self::assertStringContainsString( '<h2>Bot admins</h2>', $html );
-		self::assertStringContainsString( 'The bot admins can be managed here once the store’s status above can be read.', $html );
-		self::assertStringNotContainsString( '<form', $html );
 	}
 
 	public function test_nothing_is_sent_while_the_store_is_not_active(): void {
