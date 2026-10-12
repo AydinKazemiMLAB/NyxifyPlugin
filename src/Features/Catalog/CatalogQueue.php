@@ -302,7 +302,7 @@ final class CatalogQueue implements Queue {
 
 		$wpdb = $this->wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- The plugin's own queue table; every caller passes $wpdb->prepare()'s result.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The plugin's own queue table; every caller passes $wpdb->prepare()'s result.
 		return $wpdb->query( $sql );
 	}
 

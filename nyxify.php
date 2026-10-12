@@ -41,9 +41,6 @@ function nyxify_render_missing_autoload_notice(): void {
 		return;
 	}
 
-	// The plugin class that normally loads the translations isn't available without the autoloader.
-	load_plugin_textdomain( 'nyxify', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
 		esc_html__( 'Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip.', 'nyxify' )

@@ -438,7 +438,7 @@ final class ChangeApplierTest extends TestCase {
 		self::assertSame( '41', $args['meta_value'] );
 		self::assertSame( 'ids', $args['fields'] );
 		self::assertSame( 1, $args['posts_per_page'] );
-		self::assertTrue( $args['suppress_filters'] );
+		self::assertArrayNotHasKey( 'suppress_filters', $args ); // get_posts() suppresses filters by default.
 		self::assertCount( 1, $this->requests );
 	}
 

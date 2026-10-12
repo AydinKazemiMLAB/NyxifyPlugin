@@ -264,7 +264,6 @@ final class ChangeApplier {
 				'orderby'                => 'ID',
 				'order'                  => 'ASC',
 				'no_found_rows'          => true,
-				'suppress_filters'       => true,
 				'update_post_meta_cache' => false,
 				'update_post_term_cache' => false,
 				'meta_key'               => PayloadFilter::OUTBOX_META_KEY, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only for a pulled create, at most a few a run.
