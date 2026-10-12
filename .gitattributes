@@ -3,6 +3,7 @@
 *.mo binary
 *.png binary
 *.jpg binary
+*.webp binary
 
 # Development files stay out of `git archive` (the release zip is built from it).
 /.agents             export-ignore
@@ -13,6 +14,7 @@
 /.gitignore          export-ignore
 /.ignore             export-ignore
 /.mcp.json           export-ignore
+/.wordpress-org      export-ignore
 /CLAUDE.md           export-ignore
 /README.md           export-ignore
 /docs                export-ignore

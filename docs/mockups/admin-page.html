@@ -140,16 +140,10 @@ input.code { font-family: Consolas, Monaco, monospace; }
 }
 
 .nyxify-logo {
-	display: grid;
 	flex: 0 0 40px;
-	place-items: center;
 	inline-size: 40px;
 	block-size: 40px;
-	border-radius: 10px;
-	background: linear-gradient(135deg, var(--nyxify-accent), #2b1a6b);
-	color: #fff;
-	font-size: 20px;
-	font-weight: 700;
+	background: url(data:image/png;base64,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) center / contain no-repeat;
 }
 
 .nyxify-settings .nyxify-header h1 {
@@ -818,7 +812,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="setup-en">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>Shop bots for WooCommerce on Telegram, Bale and Rubika</p>
@@ -854,7 +848,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="setup-error-en">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>Shop bots for WooCommerce on Telegram, Bale and Rubika</p>
@@ -890,7 +884,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="lost-en">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>Shop bots for WooCommerce on Telegram, Bale and Rubika</p>
@@ -921,7 +915,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="active-en">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>Shop bots for WooCommerce on Telegram, Bale and Rubika</p>
@@ -1129,7 +1123,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="attention-en">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>Shop bots for WooCommerce on Telegram, Bale and Rubika</p>
@@ -1322,7 +1316,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="unreachable-en">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>Shop bots for WooCommerce on Telegram, Bale and Rubika</p>
@@ -1401,7 +1395,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="setup-fa">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا</p>
@@ -1437,7 +1431,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="setup-error-fa">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا</p>
@@ -1473,7 +1467,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="lost-fa">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا</p>
@@ -1504,7 +1498,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="active-fa">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا</p>
@@ -1712,7 +1706,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="attention-fa">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا</p>
@@ -1905,7 +1899,7 @@ input.code { font-family: Consolas, Monaco, monospace; }
 <template id="unreachable-fa">
 <div class="wrap nyxify-settings">
 					<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1>Nyxify</h1>
 				<p>ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا</p>

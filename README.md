@@ -1,3 +1,5 @@
+<img src=".wordpress-org/icon-128x128.png" alt="" width="96" height="96" />
+
 # Nyxify for WooCommerce
 
 The WordPress/WooCommerce plugin of Nyxify: it connects a WooCommerce store to the Nyxify core, which sells the

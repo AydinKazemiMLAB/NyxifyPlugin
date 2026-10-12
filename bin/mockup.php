@@ -374,7 +374,13 @@ foreach ( $labels as $name => $label ) {
 }
 
 $css = rtrim( (string) file_get_contents( $plugin . '/assets/css/admin.css' ) );
-$js  = rtrim( (string) file_get_contents( $plugin . '/assets/js/admin.js' ) );
+// The stylesheet's images inlined, so the mockup stays one file.
+$css = (string) preg_replace_callback(
+	'#url\(\.\./images/([a-z0-9-]+\.png)\)#',
+	static fn( array $m ): string => 'url(data:image/png;base64,' . base64_encode( (string) file_get_contents( $plugin . '/assets/images/' . $m[1] ) ) . ')',
+	$css
+);
+$js = rtrim( (string) file_get_contents( $plugin . '/assets/js/admin.js' ) );
 $wp  = rtrim( (string) file_get_contents( __DIR__ . '/mockup-wp.css' ) );
 
 $html = <<<HTML

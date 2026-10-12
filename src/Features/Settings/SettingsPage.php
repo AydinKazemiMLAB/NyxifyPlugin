@@ -261,7 +261,7 @@ final class SettingsPage {
 	private function render_header( StoreStatus|CoreError|null $status ): void {
 		?>
 		<div class="nyxify-header">
-			<span class="nyxify-logo" aria-hidden="true">N</span>
+			<span class="nyxify-logo" aria-hidden="true"></span>
 			<div class="nyxify-header__title">
 				<h1><?php esc_html_e( 'Nyxify', 'nyxify' ); ?></h1>
 				<p><?php esc_html_e( 'Shop bots for WooCommerce on Telegram, Bale and Rubika', 'nyxify' ); ?></p>
