@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Nyxify 0.6.0\n"
+"Project-Id-Version: Nyxify 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: Nyxon\n"
 "Language-Team: Persian\n"
@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-12T17:54:39+00:00\n"
+"PO-Revision-Date: 2026-10-13T15:39:46+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: nyxify\n"
@@ -28,7 +28,7 @@ msgstr "محصولات فروشگاه ووکامرس خود را با ربات�
 msgid "Nyxon"
 msgstr "Nyxon"
 
-#: nyxify.php:49
+#: nyxify.php:46
 msgid "Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip."
 msgstr "Nyxify ناقص است: پوشهٔ vendor آن وجود ندارد. افزونه را دوباره از فایل zip انتشار نصب کنید."
 
