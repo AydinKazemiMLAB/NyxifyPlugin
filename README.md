@@ -7,21 +7,22 @@ store's products through Telegram, Bale and Rubika bots. The plugin activates th
 catalog and order changes to the core, and gives the store owner a settings page for the bots, the admin PIN and the
 bot admins.
 
-> Status: phase 6 (pull fallback), version 0.6.0. On **WooCommerce > Nyxify** the owner enters a license key
-> and the store is connected to the core; the page shows the store's status, checks the connection and rotates the
-> shared secret, connects, replaces and removes the store's Telegram, Bale and Rubika bots, issues the bots' admin PIN
-> and lists and removes the bot admins. While connected, every change to a product, a variation, its stock or a
-> product category, and every change to an order placed through a bot, reaches the core within seconds in the
-> background, and "Sync now" starts a full catalog sync. Deactivating the plugin tells the core, and uninstalling
-> removes everything the plugin stored. When the core can't reach the store, the plugin fetches the bot admins'
-> product edits itself every 5 minutes and applies them (pull fallback). Plans and progress:
-> `docs/phase-*-plan.md`. "Nyxify" / `nyxify` is a temporary name:
-> WordPress.org doesn't accept slugs starting with `woo`, so the public name, slug and text domain change before the
-> first release.
+> Status: phase 7 (release readiness) done, version **1.0.0**, ready for the WordPress.org submission (what is left
+> before it: `docs/submission-kickoff.md`). On **WooCommerce > Nyxify** the owner enters a license key and the store
+> is connected to the core; the page shows the store's status, checks the connection and rotates the shared secret,
+> connects, replaces and removes the store's Telegram, Bale and Rubika bots, issues the bots' admin PIN and lists and
+> removes the bot admins. While connected, every change to a product, a variation, its stock or a product category,
+> and every change to an order placed through a bot, reaches the core in the background (seconds to about a minute,
+> see "When" below), and "Sync now" starts a full catalog sync. When the core can't reach the store, the plugin
+> fetches the bot admins' product edits itself every 5 minutes and applies them (pull fallback). Deactivating the
+> plugin tells the core, and deleting it removes everything the plugin stored. Persian translation and RTL admin, the
+> page in Vazirmatn for Persian admins, Jalali dates. Plans and progress: `docs/phase-*-plan.md`; the next phase of
+> features (categories, trash and reports in the bot, plugin 1.1.0): `docs/phase-8-plan.md`.
 
 ## Requirements
 
-- WordPress 6.5+, WooCommerce 9.0+ (tested up to 11.1.2), PHP 8.1+ with the `sodium` extension (bundled with PHP).
+- WordPress 6.5+ (tested up to 7.1), WooCommerce 9.0+ (tested up to 11.2.1), PHP 8.1+ with the `sodium` extension
+  (bundled with PHP). The minimums were checked on WordPress Playground (WordPress 6.5, WooCommerce 9.0.0, PHP 8.1).
 - Development: PHP 8.1+ (8.3 used) and Composer 2; Git.
 
 ## Development setup
@@ -40,6 +41,7 @@ composer check
 | `composer i18n:pot` | regenerates `languages/nyxify.pot` |
 | `composer i18n:compile` | merges the `.pot` into every `.po`, then builds the `.mo` and `.l10n.php` files |
 | `composer build` | builds `dist/nyxify-<version>.zip`: the files `git archive` would ship (dev files are `export-ignore`d in `.gitattributes`) plus Composer's production autoloader; nothing has to be committed first |
+| `composer mockup` | regenerates `docs/mockups/admin-page.html`: the settings page rendered by its own classes with sample data, every state in English and Persian, one self-contained file |
 
 On Windows run Composer from PowerShell or cmd (Git Bash may not find `php`).
 
@@ -164,8 +166,8 @@ only while the store is connected.
 
 ```
 nyxify.php            plugin header, constants, Composer autoload, boot
-uninstall.php         removes the plugin's REST key, options, transients, queue table and scheduled actions (every
-                      site of a multisite)
+uninstall.php         removes the plugin's REST key, options, transients, queue table, scheduled actions, the
+                      `_nyxify_outbox_id` meta and its WooCommerce log entries (every site of a multisite)
 src/Plugin.php        hooks: WooCommerce check, HPOS compatibility, translations, deactivation, features
 src/Shared/           Security (Encryptor, HmacSigner), Options (SecretStore), Http (CoreClient, errors),
                       Logging (Logger), Admin (AdminAction: nonce and capability checks; Notices: one-time results)
@@ -176,17 +178,22 @@ src/Features/         Settings (the admin page and its sections: status, bots, a
                       catalog and orders, payload builder, sender, retry policy, "Sync now", plan-limit notice),
                       Orders (order collector, whitelisted order payloads, status sender),
                       Sync (pull fallback: outbox client, payload whitelist, change applier, lock, scheduler, run)
-assets/css/           admin styles (logical CSS properties, RTL-safe)
+assets/css/           admin styles (logical CSS properties, RTL-safe; Vazirmatn for Persian admins)
+assets/fonts/         Vazirmatn v33.003 (variable woff2) and its SIL OFL 1.1, unchanged
+assets/images/        the logo on the settings page
 assets/js/            confirmations: forms with `data-nyxify-confirm` (settings page), deactivation (plugins list)
 languages/            nyxify.pot and the Persian translation
 tests/Unit/           PHPUnit + Brain Monkey
-bin/build-zip.php     the zip builder behind `composer build`
-docs/                 handoff, phase plans, the core's OpenAPI spec
+bin/                  the zip builder (`composer build`), the mockup (`composer mockup`), the logo's assets
+                      (`brand-assets.sh`)
+.wordpress-org/       the directory's icon and banner (for SVN's `assets/`, not the zip)
+docs/                 handoff, phase plans and kickoffs, the core's OpenAPI spec, the admin page's mockup
 ```
 
 ## Rules the code follows
 
 - No request to the core before the owner enters a license key (WordPress.org).
+- Nothing is loaded from outside the plugin: no CDN, no remote font or script (Vazirmatn is bundled).
 - Every admin page and action: `manage_woocommerce` and a nonce; input sanitized, output escaped; everything
   prefixed.
 - Requests to the core are signed with HMAC-SHA256 over the exact bytes sent, redirects are not followed, and the
