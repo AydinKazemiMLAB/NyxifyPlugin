@@ -7,6 +7,7 @@ body {
 	font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 body.rtl { font-family: Tahoma, Arial, sans-serif; }
+.rtl h1, .rtl h2, .rtl h3, .rtl h4, .rtl h5, .rtl h6 { font-family: Arial, sans-serif; font-weight: 600; }
 .mock-switcher {
 	position: sticky; inset-block-start: 0; z-index: 10;
 	display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;

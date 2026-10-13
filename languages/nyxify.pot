@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T15:38:32+00:00\n"
+"POT-Creation-Date: 2026-10-13T20:21:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: nyxify\n"
@@ -654,24 +654,66 @@ msgstr ""
 msgid "Nyxify reads every product and category of this store again."
 msgstr ""
 
-#: src/Features/Settings/StatusSection.php:254
+#: src/Features/Settings/StatusSection.php:255
+msgctxt "plan name"
+msgid "Free"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:256
+msgctxt "plan name"
+msgid "Basic"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:257
+msgctxt "plan name"
+msgid "Standard"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:258
+msgctxt "plan name"
+msgid "Pro"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:259
+msgctxt "plan name"
+msgid "Premium"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:260
+msgctxt "plan name"
+msgid "Business"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:261
+msgctxt "plan name"
+msgid "Enterprise"
+msgstr ""
+
+#. translators: 1: the plan's name from the Nyxify server, 2: its translation
+#: src/Features/Settings/StatusSection.php:270
+#, php-format
+msgctxt "plan name and its translation"
+msgid "%1$s – %2$s"
+msgstr ""
+
+#: src/Features/Settings/StatusSection.php:280
 msgid "None"
 msgstr ""
 
 #. translators: separator between the items of a list
-#: src/Features/Settings/StatusSection.php:259
+#: src/Features/Settings/StatusSection.php:285
 msgctxt "list separator"
 msgid ", "
 msgstr ""
 
 #. translators: %s: number of products
-#: src/Features/Settings/StatusSection.php:272
+#: src/Features/Settings/StatusSection.php:298
 #, php-format
 msgid "%s (no limit)"
 msgstr ""
 
 #. translators: 1: number of products, 2: the plan's limit
-#: src/Features/Settings/StatusSection.php:277
+#: src/Features/Settings/StatusSection.php:303
 #, php-format
 msgid "%1$s of %2$s"
 msgstr ""

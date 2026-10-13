@@ -83,7 +83,7 @@ final class StatusSection {
 	 */
 	private static function render_plan( StoreStatus $status ): void {
 		self::open_card( 'plan', __( 'Plan', 'nyxify' ), 'nyxify-plan-status' );
-		printf( '<div class="nyxify-stat__value">%s</div>', esc_html( $status->plan_name ) );
+		printf( '<div class="nyxify-stat__value">%s</div>', esc_html( self::plan_name( $status->plan_name ) ) );
 
 		$days = self::days_left( $status );
 		if ( null !== $days ) {
@@ -242,6 +242,32 @@ final class StatusSection {
 	 */
 	private static function label( array $labels, string $value ): string {
 		return $labels[ $value ] ?? $value;
+	}
+
+	/**
+	 * The plan's name as the core gives it, followed by its translation when it is a common plan name and the admin's
+	 * language translates it (e.g. "Free – رایگان"); other names as they are.
+	 *
+	 * @param string $name The plan's name.
+	 */
+	private static function plan_name( string $name ): string {
+		$translations = array(
+			'free'       => _x( 'Free', 'plan name', 'nyxify' ),
+			'basic'      => _x( 'Basic', 'plan name', 'nyxify' ),
+			'standard'   => _x( 'Standard', 'plan name', 'nyxify' ),
+			'pro'        => _x( 'Pro', 'plan name', 'nyxify' ),
+			'premium'    => _x( 'Premium', 'plan name', 'nyxify' ),
+			'business'   => _x( 'Business', 'plan name', 'nyxify' ),
+			'enterprise' => _x( 'Enterprise', 'plan name', 'nyxify' ),
+		);
+
+		$translated = $translations[ strtolower( trim( $name ) ) ] ?? null;
+		if ( null === $translated || 0 === strcasecmp( $translated, trim( $name ) ) ) {
+			return $name;
+		}
+
+		/* translators: 1: the plan's name from the Nyxify server, 2: its translation */
+		return sprintf( _x( '%1$s – %2$s', 'plan name and its translation', 'nyxify' ), $name, $translated );
 	}
 
 	/**

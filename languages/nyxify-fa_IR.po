@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-13T15:39:46+00:00\n"
+"PO-Revision-Date: 2026-10-13T20:21:53+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: nyxify\n"
@@ -653,24 +653,66 @@ msgstr "همگام‌سازی اکنون"
 msgid "Nyxify reads every product and category of this store again."
 msgstr "Nyxify همهٔ محصولات و دسته‌های این فروشگاه را دوباره می‌خواند."
 
-#: src/Features/Settings/StatusSection.php:254
+#: src/Features/Settings/StatusSection.php:255
+msgctxt "plan name"
+msgid "Free"
+msgstr "رایگان"
+
+#: src/Features/Settings/StatusSection.php:256
+msgctxt "plan name"
+msgid "Basic"
+msgstr "پایه"
+
+#: src/Features/Settings/StatusSection.php:257
+msgctxt "plan name"
+msgid "Standard"
+msgstr "استاندارد"
+
+#: src/Features/Settings/StatusSection.php:258
+msgctxt "plan name"
+msgid "Pro"
+msgstr "حرفه‌ای"
+
+#: src/Features/Settings/StatusSection.php:259
+msgctxt "plan name"
+msgid "Premium"
+msgstr "ویژه"
+
+#: src/Features/Settings/StatusSection.php:260
+msgctxt "plan name"
+msgid "Business"
+msgstr "تجاری"
+
+#: src/Features/Settings/StatusSection.php:261
+msgctxt "plan name"
+msgid "Enterprise"
+msgstr "سازمانی"
+
+#. translators: 1: the plan's name from the Nyxify server, 2: its translation
+#: src/Features/Settings/StatusSection.php:270
+#, php-format
+msgctxt "plan name and its translation"
+msgid "%1$s – %2$s"
+msgstr "%1$s – %2$s"
+
+#: src/Features/Settings/StatusSection.php:280
 msgid "None"
 msgstr "هیچ‌کدام"
 
 #. translators: separator between the items of a list
-#: src/Features/Settings/StatusSection.php:259
+#: src/Features/Settings/StatusSection.php:285
 msgctxt "list separator"
 msgid ", "
 msgstr "، "
 
 #. translators: %s: number of products
-#: src/Features/Settings/StatusSection.php:272
+#: src/Features/Settings/StatusSection.php:298
 #, php-format
 msgid "%s (no limit)"
 msgstr "%s (بدون سقف)"
 
 #. translators: 1: number of products, 2: the plan's limit
-#: src/Features/Settings/StatusSection.php:277
+#: src/Features/Settings/StatusSection.php:303
 #, php-format
 msgid "%1$s of %2$s"
 msgstr "%1$s از %2$s"

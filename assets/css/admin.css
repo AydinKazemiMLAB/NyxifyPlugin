@@ -25,7 +25,8 @@
 /*
  * Persian admins see the page in Vazirmatn (SIL Open Font License 1.1, fonts/vazirmatn/OFL.txt), bundled with the
  * plugin. WordPress puts the user's locale on <body>; browsers download the font only where a rule uses it, so other
- * languages never fetch it. Fields and buttons inherit it from the WordPress admin's own rules; code keeps its font.
+ * languages never fetch it. Fields and buttons inherit it from the WordPress admin's own rules; headings need their
+ * own rule (WordPress's RTL stylesheet gives `.rtl h1`...`h6` Arial); code keeps its font.
  */
 @font-face {
 	font-family: Vazirmatn;
@@ -35,7 +36,8 @@
 	font-display: swap;
 }
 
-:is(.locale-fa-ir, .locale-fa-af, .locale-fa) .nyxify-settings {
+:is(.locale-fa-ir, .locale-fa-af, .locale-fa) .nyxify-settings,
+:is(.locale-fa-ir, .locale-fa-af, .locale-fa) .nyxify-settings :is(h1, h2, h3, h4, h5, h6) {
 	font-family: Vazirmatn, Tahoma, Arial, sans-serif;
 }
 

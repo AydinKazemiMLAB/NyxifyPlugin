@@ -112,6 +112,53 @@ final class StatusSectionTest extends TestCase {
 		self::assertStringContainsString( 'Expires soon</p>', $html );
 	}
 
+	/**
+	 * Plan names from the core and how the plan's card shows them in Persian.
+	 *
+	 * @return array<string, array{string, string}>
+	 */
+	public static function plan_names(): array {
+		return array(
+			'translated'       => array( 'Free', 'Free – رایگان' ),
+			'any case'         => array( 'PRO', 'PRO – حرفه‌ای' ),
+			'not a known name' => array( 'Gold', 'Gold' ),
+		);
+	}
+
+	#[DataProvider( 'plan_names' )]
+	public function test_a_known_plan_name_comes_with_its_translation( string $name, string $expected ): void {
+		$persian = array(
+			'Free'        => 'رایگان',
+			'Pro'         => 'حرفه‌ای',
+			'%1$s – %2$s' => '%1$s – %2$s',
+		);
+		Functions\when( '_x' )->alias( fn( string $text ): string => $persian[ $text ] ?? $text );
+
+		$html = self::rendered( self::store_status( array( 'plan_name' => $name ) ) );
+
+		self::assertStringContainsString( '<div class="nyxify-stat__value">' . $expected . '</div>', $html );
+	}
+
+	/**
+	 * Plan names shown as they are in English.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public static function untranslated_plan_names(): array {
+		return array(
+			'known'     => array( 'Free' ),
+			'lowercase' => array( 'free' ),
+			'unknown'   => array( 'Gold' ),
+		);
+	}
+
+	#[DataProvider( 'untranslated_plan_names' )]
+	public function test_a_plan_name_without_a_translation_is_shown_alone( string $name ): void {
+		$html = self::rendered( self::store_status( array( 'plan_name' => $name ) ) );
+
+		self::assertStringContainsString( '<div class="nyxify-stat__value">' . $name . '</div>', $html );
+	}
+
 	public function test_the_products_bar(): void {
 		$html = self::rendered( self::store_status() );
 
