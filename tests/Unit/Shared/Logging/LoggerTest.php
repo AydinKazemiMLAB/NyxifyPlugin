@@ -68,6 +68,9 @@ final class LoggerTest extends TestCase {
 			'rubika token'           => array( str_repeat( 'Ab1_', 16 ) ),
 			'mobile number'          => array( '09121234567' ),
 			'mobile number, +98'     => array( '+989121234567' ),
+			'mobile number, 0098'    => array( '00989121234567' ),
+			'mobile number after :'  => array( 'tel:09121234567' ),
+			'mobile number in fa'    => array( 'شماره09121234567' ),
 		);
 	}
 
@@ -95,6 +98,9 @@ final class LoggerTest extends TestCase {
 		return array(
 			'store id'           => array( 'shop_8f2a0c1d3e4b5a69' ),
 			'plugin request id'  => array( 'nx-0123456789abcdef01234567' ),
+			// Digit runs that read like a mobile number, inside hex ids (seen in the test shop's log).
+			'request id, 0 9'    => array( 'nx-6d59e042d09123456789a845' ),
+			'request id, 9'      => array( 'nx-ab9123456789cdef0123456a' ),
 			'core request id'    => array( 'f47ac10b58cc4372a5670e02b2c3d479' ),
 			'uuid'               => array( 'f47ac10b-58cc-4372-a567-0e02b2c3d479' ),
 			'license key prefix' => array( 'NX-ABCDEF' ),

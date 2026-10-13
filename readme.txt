@@ -86,8 +86,8 @@ Only users who can manage WooCommerce see the page.
 
 Deactivating tells the service that the shop is gone (the bots stop answering) and removes the connection and the REST
 API key the plugin created (if the service can't be reached at that moment, both stay until you delete the plugin).
-To connect again, enter the license key again. Deleting the plugin also removes its settings, its queue table and its
-scheduled actions.
+To connect again, enter the license key again. Deleting the plugin also removes its settings, its queue table, its
+scheduled actions and its entries in WooCommerce's log. Your products and orders stay.
 
 = Can I use it on a multisite network? =
 

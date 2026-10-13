@@ -14,15 +14,19 @@ use Nyxify\Features\Catalog\PlanLimitNotice;
 use Nyxify\Features\Catalog\Schema;
 use Nyxify\Features\Store\RestKeys;
 use Nyxify\Features\Store\StatusService;
+use Nyxify\Features\Sync\PayloadFilter;
 use Nyxify\Features\Sync\PullLock;
 use Nyxify\Features\Sync\PullScheduler;
 use Nyxify\Shared\Admin\Notices;
+use Nyxify\Shared\Logging\Logger;
 use Nyxify\Shared\Options\SecretStore;
 
 /**
  * Removes everything the plugin stored, on every site of a network: the WooCommerce REST key it created, its pending
- * catalog flushes and pulls (when Action Scheduler is loaded), its catalog queue table, its options and its transients. Nothing
- * is sent to the core (the deactivation already told it, or couldn't); keys the plugin didn't create are never touched.
+ * catalog flushes and pulls (when Action Scheduler is loaded), its catalog queue table, its options and its transients,
+ * the outbox marker on the products a pull created, and its entries in WooCommerce's log (when WooCommerce is loaded;
+ * otherwise WooCommerce's log retention removes them). Nothing is sent to the core (the deactivation already told it,
+ * or couldn't); keys the plugin didn't create are never touched.
  */
 final class Uninstaller {
 
@@ -80,13 +84,16 @@ final class Uninstaller {
 	}
 
 	/**
-	 * Deletes the current site's REST key, pending flushes and pulls, queue table, options and transients.
+	 * Deletes the current site's REST key, pending flushes and pulls, queue table, options, transients, outbox markers
+	 * and log entries.
 	 */
 	private static function clean_site(): void {
 		self::delete_rest_key();
 		FlushScheduler::unschedule_all();
 		PullScheduler::unschedule_all();
 		Schema::drop();
+		delete_post_meta_by_key( PayloadFilter::OUTBOX_META_KEY );
+		self::delete_logs();
 
 		foreach ( self::OPTIONS as $option ) {
 			delete_option( $option );
@@ -115,6 +122,21 @@ final class Uninstaller {
 		$suppressed = $wpdb->suppress_errors( true );
 		$rest_keys->delete( $key_id );
 		$wpdb->suppress_errors( $suppressed );
+	}
+
+	/**
+	 * Deletes the plugin's entries in WooCommerce's log (its files and database rows, by source), when WooCommerce is
+	 * loaded.
+	 */
+	private static function delete_logs(): void {
+		if ( ! function_exists( 'wc_get_logger' ) ) {
+			return;
+		}
+
+		$logger = wc_get_logger();
+		if ( method_exists( $logger, 'clear' ) ) {
+			$logger->clear( Logger::SOURCE );
+		}
 	}
 
 	/**

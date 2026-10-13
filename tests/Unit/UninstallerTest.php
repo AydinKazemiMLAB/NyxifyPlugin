@@ -82,6 +82,20 @@ final class UninstallerTest extends TestCase {
 	private array $pulls_unscheduled = array();
 
 	/**
+	 * Post meta deleted by key, as "site:key".
+	 *
+	 * @var list<string>
+	 */
+	private array $deleted_meta = array();
+
+	/**
+	 * Log sources cleared in WooCommerce's log, as "site:source".
+	 *
+	 * @var list<string>
+	 */
+	private array $cleared_logs = array();
+
+	/**
 	 * The current site, and the sites switched from.
 	 *
 	 * @var list<int>
@@ -140,6 +154,34 @@ final class UninstallerTest extends TestCase {
 				$this->pulls_unscheduled[] = $this->site() . ':' . $hook;
 			}
 		);
+		Functions\when( 'delete_post_meta_by_key' )->alias(
+			function ( string $key ): bool {
+				$this->deleted_meta[] = $this->site() . ':' . $key;
+				return true;
+			}
+		);
+		// WooCommerce's WC_Logger isn't loaded here; its clear() is all the cleanup uses.
+		$record = function ( string $source ): void {
+			$this->cleared_logs[] = $this->site() . ':' . $source;
+		};
+		$logger = new class( $record ) {
+			/**
+			 * Records a cleared source.
+			 *
+			 * @var \Closure
+			 */
+			private \Closure $record;
+
+			public function __construct( \Closure $record ) {
+				$this->record = $record;
+			}
+
+			public function clear( string $source ): bool {
+				( $this->record )( $source );
+				return true;
+			}
+		};
+		Functions\when( 'wc_get_logger' )->justReturn( $logger );
 
 		$this->wpdb = Mockery::mock( \wpdb::class );
 		$this->set_prefix();
@@ -230,6 +272,18 @@ final class UninstallerTest extends TestCase {
 		self::assertSame( self::site_queries( 'wp_' ), $this->queries );
 		self::assertSame( array( self::MAIN_SITE ), $this->unscheduled );
 		self::assertSame( array( self::MAIN_SITE . ':nyxify_sync_pull', self::MAIN_SITE . ':nyxify_sync_pull_now' ), $this->pulls_unscheduled );
+		self::assertSame( array( '1:_nyxify_outbox_id' ), $this->deleted_meta );
+		self::assertSame( array( '1:nyxify' ), $this->cleared_logs );
+	}
+
+	public function test_a_logger_without_clear_is_left_alone(): void {
+		Functions\when( 'wc_get_logger' )->justReturn( Mockery::mock( \WC_Logger_Interface::class ) );
+		$this->install( self::MAIN_SITE );
+
+		Uninstaller::run();
+
+		self::assertSame( array(), $this->cleared_logs );
+		self::assertSame( array( 'blogname' => 'Shop' ), $this->options[ self::MAIN_SITE ] );
 	}
 
 	public function test_database_errors_are_hidden_while_deleting_the_key_and_restored(): void {
@@ -294,6 +348,8 @@ final class UninstallerTest extends TestCase {
 		);
 		self::assertSame( array( 1, 2, 3 ), $this->unscheduled );
 		self::assertSame( array( '1:nyxify_sync_pull', '1:nyxify_sync_pull_now', '2:nyxify_sync_pull', '2:nyxify_sync_pull_now', '3:nyxify_sync_pull', '3:nyxify_sync_pull_now' ), $this->pulls_unscheduled );
+		self::assertSame( array( '1:_nyxify_outbox_id', '2:_nyxify_outbox_id', '3:_nyxify_outbox_id' ), $this->deleted_meta );
+		self::assertSame( array( '1:nyxify', '2:nyxify', '3:nyxify' ), $this->cleared_logs );
 		self::assertSame( array( self::MAIN_SITE ), $this->site_stack );
 		self::assertSame( 'wp_', $this->wpdb->prefix );
 	}

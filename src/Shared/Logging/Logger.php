@@ -36,8 +36,8 @@ final class Logger {
 		'/\bNX-[A-Z2-7]{6}(?:[\s-]*[A-Z2-7]{6}){3}\b/i',
 		// Telegram and Bale bot tokens: <bot id>:<secret>.
 		'/\b\d{1,20}:[A-Za-z0-9_-]{20,100}/',
-		// Iranian mobile numbers (personal data).
-		'/(?<!\d)(?:\+98|0098|98|0)?9\d{9}(?!\d)/',
+		// Iranian mobile numbers (personal data), not digits inside a word such as a hex request id.
+		'/(?<![A-Za-z0-9])(?:\+98|0098|98|0)?9\d{9}(?![A-Za-z0-9])/',
 		// Anything else that looks like a token (e.g. Rubika's), longer than a request id or a UUID.
 		'/[A-Za-z0-9_-]{40,}/',
 	);
