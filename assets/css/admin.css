@@ -22,6 +22,23 @@
 	max-inline-size: 1200px;
 }
 
+/*
+ * Persian admins see the page in Vazirmatn (SIL Open Font License 1.1, fonts/vazirmatn/OFL.txt), bundled with the
+ * plugin. WordPress puts the user's locale on <body>; browsers download the font only where a rule uses it, so other
+ * languages never fetch it. Fields and buttons inherit it from the WordPress admin's own rules; code keeps its font.
+ */
+@font-face {
+	font-family: Vazirmatn;
+	src: url(../fonts/vazirmatn/Vazirmatn-Variable.woff2) format("woff2");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+:is(.locale-fa-ir, .locale-fa-af, .locale-fa) .nyxify-settings {
+	font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+}
+
 .nyxify-settings code[dir="ltr"],
 .nyxify-settings input[dir="ltr"] {
 	unicode-bidi: isolate;

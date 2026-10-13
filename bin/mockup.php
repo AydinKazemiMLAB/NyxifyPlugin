@@ -374,13 +374,18 @@ foreach ( $labels as $name => $label ) {
 }
 
 $css = rtrim( (string) file_get_contents( $plugin . '/assets/css/admin.css' ) );
-// The stylesheet's images inlined, so the mockup stays one file.
+// The stylesheet's images and font inlined, so the mockup stays one file.
 $css = (string) preg_replace_callback(
 	'#url\(\.\./images/([a-z0-9-]+\.png)\)#',
 	static fn( array $m ): string => 'url(data:image/png;base64,' . base64_encode( (string) file_get_contents( $plugin . '/assets/images/' . $m[1] ) ) . ')',
 	$css
 );
-$js = rtrim( (string) file_get_contents( $plugin . '/assets/js/admin.js' ) );
+$css = (string) preg_replace_callback(
+	'#url\(\.\./fonts/([a-z0-9/-]+\.woff2)\)#i',
+	static fn( array $m ): string => 'url(data:font/woff2;base64,' . base64_encode( (string) file_get_contents( $plugin . '/assets/fonts/' . $m[1] ) ) . ')',
+	$css
+);
+$js =rtrim( (string) file_get_contents( $plugin . '/assets/js/admin.js' ) );
 $wp  = rtrim( (string) file_get_contents( __DIR__ . '/mockup-wp.css' ) );
 
 $html = <<<HTML
