@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy Policy – Nyxify</title>
+<link rel="stylesheet" href="../style.css" />
+<link rel="icon" href="../logo.png" />
+</head>
+<body>
+<header>
+	<a class="brand" href="../"><img src="../logo.png" alt="" /> Nyxify</a>
+	<nav><a href="../terms/">Terms</a> <a href="../fa/privacy/" lang="fa" hreflang="fa">فارسی</a></nav>
+</header>
+<main class="legal">
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: 14 October 2026</p>
+
+<div class="summary">
+	<p><strong>In short:</strong> Nyxify runs Telegram, Bale and Rubika bots for WooCommerce shops. We keep only what the
+	bots need to work, we never sell data or show ads, we set no cookies and use no analytics, and payments happen on
+	the shop's own website, never with us.</p>
+</div>
+
+<h2>1. Who we are</h2>
+<p>Nyxify is a service of Nyxon (“we”). It connects a WooCommerce shop, through the Nyxify plugin, to bots on Telegram,
+Bale and Rubika that show the shop's products, take orders and let the shop's staff manage products. Questions about
+this policy: <a href="mailto:nyxify@nyxon.tech">nyxify@nyxon.tech</a>.</p>
+<p>For the people who buy from a shop through its bot, the <strong>shop</strong> decides why and how their data is used;
+we process it on the shop's behalf to run its bot. A shop that uses Nyxify should mention it in its own privacy
+policy.</p>
+
+<h2>2. Data we receive from a shop</h2>
+<p>Nothing is sent from a shop before its owner enters a license key in the plugin. After that:</p>
+<ul>
+	<li><strong>Connection:</strong> the shop's address and REST API address, its WordPress and WooCommerce versions and
+	currency, and a WooCommerce REST API key created for the service. The license key is checked and kept only as a
+	one-way hash.</li>
+	<li><strong>Catalog:</strong> products, their variations and product categories: names, descriptions, prices, stock,
+	SKUs, attributes, categories, dates and links to their images. Custom fields (meta data) are never sent.</li>
+	<li><strong>Orders placed through a bot:</strong> each order's number, status, currency, total, dates and items.
+	Orders placed on the shop's own website are never sent.</li>
+	<li><strong>Bots:</strong> the bot token the owner enters, and the admin PIN the service issues (kept only as a
+	one-way hash).</li>
+</ul>
+
+<h2>3. Data about people who use a shop's bot</h2>
+<ul>
+	<li><strong>Messenger profile:</strong> the user id and chat id the messenger gives, and the first name, last name and
+	username shown in the messenger, refreshed when the person starts the bot.</li>
+	<li><strong>Phone number:</strong> only if the person shares their own contact in the bot, which is needed to place an
+	order.</li>
+	<li><strong>Checkout details:</strong> the e-mail address and order note the person types at checkout. They are
+	passed to the shop to create the order and are not kept by us after the checkout (an unfinished checkout is
+	forgotten after 24 hours).</li>
+	<li><strong>Carts and orders:</strong> the products in the cart, and for each order placed through the bot its
+	number, status, total, items and dates. The order itself, with the name, phone number, e-mail address and note, is
+	created in the shop's WooCommerce. No postal address is collected by the bot.</li>
+	<li><strong>Language:</strong> the language the person chooses in the bot.</li>
+	<li><strong>Payments:</strong> the person pays on the shop's own website. We never see card or bank details.</li>
+</ul>
+
+<h2>4. Data about a shop's bot admins</h2>
+<p>People who log in to a shop's bot with its admin PIN become bot admins. We keep the same messenger profile as above,
+the changes they make to products, and the product photos they upload. Uploaded photos are re-encoded, which removes
+location and camera details, and are deleted from our server once the shop has received them, and in any case within
+7 days. The shop's owner sees each admin's messenger, name and username on the plugin's settings page.</p>
+
+<h2>5. Data about shop owners</h2>
+<p>When we issue a license we record the owner's name, business name, e-mail address or mobile number, and Iranian
+national code, together with the plan and its dates.</p>
+
+<h2>6. How we use it</h2>
+<p>Only to run the service: to show a shop's catalog in its bots, keep carts, create orders in the shop and show their
+status, let bot admins manage products, keep the bots connected, enforce plan limits, prevent abuse and keep the
+service secure. We do not sell or rent data, use it for advertising, or build profiles across shops.</p>
+
+<h2>7. Who receives it</h2>
+<ul>
+	<li><strong>The shop</strong> the person is buying from: the orders created in its WooCommerce.</li>
+	<li><strong>The messenger</strong> (Telegram, Bale or Rubika) that carries the bot's messages, under its own privacy
+	policy. Rubika's traffic passes through a relay server of ours in Iran that keeps no access log.</li>
+	<li><strong>Our hosting provider</strong>, whose servers store the data for us.</li>
+</ul>
+<p>We share data with no one else, unless the law requires it.</p>
+
+<h2>8. How long we keep it</h2>
+<table>
+	<tr><th>Data</th><th>Kept</th></tr>
+	<tr><td>Unfinished checkout (e-mail, note)</td><td>24 hours</td></tr>
+	<tr><td>Cart items</td><td>30 days after their last change</td></tr>
+	<tr><td>Bot admins' uploaded photos</td><td>until the shop receives them, at most 7 days</td></tr>
+	<tr><td>Product changes made in the bot</td><td>30 days after they are applied</td></tr>
+	<tr><td>Chosen language</td><td>180 days after the last use</td></tr>
+	<tr><td>Server logs (requests and errors, without message contents)</td><td>at most 14 days</td></tr>
+	<tr><td>Messenger profiles, phone numbers, order summaries, the shop's connection and catalog</td><td>while the shop uses
+	Nyxify; deleted within 30 days of a request by the shop or the person</td></tr>
+</table>
+<p>Unpaid orders placed through a bot are cancelled in the shop after 24 hours.</p>
+
+<h2>9. Security</h2>
+<p>All connections use HTTPS. Requests between a shop and the service are signed with a secret only the two share. The
+shop's REST API key, the shared secret, bot tokens and payment links are stored encrypted; license keys and admin PINs
+only as one-way hashes. Logs never contain tokens, keys or message contents.</p>
+
+<h2>10. Cookies</h2>
+<p>The service, its bots and these pages set no cookies and use no analytics or tracking.</p>
+
+<h2>11. Your choices</h2>
+<p>A person who used a shop's bot can ask the shop, or us at <a href="mailto:nyxify@nyxon.tech">nyxify@nyxon.tech</a>, for
+a copy of their data or for its deletion; deleted data can't be restored, and orders already created in the shop stay
+with the shop. A shop owner can disconnect the shop at any time by deactivating the plugin, and can ask us to delete
+the shop's data.</p>
+
+<h2>12. Changes</h2>
+<p>We will publish any change to this policy on this page with a new date.</p>
+</main>
+<footer>Nyxify · <a href="mailto:nyxify@nyxon.tech">nyxify@nyxon.tech</a> · <a href="../terms/">Terms of Service</a></footer>
+</body>
+</html>

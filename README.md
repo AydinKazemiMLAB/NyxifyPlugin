@@ -185,8 +185,11 @@ assets/js/            confirmations: forms with `data-nyxify-confirm` (settings 
 languages/            nyxify.pot and the Persian translation
 tests/Unit/           PHPUnit + Brain Monkey
 bin/                  the zip builder (`composer build`), the mockup (`composer mockup`), the logo's assets
-                      (`brand-assets.sh`)
-.wordpress-org/       the directory's icon and banner (for SVN's `assets/`, not the zip)
+                      (`brand-assets.sh`), the directory's screenshots from the mockup (`screenshots.sh`), the
+                      service's public pages (`site.sh`)
+.wordpress-org/       the directory's icon, banner and screenshots (for SVN's `assets/`, not the zip)
+site/                 the service's terms of service and privacy policy, English and Persian, served at
+                      https://nyxify.nyxon.tech/ (not in the zip)
 docs/                 handoff, phase plans and kickoffs, the core's OpenAPI spec, the admin page's mockup
 ```
 

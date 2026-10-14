@@ -1,5 +1,5 @@
 === Nyxify – Shop Bots for WooCommerce ===
-Contributors: TODO-wordpress-org-username
+Contributors: nyxify
 Tags: woocommerce, telegram, chatbot, bot, ecommerce
 Requires at least: 6.5
 Tested up to: 7.1
@@ -137,8 +137,8 @@ What is sent, and when:
   service for bot admins' edits it couldn't deliver, applies them through WooCommerce and reports each result (ok, or
   WooCommerce's error). Product photos in those edits are downloaded by WooCommerce from the links the service gives.
 
-The service's terms of service: [TODO before submission: terms of service link]
-The service's privacy policy: [TODO before submission: privacy policy link]
+The service's terms of service: https://nyxify.nyxon.tech/terms/
+The service's privacy policy: https://nyxify.nyxon.tech/privacy/
 
 == Changelog ==
 

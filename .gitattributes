@@ -23,4 +23,5 @@
 /phpcs.xml.dist      export-ignore
 /phpstan.neon.dist   export-ignore
 /phpunit.xml.dist    export-ignore
+/site                export-ignore
 /tests               export-ignore

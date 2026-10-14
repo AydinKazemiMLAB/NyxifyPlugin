@@ -1,0 +1,97 @@
+/* nyxify.nyxon.tech: the service's legal pages. Plain, readable, light and dark, LTR and RTL. */
+@font-face {
+	font-family: Vazirmatn;
+	src: url(fonts/Vazirmatn-Variable.woff2) format("woff2");
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+:root {
+	--text: #1d2327;
+	--muted: #50575e;
+	--bg: #ffffff;
+	--soft: #f6f7f7;
+	--line: #dcdcde;
+	--accent: #5b3cc4;
+	color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--text: #e7e7ea;
+		--muted: #a7aab0;
+		--bg: #15161a;
+		--soft: #1e2026;
+		--line: #33363d;
+		--accent: #a993ff;
+	}
+}
+
+* { box-sizing: border-box; }
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html[lang="fa"] body { font-family: Vazirmatn, Tahoma, Arial, sans-serif; }
+
+header, main, footer {
+	max-inline-size: 760px;
+	margin-inline: auto;
+	padding-inline: 20px;
+}
+
+header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding-block: 24px 8px;
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: inherit;
+	font-weight: 700;
+	font-size: 20px;
+	text-decoration: none;
+}
+
+.brand img { inline-size: 40px; block-size: 40px; }
+
+nav { display: flex; gap: 16px; font-size: 14px; }
+
+a { color: var(--accent); }
+
+h1 { font-size: 30px; line-height: 1.3; margin-block: 24px 4px; }
+h2 { font-size: 20px; margin-block: 32px 8px; }
+
+/* The terms and the privacy policy read as documents: their running text is justified. */
+.legal p, .legal li { text-align: justify; text-justify: inter-word; hyphens: auto; }
+
+.updated { color: var(--muted); font-size: 14px; margin-block-start: 0; }
+
+.summary {
+	background: var(--soft);
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 4px 20px;
+}
+
+table { border-collapse: collapse; inline-size: 100%; font-size: 15px; }
+th, td { border-block-end: 1px solid var(--line); padding: 8px; text-align: start; vertical-align: top; }
+
+code { font-family: Consolas, Monaco, monospace; font-size: 0.9em; }
+
+footer {
+	border-block-start: 1px solid var(--line);
+	margin-block-start: 48px;
+	padding-block: 16px 32px;
+	color: var(--muted);
+	font-size: 14px;
+}
