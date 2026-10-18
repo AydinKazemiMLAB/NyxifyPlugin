@@ -36,7 +36,7 @@ The bots run on the Nyxify service, not on your server. This plugin connects you
   **deleting** it removes its settings and data.
 
 You need a Nyxify license key and an active subscription; plans decide which messengers and how many products you can
-use. The plugin ships with a Persian translation and works with right-to-left admin screens.
+use. The plugin is translatable on translate.wordpress.org and works with right-to-left admin screens.
 
 In Persian the settings page uses the Vazirmatn font by the Vazirmatn Project Authors, bundled with the plugin
 (nothing is loaded from elsewhere) under the SIL Open Font License 1.1 (`assets/fonts/vazirmatn/OFL.txt`).

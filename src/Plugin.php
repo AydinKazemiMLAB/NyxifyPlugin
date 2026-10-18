@@ -75,7 +75,6 @@ final class Plugin {
 	 */
 	public function register(): void {
 		add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
-		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'plugins_loaded', array( $this, 'boot' ) );
 		register_activation_hook( $this->plugin_file, array( $this, 'activate' ) );
 		register_deactivation_hook( $this->plugin_file, array( $this, 'deactivate' ) );
@@ -97,14 +96,6 @@ final class Plugin {
 	 */
 	public function deactivate( bool $network_wide = false ): void {
 		Deactivator::run( $network_wide, plugin_basename( $this->plugin_file ) );
-	}
-
-	/**
-	 * Loads the translations shipped in `languages/`. Translations from translate.wordpress.org (in
-	 * `wp-content/languages/plugins/`) take precedence; WordPress loads them on its own.
-	 */
-	public function load_textdomain(): void {
-		load_plugin_textdomain( 'nyxify', false, dirname( plugin_basename( $this->plugin_file ) ) . '/languages' );
 	}
 
 	/**
@@ -172,10 +163,10 @@ final class Plugin {
 	}
 
 	/**
-	 * Admin notice shown while WooCommerce is missing, inactive or too old.
+	 * Admin notice shown while WooCommerce is missing, inactive or too old, on the Plugins screen only (guideline 11).
 	 */
 	public function render_woocommerce_notice(): void {
-		if ( ! current_user_can( 'activate_plugins' ) ) {
+		if ( ! current_user_can( 'activate_plugins' ) || ! self::on_plugins_screen() ) {
 			return;
 		}
 
@@ -186,5 +177,17 @@ final class Plugin {
 		);
 
 		printf( '<div class="notice notice-error"><p>%s</p></div>', esc_html( $message ) );
+	}
+
+	/**
+	 * Whether the current admin screen is the Plugins screen (of a site or of the network).
+	 */
+	public static function on_plugins_screen(): bool {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+		return null !== $screen && 'plugins' === $screen->base;
 	}
 }

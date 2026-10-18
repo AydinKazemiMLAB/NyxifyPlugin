@@ -34,10 +34,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 ( new \Nyxify\Plugin( NYXIFY_PLUGIN_FILE ) )->register();
 
 /**
- * Shown when the plugin was copied without its Composer autoloader (a development checkout without `composer install`).
+ * Shown on the Plugins screen when the plugin was copied without its Composer autoloader (a development checkout
+ * without `composer install`).
  */
 function nyxify_render_missing_autoload_notice(): void {
-	if ( ! current_user_can( 'activate_plugins' ) ) {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+	if ( ! current_user_can( 'activate_plugins' ) || null === $screen || 'plugins' !== $screen->base ) {
 		return;
 	}
 

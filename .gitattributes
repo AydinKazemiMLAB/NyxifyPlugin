@@ -25,3 +25,7 @@
 /phpunit.xml.dist    export-ignore
 /site                export-ignore
 /tests               export-ignore
+# Translations come from translate.wordpress.org; the Persian source stays here for importing there.
+/languages/*.po      export-ignore
+/languages/*.mo      export-ignore
+/languages/*.l10n.php export-ignore

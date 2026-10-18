@@ -39,7 +39,7 @@ composer check
 | `composer test` | PHPUnit 10 with Brain Monkey (unit tests, no WordPress needed) |
 | `composer check` | the three above; must be green before every commit |
 | `composer i18n:pot` | regenerates `languages/nyxify.pot` |
-| `composer i18n:compile` | merges the `.pot` into every `.po`, then builds the `.mo` and `.l10n.php` files |
+| `composer i18n:compile` | merges the `.pot` into every `.po`, then builds the `.mo` and `.l10n.php` files (kept here, not in the zip: WordPress.org's review asked for translations through translate.wordpress.org, which WordPress loads from `wp-content/languages/plugins/` on its own; the Persian `.po` is the source to import there) |
 | `composer build` | builds `dist/nyxify-<version>.zip`: the files `git archive` would ship (dev files are `export-ignore`d in `.gitattributes`) plus Composer's production autoloader; nothing has to be committed first |
 | `composer mockup` | regenerates `docs/mockups/admin-page.html`: the settings page rendered by its own classes with sample data, every state in English and Persian, one self-contained file |
 
@@ -168,7 +168,8 @@ only while the store is connected.
 nyxify.php            plugin header, constants, Composer autoload, boot
 uninstall.php         removes the plugin's REST key, options, transients, queue table, scheduled actions, the
                       `_nyxify_outbox_id` meta and its WooCommerce log entries (every site of a multisite)
-src/Plugin.php        hooks: WooCommerce check, HPOS compatibility, translations, deactivation, features
+src/Plugin.php        hooks: WooCommerce check (its notice on the Plugins screen only), HPOS compatibility, deactivation,
+                      features
 src/Shared/           Security (Encryptor, HmacSigner), Options (SecretStore), Http (CoreClient, errors),
                       Logging (Logger), Admin (AdminAction: nonce and capability checks; Notices: one-time results)
 src/Features/         Settings (the admin page and its sections: status, bots, admin PIN, bot admins; deactivation
@@ -182,7 +183,7 @@ assets/css/           admin styles (logical CSS properties, RTL-safe; Vazirmatn 
 assets/fonts/         Vazirmatn v33.003 (variable woff2) and its SIL OFL 1.1, unchanged
 assets/images/        the logo on the settings page
 assets/js/            confirmations: forms with `data-nyxify-confirm` (settings page), deactivation (plugins list)
-languages/            nyxify.pot and the Persian translation
+languages/            nyxify.pot (in the zip) and the Persian translation (not in the zip, see i18n:compile)
 tests/Unit/           PHPUnit + Brain Monkey
 bin/                  the zip builder (`composer build`), the mockup (`composer mockup`), the logo's assets
                       (`brand-assets.sh`), the directory's screenshots from the mockup (`screenshots.sh`), the
