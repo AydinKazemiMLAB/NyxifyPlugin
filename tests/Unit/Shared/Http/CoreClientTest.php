@@ -179,6 +179,24 @@ final class CoreClientTest extends TestCase {
 		self::assertTrue( ( new HmacSigner( self::secret() ) )->verify( $headers, '', self::STORE_ID ) );
 	}
 
+	public function test_signed_patch_sends_and_signs_its_body(): void {
+		$this->activated_client()->patch(
+			'/appearance',
+			array(
+				'version'  => 3,
+				'settings' => array( 'contact' => null ),
+			)
+		);
+
+		$sent    = $this->sent();
+		$headers = $this->sent_headers();
+		self::assertSame( 'https://core.example.com/api/v1/appearance', $sent['url'] );
+		self::assertSame( 'PATCH', $sent['args']['method'] );
+		self::assertSame( '{"version":3,"settings":{"contact":null}}', $sent['args']['body'] );
+		self::assertSame( 'application/json', $headers['Content-Type'] );
+		self::assertTrue( ( new HmacSigner( self::secret() ) )->verify( $headers, '{"version":3,"settings":{"contact":null}}', self::STORE_ID ) );
+	}
+
 	public function test_post_with_an_empty_payload_sends_an_empty_object(): void {
 		$this->activated_client()->post( '/bots/admin-pin', array() );
 

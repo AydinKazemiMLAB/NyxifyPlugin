@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Nyxify\Features\Settings;
 
+use Nyxify\Features\Appearance\AppearancePage;
 use Nyxify\Features\Bots\AdminPinHandler;
 use Nyxify\Features\Bots\AdminRemovalHandler;
 use Nyxify\Features\Bots\AdminService;
@@ -36,7 +37,8 @@ use Nyxify\Shared\Options\SecretStore;
  * - while not connected (nothing is sent before a license key is entered): the three steps to start and the license
  *   form;
  * - while connected: the store's status on the core (fetched once per page load and shared by the sections) in four
- *   cards, the bots and the bot admins (only while that status can be read), and aside the admin PIN and the connection
+ *   cards, the bots, the way to the bot appearance page and the bot admins (only while that status can be read), and
+ *   aside the admin PIN and the connection
  *   (store id, server, license, "Check connection", "Rotate secret" and the license form folded into "Activate
  *   again"), then the deactivation warning.
  */
@@ -229,6 +231,7 @@ final class SettingsPage {
 					<div class="nyxify-layout__main">
 						<?php if ( $status instanceof StoreStatus ) : ?>
 							<?php $this->bots_section->render( $status ); ?>
+							<?php self::render_appearance_link(); ?>
 							<?php $this->admins_section->render( $status ); ?>
 						<?php else : ?>
 							<section class="nyxify-card">
@@ -250,6 +253,19 @@ final class SettingsPage {
 				</div>
 			<?php endif; ?>
 		</div>
+		<?php
+	}
+
+	/**
+	 * The way to the bot appearance page.
+	 */
+	private static function render_appearance_link(): void {
+		?>
+		<section class="nyxify-card nyxify-appearance-link" aria-labelledby="nyxify-appearance-heading">
+			<?php Markup::card_heading( 'bots', __( 'Bot appearance', 'nyxify' ), 'nyxify-appearance-heading' ); ?>
+			<p class="description"><?php esc_html_e( 'Your contact details on the bots’ “Support” screen, and how the bots look.', 'nyxify' ); ?></p>
+			<p><a href="<?php echo esc_url( AppearancePage::url() ); ?>" class="button"><?php esc_html_e( 'Open bot appearance', 'nyxify' ); ?></a></p>
+		</section>
 		<?php
 	}
 

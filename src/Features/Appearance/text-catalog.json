@@ -1,0 +1,1113 @@
+{
+  "generated_by": "NyxifyBot scripts/export_text_catalog.py",
+  "markup_limit": 2000,
+  "sections": [
+    {
+      "key": "catalog",
+      "title": {
+        "fa": "محصولات",
+        "en": "Products"
+      }
+    },
+    {
+      "key": "search",
+      "title": {
+        "fa": "جست‌وجو",
+        "en": "Search"
+      }
+    },
+    {
+      "key": "cart",
+      "title": {
+        "fa": "سبد خرید",
+        "en": "Cart"
+      }
+    },
+    {
+      "key": "checkout",
+      "title": {
+        "fa": "ثبت سفارش",
+        "en": "Placing an order"
+      }
+    },
+    {
+      "key": "orders",
+      "title": {
+        "fa": "سفارش‌های من",
+        "en": "My orders"
+      }
+    },
+    {
+      "key": "account",
+      "title": {
+        "fa": "حساب من",
+        "en": "My account"
+      }
+    },
+    {
+      "key": "support",
+      "title": {
+        "fa": "پشتیبانی",
+        "en": "Support"
+      }
+    },
+    {
+      "key": "errors",
+      "title": {
+        "fa": "خطاها و هشدارها",
+        "en": "Errors and warnings"
+      }
+    }
+  ],
+  "texts": [
+    {
+      "key": "errors.generic",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
+        "en": "Something went wrong. Please try again."
+      }
+    },
+    {
+      "key": "errors.unavailable",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سرویس موقتاً در دسترس نیست. لطفاً چند دقیقهٔ دیگر دوباره تلاش کنید.",
+        "en": "The service is temporarily unavailable. Please try again in a few minutes."
+      }
+    },
+    {
+      "key": "errors.shop_closed",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "فروشگاه در حال حاضر بسته است. لطفاً بعداً دوباره سر بزنید.",
+        "en": "The shop is closed at the moment. Please try again later."
+      }
+    },
+    {
+      "key": "errors.too_fast",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "پیام‌ها را خیلی سریع می‌فرستید. لطفاً کمی صبر کنید.",
+        "en": "You're sending messages too fast. Please wait a moment."
+      }
+    },
+    {
+      "key": "errors.expired_button",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این دکمه دیگر فعال نیست. برای دیدن منو /start را بفرستید.",
+        "en": "This button is no longer active. Send /start to see the menu."
+      }
+    },
+    {
+      "key": "errors.website_unavailable",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سایت فروشگاه در حال حاضر نمی‌تواند سفارش بگیرد. لطفاً بعداً دوباره تلاش کنید.",
+        "en": "The shop's website can't take orders right now. Please try again later."
+      }
+    },
+    {
+      "key": "errors.cart_empty",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سبد خرید شما خالی است.",
+        "en": "Your cart is empty."
+      }
+    },
+    {
+      "key": "errors.cart_unavailable_items",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "بعضی از کالاهای سبد خرید شما دیگر موجود نیستند. لطفاً سبد خود را بررسی کنید.",
+        "en": "Some items in your cart are no longer available. Please review your cart."
+      }
+    },
+    {
+      "key": "errors.cart_full",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سبد خرید شما پر است. برای افزودن کالای جدید، ابتدا یک کالا را حذف کنید.",
+        "en": "Your cart is full. Remove an item before adding a new one."
+      }
+    },
+    {
+      "key": "errors.cart_item_gone",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این کالا دیگر در سبد خرید شما نیست.",
+        "en": "This item is no longer in your cart."
+      }
+    },
+    {
+      "key": "errors.quantity_too_large",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این تعداد بیش از حد مجاز است.",
+        "en": "That quantity is too large."
+      }
+    },
+    {
+      "key": "errors.checkout_in_progress",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سفارش قبلی شما هنوز در حال ثبت است. لطفاً کمی صبر کنید.",
+        "en": "Your previous order is still being created. Please wait a moment."
+      }
+    },
+    {
+      "key": "errors.start_first",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "لطفاً ابتدا /start را بفرستید.",
+        "en": "Please send /start first."
+      }
+    },
+    {
+      "key": "errors.not_enough_stock",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "موجودی برای این تعداد کافی نیست.",
+        "en": "There isn't enough stock for that quantity."
+      }
+    },
+    {
+      "key": "errors.order_not_found",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این سفارش پیدا نشد.",
+        "en": "This order was not found."
+      }
+    },
+    {
+      "key": "errors.out_of_stock",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این محصول ناموجود است.",
+        "en": "This product is out of stock."
+      }
+    },
+    {
+      "key": "errors.product_not_available",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این محصول در حال حاضر قابل خرید نیست.",
+        "en": "This product can't be bought right now."
+      }
+    },
+    {
+      "key": "errors.product_not_found",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این محصول پیدا نشد.",
+        "en": "This product was not found."
+      }
+    },
+    {
+      "key": "errors.option_not_found",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "این گزینهٔ محصول پیدا نشد.",
+        "en": "This option of the product was not found."
+      }
+    },
+    {
+      "key": "errors.option_required",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "لطفاً ابتدا یکی از گزینه‌های محصول را انتخاب کنید.",
+        "en": "Please choose an option of the product first."
+      }
+    },
+    {
+      "key": "errors.invalid_information",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "بخشی از اطلاعات معتبر نیست.",
+        "en": "Some of the information is not valid."
+      }
+    },
+    {
+      "key": "errors.order_refused",
+      "section": "errors",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سایت فروشگاه سفارش را نپذیرفت. لطفاً سبد خرید را بررسی کنید یا با فروشگاه تماس بگیرید.",
+        "en": "The shop's website refused the order. Please review your cart or contact the shop."
+      }
+    },
+    {
+      "key": "account.title",
+      "section": "account",
+      "markup": true,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "👤 <b>حساب من</b>",
+        "en": "👤 <b>My account</b>"
+      }
+    },
+    {
+      "key": "account.name",
+      "section": "account",
+      "markup": true,
+      "variables": [
+        "name"
+      ],
+      "limit": 300,
+      "default": {
+        "fa": "نام: {name}",
+        "en": "Name: {name}"
+      }
+    },
+    {
+      "key": "account.phone",
+      "section": "account",
+      "markup": true,
+      "variables": [
+        "phone"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "تلفن: {phone}",
+        "en": "Phone: {phone}"
+      }
+    },
+    {
+      "key": "account.no_phone",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "تلفن: هنوز ثبت نشده",
+        "en": "Phone: not shared yet"
+      }
+    },
+    {
+      "key": "account.ask_phone_for_order",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "📱 برای ثبت سفارش، شمارهٔ تلفن خود را با دکمهٔ پایین بفرستید. فروشگاه برای هماهنگی سفارش با شما از آن استفاده می‌کند.",
+        "en": "📱 To place your order, share your phone number with the button below. The shop uses it to reach you about your order."
+      }
+    },
+    {
+      "key": "account.ask_phone",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "📱 شمارهٔ تلفن خود را با دکمهٔ پایین بفرستید. فروشگاه برای هماهنگی سفارش‌ها با شما از آن استفاده می‌کند.",
+        "en": "📱 Share your phone number with the button below. The shop uses it to reach you about your orders."
+      }
+    },
+    {
+      "key": "account.use_the_button",
+      "section": "account",
+      "markup": true,
+      "variables": [
+        "button"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "لطفاً از دکمهٔ «{button}» در پایین استفاده کنید؛ شمارهٔ تایپ‌شده پذیرفته نمی‌شود.",
+        "en": "Please use the “{button}” button below; typed numbers can't be accepted."
+      }
+    },
+    {
+      "key": "account.not_own_contact",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "لطفاً شمارهٔ خودتان را با دکمهٔ پایین بفرستید.",
+        "en": "Please share your own number with the button below."
+      }
+    },
+    {
+      "key": "account.not_iranian",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "فقط شماره‌های همراه ایران (که با ۰۹ شروع می‌شوند) پذیرفته می‌شوند.",
+        "en": "Only Iranian mobile numbers (starting with 09) can be used."
+      }
+    },
+    {
+      "key": "account.phone_saved",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "✅ شمارهٔ تلفن شما ثبت شد.",
+        "en": "✅ Your phone number was saved."
+      }
+    },
+    {
+      "key": "account.phone_not_shared",
+      "section": "account",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "شمارهٔ تلفن ارسال نشد.",
+        "en": "Your phone number was not shared."
+      }
+    },
+    {
+      "key": "cart.title",
+      "section": "cart",
+      "markup": true,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "🛒 <b>سبد خرید شما</b>",
+        "en": "🛒 <b>Your cart</b>"
+      }
+    },
+    {
+      "key": "cart.items",
+      "section": "cart",
+      "markup": false,
+      "variables": [
+        "count"
+      ],
+      "limit": 100,
+      "default": {
+        "fa": "تعداد کالاها: {count}",
+        "en": "Items: {count}"
+      }
+    },
+    {
+      "key": "cart.subtotal",
+      "section": "cart",
+      "markup": true,
+      "variables": [
+        "amount"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "💰 جمع: <b>{amount}</b>\n<i>تقریبی است؛ مبلغ نهایی را سایت فروشگاه تعیین می‌کند.</i>",
+        "en": "💰 Subtotal: <b>{amount}</b>\n<i>An estimate: the shop's website sets the final amount.</i>"
+      }
+    },
+    {
+      "key": "cart.fix_items",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "⚠️ برای ثبت سفارش، کالاهای علامت‌دار را حذف یا اصلاح کنید.",
+        "en": "⚠️ Remove or change the marked items to place your order."
+      }
+    },
+    {
+      "key": "cart.empty",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "🛒 سبد خرید شما خالی است.",
+        "en": "🛒 Your cart is empty."
+      }
+    },
+    {
+      "key": "cart.confirm_clear",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "🗑 همهٔ کالاها از سبد خرید حذف شوند؟",
+        "en": "🗑 Remove everything from your cart?"
+      }
+    },
+    {
+      "key": "cart.unavailable",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "دیگر فروخته نمی‌شود.",
+        "en": "No longer for sale."
+      }
+    },
+    {
+      "key": "cart.choose_option_again",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "دوباره یکی از گزینه‌های این محصول را انتخاب کنید.",
+        "en": "Choose an option of this product again."
+      }
+    },
+    {
+      "key": "cart.out_of_stock",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "ناموجود است.",
+        "en": "Out of stock."
+      }
+    },
+    {
+      "key": "cart.only_left",
+      "section": "cart",
+      "markup": false,
+      "variables": [
+        "count"
+      ],
+      "limit": 100,
+      "default": {
+        "fa": "فقط {count} عدد موجود است.",
+        "en": "Only {count} left."
+      }
+    },
+    {
+      "key": "cart.not_enough_stock",
+      "section": "cart",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "موجودی کافی نیست.",
+        "en": "Not enough in stock."
+      }
+    },
+    {
+      "key": "catalog.categories",
+      "section": "catalog",
+      "markup": true,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "🛍 <b>محصولات</b>\nیک دسته را انتخاب کنید:",
+        "en": "🛍 <b>Products</b>\nChoose a category:"
+      }
+    },
+    {
+      "key": "catalog.choose_subcategory",
+      "section": "catalog",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "یک زیردسته را انتخاب کنید:",
+        "en": "Choose a subcategory:"
+      }
+    },
+    {
+      "key": "catalog.all_products",
+      "section": "catalog",
+      "markup": true,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "🛍 <b>همهٔ محصولات</b>",
+        "en": "🛍 <b>All products</b>"
+      }
+    },
+    {
+      "key": "catalog.choose_product",
+      "section": "catalog",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "یک محصول را انتخاب کنید:",
+        "en": "Choose a product:"
+      }
+    },
+    {
+      "key": "catalog.no_products",
+      "section": "catalog",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "هنوز محصولی اینجا نیست.",
+        "en": "There are no products here yet."
+      }
+    },
+    {
+      "key": "catalog.choose_option",
+      "section": "catalog",
+      "markup": true,
+      "variables": [
+        "name"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "<b>{name}</b>\nیک گزینه را انتخاب کنید:",
+        "en": "<b>{name}</b>\nChoose an option:"
+      }
+    },
+    {
+      "key": "catalog.no_options",
+      "section": "catalog",
+      "markup": true,
+      "variables": [
+        "name"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "<b>{name}</b>\nاین محصول فعلاً گزینه‌ای برای انتخاب ندارد.",
+        "en": "<b>{name}</b>\nThis product has no options to choose from right now."
+      }
+    },
+    {
+      "key": "catalog.in_stock_count",
+      "section": "catalog",
+      "markup": false,
+      "variables": [
+        "count"
+      ],
+      "limit": 100,
+      "default": {
+        "fa": "✅ موجود ({count} عدد)",
+        "en": "✅ In stock ({count} left)"
+      }
+    },
+    {
+      "key": "catalog.in_stock",
+      "section": "catalog",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "✅ موجود",
+        "en": "✅ In stock"
+      }
+    },
+    {
+      "key": "catalog.out_of_stock",
+      "section": "catalog",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "❌ ناموجود",
+        "en": "❌ Out of stock"
+      }
+    },
+    {
+      "key": "catalog.on_backorder",
+      "section": "catalog",
+      "markup": false,
+      "variables": [],
+      "limit": 100,
+      "default": {
+        "fa": "⏳ قابل سفارش",
+        "en": "⏳ Available to order"
+      }
+    },
+    {
+      "key": "search.prompt",
+      "section": "search",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "🔍 نام محصولی را که دنبالش هستید بفرستید.",
+        "en": "🔍 Send the name of the product you're looking for."
+      }
+    },
+    {
+      "key": "search.expired",
+      "section": "search",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "مهلت جست‌وجو تمام شده است. نام محصول را دوباره بفرستید.",
+        "en": "Your search has expired. Send the name of the product again."
+      }
+    },
+    {
+      "key": "search.too_short",
+      "section": "search",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "لطفاً دست‌کم دو حرف بفرستید.",
+        "en": "Please send at least two characters."
+      }
+    },
+    {
+      "key": "search.nothing_found",
+      "section": "search",
+      "markup": true,
+      "variables": [
+        "query"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "🔍 برای <b>{query}</b> چیزی پیدا نشد.\nکلمهٔ دیگری بفرستید یا بازگردید.",
+        "en": "🔍 Nothing was found for <b>{query}</b>.\nSend another word, or go back."
+      }
+    },
+    {
+      "key": "search.results",
+      "section": "search",
+      "markup": true,
+      "variables": [
+        "query"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "🔍 نتیجه‌های جست‌وجوی <b>{query}</b>:",
+        "en": "🔍 Results for <b>{query}</b>:"
+      }
+    },
+    {
+      "key": "catalog.added",
+      "section": "catalog",
+      "markup": false,
+      "variables": [
+        "count"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "✅ به سبد خرید اضافه شد ({count} عدد در سبد).",
+        "en": "✅ Added to your cart ({count} in the cart)."
+      }
+    },
+    {
+      "key": "checkout.title",
+      "section": "checkout",
+      "markup": true,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "🧾 <b>سفارش شما</b>",
+        "en": "🧾 <b>Your order</b>"
+      }
+    },
+    {
+      "key": "checkout.more",
+      "section": "checkout",
+      "markup": false,
+      "variables": [
+        "count"
+      ],
+      "limit": 100,
+      "default": {
+        "fa": "… و {count} مورد دیگر",
+        "en": "…and {count} more"
+      }
+    },
+    {
+      "key": "checkout.phone",
+      "section": "checkout",
+      "markup": true,
+      "variables": [
+        "phone"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "📱 تلفن: {phone}",
+        "en": "📱 Phone: {phone}"
+      }
+    },
+    {
+      "key": "checkout.note",
+      "section": "checkout",
+      "markup": true,
+      "variables": [
+        "note"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "📝 یادداشت: {note}",
+        "en": "📝 Note: {note}"
+      }
+    },
+    {
+      "key": "checkout.email",
+      "section": "checkout",
+      "markup": true,
+      "variables": [
+        "email"
+      ],
+      "limit": 400,
+      "default": {
+        "fa": "✉️ ایمیل: {email}",
+        "en": "✉️ Email: {email}"
+      }
+    },
+    {
+      "key": "checkout.place_hint",
+      "section": "checkout",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "سفارش را ثبت کنید و سپس هزینهٔ آن را در سایت فروشگاه بپردازید.",
+        "en": "Place the order, then pay for it on the shop's website."
+      }
+    },
+    {
+      "key": "checkout.ask_note",
+      "section": "checkout",
+      "markup": false,
+      "variables": [
+        "limit"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "📝 یادداشت خود برای فروشگاه را بفرستید (حداکثر {limit} حرف).",
+        "en": "📝 Send your note for the shop (at most {limit} characters)."
+      }
+    },
+    {
+      "key": "checkout.ask_email",
+      "section": "checkout",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "✉️ نشانی ایمیل خود را بفرستید. فروشگاه ممکن است جزئیات سفارش را به آن بفرستد.",
+        "en": "✉️ Send your email address. The shop may send the order's details there."
+      }
+    },
+    {
+      "key": "checkout.note_too_long",
+      "section": "checkout",
+      "markup": false,
+      "variables": [
+        "limit"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "یادداشت خیلی طولانی است؛ حداکثر {limit} حرف.",
+        "en": "The note is too long: at most {limit} characters."
+      }
+    },
+    {
+      "key": "checkout.note_as_text",
+      "section": "checkout",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "لطفاً یادداشت را به صورت متن بفرستید.",
+        "en": "Please send the note as text."
+      }
+    },
+    {
+      "key": "checkout.not_an_email",
+      "section": "checkout",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "این نشانی ایمیل درست به نظر نمی‌رسد. دوباره بفرستید یا بازگردید.",
+        "en": "That doesn't look like an email address. Send it again, or go back."
+      }
+    },
+    {
+      "key": "checkout.placed",
+      "section": "checkout",
+      "markup": true,
+      "variables": [
+        "number",
+        "total"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "✅ <b>سفارش شما ثبت شد.</b>\nشمارهٔ سفارش: {number}\nمبلغ: {total}\n\nهزینهٔ آن را با دکمهٔ پایین در سایت فروشگاه بپردازید.",
+        "en": "✅ <b>Your order was placed.</b>\nOrder number: {number}\nTotal: {total}\n\nPay for it on the shop's website with the button below."
+      }
+    },
+    {
+      "key": "checkout.cart_emptied",
+      "section": "checkout",
+      "markup": true,
+      "variables": [
+        "orders"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "سبد خرید شما خالی است. اگر همین حالا سفارشی ثبت کرده‌اید، آن را در «{orders}» می‌بینید.",
+        "en": "Your cart is empty. If you just placed an order, you'll find it in “{orders}”."
+      }
+    },
+    {
+      "key": "checkout.outcome_unknown",
+      "section": "checkout",
+      "markup": true,
+      "variables": [
+        "orders"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "ثبت سفارش تأیید نشد؛ ممکن است سفارش ثبت شده باشد. لطفاً «{orders}» را ببینید.",
+        "en": "We couldn't confirm your order: it may have been created. Please look in “{orders}”."
+      }
+    },
+    {
+      "key": "checkout.creating",
+      "section": "checkout",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "⏳ در حال ثبت سفارش…",
+        "en": "⏳ Creating your order…"
+      }
+    },
+    {
+      "key": "checkout.cart_changed",
+      "section": "checkout",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "سبد خرید شما تغییر کرده است. لطفاً سفارش را دوباره بررسی کنید.",
+        "en": "Your cart has changed. Please check your order again."
+      }
+    },
+    {
+      "key": "orders.none",
+      "section": "orders",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "📦 هنوز سفارشی ثبت نکرده‌اید.",
+        "en": "📦 You haven't placed any orders yet."
+      }
+    },
+    {
+      "key": "orders.title",
+      "section": "orders",
+      "markup": true,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "📦 <b>سفارش‌های من</b>",
+        "en": "📦 <b>My orders</b>"
+      }
+    },
+    {
+      "key": "orders.order_title",
+      "section": "orders",
+      "markup": true,
+      "variables": [
+        "number"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "🧾 <b>سفارش #{number}</b>",
+        "en": "🧾 <b>Order #{number}</b>"
+      }
+    },
+    {
+      "key": "orders.status",
+      "section": "orders",
+      "markup": true,
+      "variables": [
+        "status"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "📌 وضعیت: {status}",
+        "en": "📌 Status: {status}"
+      }
+    },
+    {
+      "key": "orders.total",
+      "section": "orders",
+      "markup": true,
+      "variables": [
+        "total"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "💰 مبلغ کل: <b>{total}</b>",
+        "en": "💰 Total: <b>{total}</b>"
+      }
+    },
+    {
+      "key": "orders.paid",
+      "section": "orders",
+      "markup": true,
+      "variables": [
+        "date"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "✅ پرداخت شده: {date}",
+        "en": "✅ Paid: {date}"
+      }
+    },
+    {
+      "key": "orders.stale",
+      "section": "orders",
+      "markup": false,
+      "variables": [],
+      "limit": 500,
+      "default": {
+        "fa": "⚠️ سایت فروشگاه در دسترس نبود؛ این آخرین وضعیت ثبت‌شدهٔ سفارش است.",
+        "en": "⚠️ The shop's website couldn't be reached; this is the order's last known state."
+      }
+    },
+    {
+      "key": "support.title",
+      "section": "support",
+      "markup": true,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "💬 <b>پشتیبانی</b>",
+        "en": "💬 <b>Support</b>"
+      }
+    },
+    {
+      "key": "support.phone",
+      "section": "support",
+      "markup": true,
+      "variables": [
+        "phone"
+      ],
+      "limit": 200,
+      "default": {
+        "fa": "📱 تلفن تماس: {phone}",
+        "en": "📱 Call us: {phone}"
+      }
+    },
+    {
+      "key": "support.email",
+      "section": "support",
+      "markup": true,
+      "variables": [
+        "email"
+      ],
+      "limit": 400,
+      "default": {
+        "fa": "✉️ ایمیل: {email}",
+        "en": "✉️ Email us: {email}"
+      }
+    },
+    {
+      "key": "support.address",
+      "section": "support",
+      "markup": true,
+      "variables": [
+        "address"
+      ],
+      "limit": 500,
+      "default": {
+        "fa": "📍 نشانی: {address}",
+        "en": "📍 Address: {address}"
+      }
+    },
+    {
+      "key": "support.hours",
+      "section": "support",
+      "markup": true,
+      "variables": [
+        "hours"
+      ],
+      "limit": 400,
+      "default": {
+        "fa": "⏰ ساعات کاری: {hours}",
+        "en": "⏰ Working hours: {hours}"
+      }
+    },
+    {
+      "key": "support.messengers",
+      "section": "support",
+      "markup": false,
+      "variables": [],
+      "limit": 200,
+      "default": {
+        "fa": "یا با دکمه‌های زیر به ما پیام بدهید.",
+        "en": "Or write to us with the buttons below."
+      }
+    }
+  ]
+}

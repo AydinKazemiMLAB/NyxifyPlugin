@@ -98,6 +98,11 @@ final class CoreError {
 	 */
 	public const PIN_NOT_SAVED = 'pin_not_saved';
 
+	/**
+	 * Some fields of a bot appearance form failed the plugin's checks; nothing was sent.
+	 */
+	public const APPEARANCE_FORM_INVALID = 'appearance_form_invalid';
+
 	private const CODE_PATTERN = '/^[a-z][a-z0-9_]{0,63}$/D';
 
 	/**

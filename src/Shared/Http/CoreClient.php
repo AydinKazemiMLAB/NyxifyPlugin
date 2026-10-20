@@ -133,6 +133,17 @@ final class CoreClient {
 	}
 
 	/**
+	 * A signed PATCH.
+	 *
+	 * @param string               $path    Path after `/api/v1`.
+	 * @param array<string, mixed> $payload JSON object fields.
+	 * @param int                  $timeout Seconds.
+	 */
+	public function patch( string $path, array $payload, int $timeout = self::TIMEOUT_SECONDS ): CoreResponse {
+		return $this->send( 'PATCH', $path, array(), $payload, true, $timeout );
+	}
+
+	/**
 	 * A signed DELETE (empty body).
 	 *
 	 * @param string $path    Path after `/api/v1`.

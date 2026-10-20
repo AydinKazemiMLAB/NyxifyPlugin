@@ -801,6 +801,189 @@ input.code { font-family: Consolas, Monaco, monospace; }
 .nyxify-footer-note strong {
 	color: #1d2327;
 }
+
+/* Bot appearance */
+
+.nyxify-appearance__note {
+	margin-block: 12px;
+}
+
+.nyxify-appearance .nav-tab-wrapper {
+	margin-block-end: 16px;
+}
+
+.nyxify-appearance-form h3 {
+	margin-block: 1.5em 0.5em;
+}
+
+.nyxify-appearance-form .form-table th {
+	inline-size: 160px;
+}
+
+.nyxify-prefixed {
+	display: inline-flex;
+	align-items: stretch;
+	max-inline-size: 100%;
+}
+
+.nyxify-prefix {
+	display: inline-flex;
+	align-items: center;
+	min-inline-size: 7.5em;
+	padding-inline: 8px;
+	background: var(--nyxify-soft);
+	border: 1px solid #8c8f94;
+	border-inline-end: 0;
+	border-radius: 4px 0 0 4px;
+	color: var(--nyxify-muted);
+}
+
+.nyxify-prefixed input.regular-text {
+	margin: 0;
+	border-radius: 0 4px 4px 0;
+}
+
+.nyxify-languages {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
+	gap: 12px;
+	max-inline-size: 60em;
+}
+
+.nyxify-menu-button {
+	margin-block: 8px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.nyxify-menu-button > summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	padding: 10px 12px;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.nyxify-menu-button[open] > summary {
+	border-block-end: 1px solid #dcdcde;
+}
+
+.nyxify-menu-button > .description,
+.nyxify-menu-button > .form-table {
+	margin-inline: 12px;
+}
+
+.nyxify-menu-button code {
+	font-weight: 400;
+}
+
+.nyxify-badge {
+	padding: 0 8px;
+	border-radius: 10px;
+	background: var(--nyxify-soft);
+	color: var(--nyxify-muted);
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.nyxify-icon-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: flex-start;
+}
+
+.nyxify-icon-fields > div {
+	max-inline-size: 24em;
+}
+
+.nyxify-emoji-input {
+	inline-size: 8em;
+	font-size: 1.25em;
+}
+
+.nyxify-categories-wrap {
+	overflow-x: auto;
+	max-inline-size: 60em;
+}
+
+.nyxify-categories th[scope="row"] {
+	padding-inline-start: calc(10px + var(--nyxify-depth, 0) * 1.5em);
+	font-weight: 600;
+	vertical-align: middle;
+}
+
+.nyxify-categories .nyxify-emoji-input {
+	inline-size: 5em;
+}
+
+.nyxify-categories .nyxify-id-input {
+	inline-size: 14em;
+	max-inline-size: 100%;
+}
+
+.nyxify-text {
+	margin-inline: 12px;
+	padding-block: 12px;
+	border-block-end: 1px solid #f0f0f1;
+}
+
+.nyxify-text:last-child {
+	border-block-end: 0;
+}
+
+.nyxify-text__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: baseline;
+	margin-block: 0 4px;
+}
+
+.nyxify-text__head code {
+	font-size: 12px;
+}
+
+.nyxify-default {
+	margin-block-start: 4px;
+	overflow-wrap: anywhere;
+}
+
+.nyxify-default__label {
+	color: var(--nyxify-muted);
+}
+
+.nyxify-default blockquote {
+	margin: 4px 0;
+	padding-inline-start: 8px;
+	border-inline-start: 3px solid #dcdcde;
+}
+
+.nyxify-control-label {
+	display: block;
+	margin-block-end: 4px;
+	color: var(--nyxify-muted);
+}
+
+.nyxify-field-error {
+	margin-block: 6px 0;
+	color: var(--nyxify-error);
+}
+
+.nyxify-appearance-form [aria-invalid="true"] {
+	border-color: var(--nyxify-error);
+}
+
+.nyxify-saved-value {
+	margin-block: 6px 0;
+	padding: 4px 8px;
+	background: var(--nyxify-warning-soft);
+	border-radius: 4px;
+	color: #6b4700;
+}
 </style>
 </head>
 <body class="wp-admin wp-core-ui js">
@@ -1028,6 +1211,10 @@ input.code { font-family: Consolas, Monaco, monospace; }
 							</div>
 									</div>
 		</div>		</section>
+											<section class="nyxify-card nyxify-appearance-link" aria-labelledby="nyxify-appearance-heading">
+			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--bots" aria-hidden="true"></span><h2 id="nyxify-appearance-heading">Bot appearance</h2></div>			<p class="description">Your contact details on the bots’ “Support” screen, and how the bots look.</p>
+			<p><a href="https://shop.example.com/wp-admin/admin.php?page=nyxify-appearance" class="button">Open bot appearance</a></p>
+		</section>
 											<section class="nyxify-card nyxify-admins-card" aria-labelledby="nyxify-admins-heading">
 			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--admins" aria-hidden="true"></span><h2 id="nyxify-admins-heading">Bot admins</h2></div>			<p class="description">People who sent the admin PIN to one of your bots. Removing one takes away their admin access, but the current PIN still works for them: issue a new PIN too if they shouldn’t come back.</p>		<table class="nyxify-table nyxify-admins">
 			<thead>
@@ -1259,6 +1446,10 @@ input.code { font-family: Consolas, Monaco, monospace; }
 							</div>
 									</div>
 		</div>		</section>
+											<section class="nyxify-card nyxify-appearance-link" aria-labelledby="nyxify-appearance-heading">
+			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--bots" aria-hidden="true"></span><h2 id="nyxify-appearance-heading">Bot appearance</h2></div>			<p class="description">Your contact details on the bots’ “Support” screen, and how the bots look.</p>
+			<p><a href="https://shop.example.com/wp-admin/admin.php?page=nyxify-appearance" class="button">Open bot appearance</a></p>
+		</section>
 											<section class="nyxify-card nyxify-admins-card" aria-labelledby="nyxify-admins-heading">
 			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--admins" aria-hidden="true"></span><h2 id="nyxify-admins-heading">Bot admins</h2></div>			<p class="description">People who sent the admin PIN to one of your bots. Removing one takes away their admin access, but the current PIN still works for them: issue a new PIN too if they shouldn’t come back.</p><p class="nyxify-empty">No one is a bot admin yet.</p>		</section>
 													</div>
@@ -1611,6 +1802,10 @@ input.code { font-family: Consolas, Monaco, monospace; }
 							</div>
 									</div>
 		</div>		</section>
+											<section class="nyxify-card nyxify-appearance-link" aria-labelledby="nyxify-appearance-heading">
+			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--bots" aria-hidden="true"></span><h2 id="nyxify-appearance-heading">ظاهر ربات</h2></div>			<p class="description">اطلاعات تماس شما در صفحهٔ «پشتیبانی» ربات‌ها، و ظاهر ربات‌ها.</p>
+			<p><a href="https://shop.example.com/wp-admin/admin.php?page=nyxify-appearance" class="button">باز کردن ظاهر ربات</a></p>
+		</section>
 											<section class="nyxify-card nyxify-admins-card" aria-labelledby="nyxify-admins-heading">
 			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--admins" aria-hidden="true"></span><h2 id="nyxify-admins-heading">ادمین‌های ربات</h2></div>			<p class="description">کسانی که PIN ادمین را به یکی از ربات‌های شما فرستاده‌اند. حذف هر کدام دسترسی ادمینی او را می‌گیرد، اما PIN فعلی هنوز برای او کار می‌کند: اگر نباید دوباره ادمین شود، PIN جدید هم صادر کنید.</p>		<table class="nyxify-table nyxify-admins">
 			<thead>
@@ -1842,6 +2037,10 @@ input.code { font-family: Consolas, Monaco, monospace; }
 							</div>
 									</div>
 		</div>		</section>
+											<section class="nyxify-card nyxify-appearance-link" aria-labelledby="nyxify-appearance-heading">
+			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--bots" aria-hidden="true"></span><h2 id="nyxify-appearance-heading">ظاهر ربات</h2></div>			<p class="description">اطلاعات تماس شما در صفحهٔ «پشتیبانی» ربات‌ها، و ظاهر ربات‌ها.</p>
+			<p><a href="https://shop.example.com/wp-admin/admin.php?page=nyxify-appearance" class="button">باز کردن ظاهر ربات</a></p>
+		</section>
 											<section class="nyxify-card nyxify-admins-card" aria-labelledby="nyxify-admins-heading">
 			<div class="nyxify-card__head"><span class="nyxify-icon nyxify-icon--admins" aria-hidden="true"></span><h2 id="nyxify-admins-heading">ادمین‌های ربات</h2></div>			<p class="description">کسانی که PIN ادمین را به یکی از ربات‌های شما فرستاده‌اند. حذف هر کدام دسترسی ادمینی او را می‌گیرد، اما PIN فعلی هنوز برای او کار می‌کند: اگر نباید دوباره ادمین شود، PIN جدید هم صادر کنید.</p><p class="nyxify-empty">هنوز کسی ادمین ربات نشده است.</p>		</section>
 													</div>

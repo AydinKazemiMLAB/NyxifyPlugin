@@ -54,6 +54,9 @@ final class ErrorMessages {
 		'customer_not_found',
 		'invalid_bot_token',
 		'messenger_api_unavailable',
+		// Bot appearance.
+		'appearance_version_conflict',
+		'appearance_too_large',
 	);
 
 	/**
@@ -76,6 +79,7 @@ final class ErrorMessages {
 		CoreError::SECRET_NOT_SAVED,
 		CoreError::BOT_TOKEN_FORMAT,
 		CoreError::PIN_NOT_SAVED,
+		CoreError::APPEARANCE_FORM_INVALID,
 	);
 
 	/**
@@ -123,6 +127,7 @@ final class ErrorMessages {
 			CoreError::SECRET_NOT_SAVED         => __( 'Nyxify issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now.', 'nyxify' ),
 			CoreError::BOT_TOKEN_FORMAT         => __( 'This does not look like a bot token. Paste the token the messenger gave you when you created the bot, without spaces.', 'nyxify' ),
 			CoreError::PIN_NOT_SAVED            => __( 'Nyxify issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now.', 'nyxify' ),
+			CoreError::APPEARANCE_FORM_INVALID  => __( 'Some fields are not valid, so nothing was saved. Correct the fields marked below and save again.', 'nyxify' ),
 
 			// Global.
 			'bad_request'                       => __( 'The Nyxify server rejected the request as invalid. Update the plugin and try again.', 'nyxify' ),
@@ -159,6 +164,10 @@ final class ErrorMessages {
 			'customer_not_found'                => __( 'This person is no longer a bot admin of this store.', 'nyxify' ),
 			'invalid_bot_token'                 => __( 'The messenger rejected this bot token. Check it and try again.', 'nyxify' ),
 			'messenger_api_unavailable'         => __( 'The messenger’s servers did not respond. Try again in a few minutes.', 'nyxify' ),
+
+			// Bot appearance.
+			'appearance_version_conflict'       => __( 'These settings were changed meanwhile, in the bot or by another user, so your changes were not saved. They are still in the form below, next to the saved values: check them and save again.', 'nyxify' ),
+			'appearance_too_large'              => __( 'The bot appearance settings are too large for the Nyxify server (256 KB in all). Shorten some texts and save again.', 'nyxify' ),
 		);
 	}
 

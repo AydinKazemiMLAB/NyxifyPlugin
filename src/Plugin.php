@@ -10,6 +10,10 @@ declare(strict_types=1);
 namespace Nyxify;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use Nyxify\Features\Appearance\AppearancePage;
+use Nyxify\Features\Appearance\AppearanceSaveHandler;
+use Nyxify\Features\Appearance\AppearanceService;
+use Nyxify\Features\Appearance\AppearanceTabs;
 use Nyxify\Features\Bots\AdminPinHandler;
 use Nyxify\Features\Bots\AdminPinIssuer;
 use Nyxify\Features\Bots\AdminRemovalHandler;
@@ -133,24 +137,33 @@ final class Plugin {
 		add_action( PullScheduler::NOW_HOOK, array( SyncPull::class, 'run_for_site' ) );
 
 		if ( is_admin() ) {
-			$store    = new SecretStore( Encryptor::for_site() );
-			$core_url = CoreClient::configured_base_url();
-			$client   = new CoreClient( $store, $core_url );
-			$logger   = new Logger();
-
-			( new SettingsPage( $this->plugin_file, $store, $core_url, new StatusService( $client, $logger ), new BotService( $client, $logger ), new AdminService( $client, $logger ) ) )->register();
-			( new StatusRefreshHandler() )->register();
-			add_action( 'admin_init', array( PullScheduler::class, 'ensure_for_site' ) );
-			( new PlanLimitNotice() )->register();
-			// The services behind the forms are built only when a form is posted.
-			( new ActivationHandler( static fn( LicenseKey $license, int $user_id ) => Activator::for_site()->activate( $license, $user_id ) ) )->register();
-			( new SecretRotationHandler( static fn() => SecretRotator::for_site()->rotate() ) )->register();
-			( new BotRegistrationHandler( static fn( string $platform, BotToken $token ) => BotService::for_site()->register( $platform, $token ) ) )->register();
-			( new BotRemovalHandler( static fn( string $platform ) => BotService::for_site()->remove( $platform ) ) )->register();
-			( new AdminPinHandler( static fn( bool $revoke_admins ) => AdminPinIssuer::for_site()->issue( $revoke_admins ) ) )->register();
-			( new AdminRemovalHandler( static fn( int $id ) => AdminService::for_site()->revoke( $id ) ) )->register();
-			( new CatalogSyncHandler( static fn() => CatalogSender::for_site()->request_sync(), $logger ) )->register();
+			$this->boot_admin();
 		}
+	}
+
+	/**
+	 * Starts the admin pages, their notices and the handlers of their forms.
+	 */
+	private function boot_admin(): void {
+		$store    = new SecretStore( Encryptor::for_site() );
+		$core_url = CoreClient::configured_base_url();
+		$client   = new CoreClient( $store, $core_url );
+		$logger   = new Logger();
+
+		( new SettingsPage( $this->plugin_file, $store, $core_url, new StatusService( $client, $logger ), new BotService( $client, $logger ), new AdminService( $client, $logger ) ) )->register();
+		( new AppearancePage( $this->plugin_file, new AppearanceService( $client, $logger ), AppearanceTabs::all() ) )->register();
+		( new StatusRefreshHandler() )->register();
+		add_action( 'admin_init', array( PullScheduler::class, 'ensure_for_site' ) );
+		( new PlanLimitNotice() )->register();
+		// The services behind the forms are built only when a form is posted.
+		( new ActivationHandler( static fn( LicenseKey $license, int $user_id ) => Activator::for_site()->activate( $license, $user_id ) ) )->register();
+		( new SecretRotationHandler( static fn() => SecretRotator::for_site()->rotate() ) )->register();
+		( new BotRegistrationHandler( static fn( string $platform, BotToken $token ) => BotService::for_site()->register( $platform, $token ) ) )->register();
+		( new BotRemovalHandler( static fn( string $platform ) => BotService::for_site()->remove( $platform ) ) )->register();
+		( new AdminPinHandler( static fn( bool $revoke_admins ) => AdminPinIssuer::for_site()->issue( $revoke_admins ) ) )->register();
+		( new AdminRemovalHandler( static fn( int $id ) => AdminService::for_site()->revoke( $id ) ) )->register();
+		( new CatalogSyncHandler( static fn() => CatalogSender::for_site()->request_sync(), $logger ) )->register();
+		( new AppearanceSaveHandler( static fn( string $part, ?array $value, int $version, string $hash ) => AppearanceService::for_site()->save( $part, $value, $version, $hash ), AppearanceTabs::all() ) )->register();
 	}
 
 	/**

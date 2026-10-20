@@ -4,7 +4,7 @@ Tags: woocommerce, telegram, chatbot, bot, ecommerce
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,9 @@ The bots run on the Nyxify service, not on your server. This plugin connects you
   Replace or remove a bot at any time.
 * **Bot admins.** Issue an admin PIN; whoever sends it to one of your bots can manage the shop from the messenger.
   See and remove the admins, or issue a new PIN and log everyone out.
+* **Your bots' look.** On WooCommerce > Bot appearance: the main menu's buttons and their layout, every text the bots
+  send (in Persian and English), the welcome message and banner, the back button, an icon and color per category, the
+  bot's description, and your shop's contact details. Your bot admins can change most of it from the bot too.
 * **Your catalog stays in step.** Every change to a product, a variation, its stock or a category reaches the service
   within seconds in the background, and "Sync now" sends the whole catalog again. Saving a product never waits on
   the service.
@@ -46,7 +49,8 @@ In Persian the settings page uses the Vazirmatn font by the Vazirmatn Project Au
 نیکسیفای فروشگاه ووکامرس شما را به ربات‌های فروشگاهی در تلگرام، بله و روبیکا تبدیل می‌کند. مشتری‌ها در پیام‌رسان
 محصولات را می‌بینند، سبد خرید می‌سازند و سفارش می‌دهند؛ سفارش در ووکامرس ثبت می‌شود و پرداخت در صفحهٔ پرداخت
 فروشگاه خودتان انجام می‌شود. شما و مدیرانی که انتخاب می‌کنید، قیمت، موجودی، توضیحات و عکس محصولات را هم از داخل ربات
-ویرایش می‌کنید. ربات‌ها روی سرویس نیکسیفای اجرا می‌شوند و این افزونه فروشگاه را با کلید لایسنس به آن وصل می‌کند. پیش
+ویرایش می‌کنید. منو، متن‌ها، پیام خوش‌آمد، رنگ و نماد دسته‌ها و اطلاعات تماس فروشگاه را هم در ووکامرس > ظاهر ربات
+تغییر می‌دهید. ربات‌ها روی سرویس نیکسیفای اجرا می‌شوند و این افزونه فروشگاه را با کلید لایسنس به آن وصل می‌کند. پیش
 از وارد کردن کلید لایسنس هیچ داده‌ای از فروشگاه ارسال نمی‌شود.
 
 == Installation ==
@@ -83,7 +87,8 @@ notes, payment details and custom fields are never read. Orders from your shop's
 = Where do I find the bot's settings? =
 
 On WooCommerce > Nyxify, once the shop is activated: the shop's status, the bots, the admin PIN and the bot admins.
-Only users who can manage WooCommerce see the page.
+How the bots look and what they say is on WooCommerce > Bot appearance. Only users who can manage WooCommerce see
+these pages.
 
 = What happens when I deactivate or delete the plugin? =
 
@@ -126,6 +131,10 @@ What is sent, and when:
 * **Bots, admin PIN and bot admins** (when you use those sections of the settings page): the bot token you enter, sent
   once and never stored by the plugin, and your requests to issue a PIN or remove a bot or an admin. The service then
   talks to Telegram, Bale or Rubika for your bots; the plugin itself never contacts the messengers.
+* **Bot appearance and contact details** (when you open WooCommerce > Bot appearance, and when you save one of its
+  tabs): the page reads your bots' appearance settings from the service and sends the part you save. The "Contact" tab
+  sends the details you enter (phone, email, your ids on Telegram, Bale, Rubika and Instagram, a WhatsApp number, an
+  address, working hours and an introduction); your bots show them to everyone who opens them.
 * **Catalog changes** (in the background, seconds after you save, import or sell something, and when you click "Sync
   now"): products, their variations and product categories as WooCommerce's REST API describes them, cut down to name,
   slug, type, status, visibility, link, SKU, prices, stock, descriptions, images, categories, attributes and dates;
@@ -141,6 +150,12 @@ The service's terms of service: https://nyxify.nyxon.tech/terms/
 The service's privacy policy: https://nyxify.nyxon.tech/privacy/
 
 == Changelog ==
+
+= 1.1.0 =
+* New page, WooCommerce > Bot appearance, with a tab per part: the main menu (which buttons, in which rows, their
+  icons and colors), the texts the bots send (each with its default, in Persian and English), the welcome message and
+  banner, the back button, an icon and color per product category, the bot's description, and the shop's contact
+  details. Each tab saves only its own part; a save made at the same time by a bot admin is never overwritten.
 
 = 1.0.0 =
 * First public release: activation with a license key, Telegram, Bale and Rubika bots, the admin PIN and bot admins,

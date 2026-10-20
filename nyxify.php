@@ -2,7 +2,7 @@
 /**
  * Plugin Name:          Nyxify – Shop Bots for WooCommerce
  * Description:          Sell your WooCommerce products through Telegram, Bale and Rubika bots.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.5
  * Requires PHP:         8.1
  * Requires Plugins:     woocommerce
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'NYXIFY_VERSION', '1.0.0' );
+define( 'NYXIFY_VERSION', '1.1.0' );
 define( 'NYXIFY_PLUGIN_FILE', __FILE__ );
 
 if ( ! is_readable( __DIR__ . '/vendor/autoload.php' ) ) {

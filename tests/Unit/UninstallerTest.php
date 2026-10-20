@@ -248,7 +248,8 @@ final class UninstallerTest extends TestCase {
 	 * @param string $prefix Table prefix.
 	 */
 	private static function notices_query( string $prefix ): string {
-		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\\\_transient\\\\_nyxify\\\\_notice\\\\_%' OR option_name LIKE '\\\\_transient\\\\_timeout\\\\_nyxify\\\\_notice\\\\_%'";
+		return "DELETE FROM {$prefix}options WHERE option_name LIKE '\\\\_transient\\\\_nyxify\\\\_notice\\\\_%' OR option_name LIKE '\\\\_transient\\\\_timeout\\\\_nyxify\\\\_notice\\\\_%'"
+			. " OR option_name LIKE '\\\\_transient\\\\_nyxify\\\\_appearance\\\\_draft\\\\_%' OR option_name LIKE '\\\\_transient\\\\_timeout\\\\_nyxify\\\\_appearance\\\\_draft\\\\_%'";
 	}
 
 	/**

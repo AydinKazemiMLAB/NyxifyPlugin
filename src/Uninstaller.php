@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Nyxify;
 
+use Nyxify\Features\Appearance\FormDraft;
 use Nyxify\Features\Catalog\FlushScheduler;
 use Nyxify\Features\Catalog\PlanLimitNotice;
 use Nyxify\Features\Catalog\Schema;
@@ -140,7 +141,7 @@ final class Uninstaller {
 	}
 
 	/**
-	 * Deletes the per-user notices kept in the options table. With an external object cache they live there instead
+	 * Deletes the per-user notices and bot appearance drafts kept in the options table. With an external object cache they live there instead
 	 * and expire within Notices::LIFETIME seconds on their own.
 	 */
 	private static function delete_notices(): void {
@@ -149,9 +150,11 @@ final class Uninstaller {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients by prefix have no API; the rows are being removed, nothing to cache.
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
 				$wpdb->esc_like( '_transient_' . Notices::TRANSIENT_PREFIX ) . '%',
-				$wpdb->esc_like( '_transient_timeout_' . Notices::TRANSIENT_PREFIX ) . '%'
+				$wpdb->esc_like( '_transient_timeout_' . Notices::TRANSIENT_PREFIX ) . '%',
+				$wpdb->esc_like( '_transient_' . FormDraft::TRANSIENT_PREFIX ) . '%',
+				$wpdb->esc_like( '_transient_timeout_' . FormDraft::TRANSIENT_PREFIX ) . '%'
 			)
 		);
 	}

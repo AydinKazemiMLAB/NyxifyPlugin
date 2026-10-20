@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Nyxify 1.0.0\n"
+"Project-Id-Version: Nyxify 1.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "Last-Translator: Nyxon\n"
 "Language-Team: Persian\n"
@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-13T20:21:53+00:00\n"
+"PO-Revision-Date: 2026-10-20T08:57:19+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: nyxify\n"
@@ -28,21 +28,702 @@ msgstr "محصولات فروشگاه ووکامرس خود را با ربات�
 msgid "Nyxon"
 msgstr "Nyxon"
 
-#: nyxify.php:46
+#: nyxify.php:48
 msgid "Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip."
 msgstr "Nyxify ناقص است: پوشهٔ vendor آن وجود ندارد. افزونه را دوباره از فایل zip انتشار نصب کنید."
 
+#: src/Features/Appearance/AppearancePage.php:99
+#: src/Features/Appearance/AppearancePage.php:100
+#: src/Features/Appearance/AppearancePage.php:147
+#: src/Features/Appearance/AppearancePage.php:195
+#: src/Features/Settings/SettingsPage.php:265
+msgid "Bot appearance"
+msgstr "ظاهر ربات"
+
+#: src/Features/Appearance/AppearancePage.php:138
+#: src/Features/Settings/SettingsPage.php:213
+msgid "Sorry, you are not allowed to access this page."
+msgstr "متأسفانه اجازهٔ دسترسی به این صفحه را ندارید."
+
+#: src/Features/Appearance/AppearancePage.php:148
+#: src/Features/Catalog/PlanLimitNotice.php:160
+msgid "Nyxify settings"
+msgstr "تنظیمات Nyxify"
+
+#: src/Features/Appearance/AppearancePage.php:155
+msgid "Go to the Nyxify settings"
+msgstr "رفتن به تنظیمات Nyxify"
+
+#. translators: %s: minutes
+#: src/Features/Appearance/AppearancePage.php:162
+#, php-format
+msgid "Your bots show a change within %s minutes: they keep their settings that long."
+msgstr "ربات‌ها هر تغییر را حداکثر تا %s دقیقه نشان می‌دهند، چون تنظیماتشان را همین مدت نگه می‌دارند."
+
+#: src/Features/Appearance/AppearancePage.php:165
+msgid "Bot admins can change the same settings in the bot’s “🎨 Bot appearance” section, apart from the contact details."
+msgstr "مدیران ربات هم همین تنظیمات را از بخش «🎨 ظاهر ربات» در خود ربات تغییر می‌دهند، به‌جز اطلاعات تماس."
+
+#: src/Features/Appearance/AppearancePage.php:233
+msgid "Save"
+msgstr "ذخیره"
+
+#. translators: %s: date and time
+#: src/Features/Appearance/AppearancePage.php:238
+#, php-format
+msgid "Bot appearance last changed %s"
+msgstr "آخرین تغییر ظاهر ربات: %s"
+
+#. translators: %s: minutes
+#: src/Features/Appearance/AppearancePage.php:278
+#, php-format
+msgid "Saved. Your bots show the change within %s minutes."
+msgstr "ذخیره شد. ربات‌ها این تغییر را حداکثر تا %s دقیقه نشان می‌دهند."
+
+#: src/Features/Appearance/Tabs/BackButtonTab.php:33
+msgid "Back button"
+msgstr "دکمهٔ بازگشت"
+
+#: src/Features/Appearance/Tabs/BackButtonTab.php:77
+msgid "The button that goes back a screen. It looks the same on every screen, the bot admins’ screens included. By default it is blue, with ➡️ in Persian and ⬅️ in English."
+msgstr "دکمه‌ای که یک صفحه به عقب برمی‌گردد. در همهٔ صفحه‌ها، از جمله صفحه‌های مدیران ربات، یک‌شکل است. پیش‌فرض آن آبی است، با ➡️ در فارسی و ⬅️ در انگلیسی."
+
+#: src/Features/Appearance/Tabs/BackButtonTab.php:80
+#: src/Features/Appearance/Tabs/MenuTab.php:283
+#: src/Features/Appearance/Tabs/MenuTab.php:696
+msgid "Default (blue)"
+msgstr "پیش‌فرض (آبی)"
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:43
+msgid "Bot description"
+msgstr "توضیح ربات"
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:108
+msgid "How your Telegram bots introduce themselves, in plain text (Bale and Rubika have no bot descriptions). A bot sets them after the next message it gets."
+msgstr "ربات‌های تلگرام شما خودشان را این‌طور معرفی می‌کنند، با متن ساده (بله و روبیکا توضیح ربات ندارند). هر ربات بعد از پیام بعدی‌ای که می‌گیرد آن‌ها را تنظیم می‌کند."
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:126
+#: src/Features/Appearance/Tabs/ButtonFields.php:153
+#: src/Features/Appearance/Tabs/ContactTab.php:258
+#: src/Features/Appearance/Tabs/MenuTab.php:316
+#: src/Features/Appearance/Tabs/TextsTab.php:257
+#: src/Features/Appearance/Tabs/WelcomeTab.php:150
+msgid "Persian"
+msgstr "فارسی"
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:126
+#: src/Features/Appearance/Tabs/ButtonFields.php:153
+#: src/Features/Appearance/Tabs/ContactTab.php:258
+#: src/Features/Appearance/Tabs/MenuTab.php:316
+#: src/Features/Appearance/Tabs/TextsTab.php:257
+#: src/Features/Appearance/Tabs/WelcomeTab.php:150
+msgid "English"
+msgstr "انگلیسی"
+
+#. translators: %s: the most characters the field takes
+#: src/Features/Appearance/Tabs/BotProfileTab.php:151
+#: src/Features/Appearance/Tabs/ButtonFields.php:248
+#: src/Features/Appearance/Tabs/ContactTab.php:287
+#: src/Features/Appearance/Tabs/MenuTab.php:423
+#: src/Features/Appearance/Tabs/TextsTab.php:401
+#, php-format
+msgid "Up to %s characters."
+msgstr "حداکثر %s نویسه."
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:154
+#: src/Features/Appearance/Tabs/ButtonFields.php:233
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:257
+#: src/Features/Appearance/Tabs/ContactTab.php:281
+#: src/Features/Appearance/Tabs/MenuTab.php:400
+#: src/Features/Appearance/Tabs/MenuTab.php:414
+#: src/Features/Appearance/Tabs/WelcomeTab.php:184
+msgid "The Nyxify server did not accept this value."
+msgstr "سرور Nyxify این مقدار را نپذیرفت."
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:165
+msgid "Description"
+msgstr "توضیحات"
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:166
+msgid "Shown in an empty chat with the bot, before the customer starts it (“What can this bot do?”). Up to 512 characters. Empty: the bot’s own, with your shop’s name."
+msgstr "در گفت‌وگوی خالی با ربات، پیش از آنکه مشتری آن را شروع کند، نشان داده می‌شود («این ربات چه کاری می‌تواند بکند؟»). حداکثر ۵۱۲ حرف. خالی: توضیح خود ربات، با نام فروشگاه شما."
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:169
+msgid "Short description"
+msgstr "توضیح کوتاه"
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:170
+msgid "On the bot’s profile and in links to it. Up to 120 characters. Empty: the bot’s own, with your shop’s name."
+msgstr "در نمایهٔ ربات و در لینک‌هایی که به آن داده می‌شود. حداکثر ۱۲۰ حرف. خالی: توضیح خود ربات، با نام فروشگاه شما."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:142
+msgid "Title"
+msgstr "عنوان"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:160
+msgid "Up to 40 characters, without the icon. Empty: the bot’s own title in that language."
+msgstr "حداکثر ۴۰ حرف، بدون آیکون. خالی: عنوان خود ربات در همان زبان."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:167
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:178
+msgid "Icon"
+msgstr "آیکون"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:177
+msgid "Emoji"
+msgstr "ایموجی"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:189
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:179
+msgid "Premium emoji id (Telegram, optional)"
+msgstr "شناسهٔ ایموجی پریمیوم (تلگرام، اختیاری)"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:195
+msgid "One emoji. For a Telegram premium emoji, add its id: Bale, Rubika and Telegram apps that can’t show it show the emoji. You can also paste “id emoji” into the emoji box. Empty: the bot’s own icon."
+msgstr "یک ایموجی. برای ایموجی پریمیوم تلگرام، شناسه‌اش را هم بنویسید؛ بله، روبیکا و برنامه‌های تلگرامی که نمی‌توانند آن را نشان دهند، همان ایموجی را نشان می‌دهند. می‌توانید «شناسه ایموجی» را هم یک‌جا در کادر ایموجی بچسبانید. خالی: آیکون خود ربات."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:199
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:180
+msgid "Color"
+msgstr "رنگ"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:210
+msgid "Telegram only: Bale and Rubika show every button plain."
+msgstr "فقط در تلگرام؛ بله و روبیکا همهٔ دکمه‌ها را بی‌رنگ نشان می‌دهند."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:239
+msgid "Add the emoji too: Bale, Rubika and some Telegram apps show it instead of the premium emoji."
+msgstr "خود ایموجی را هم بنویسید؛ بله، روبیکا و بعضی برنامه‌های تلگرام به جای ایموجی پریمیوم آن را نشان می‌دهند."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:240
+msgid "One emoji, e.g. 🛒; or a premium emoji’s id and its emoji, e.g. 5368324170671202286 🛒."
+msgstr "یک ایموجی، مثلاً 🛒؛ یا شناسهٔ یک ایموجی پریمیوم و خود ایموجی، مثلاً 5368324170671202286 🛒."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:242
+msgid "A premium emoji’s id: up to 20 digits."
+msgstr "شناسهٔ ایموجی پریمیوم: حداکثر ۲۰ رقم."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:244
+msgid "Choose a color from the list."
+msgstr "یکی از رنگ‌های فهرست را انتخاب کنید."
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:258
+msgid "Blue"
+msgstr "آبی"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:259
+msgid "Green"
+msgstr "سبز"
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:260
+msgid "Red"
+msgstr "قرمز"
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:89
+msgid "Categories"
+msgstr "دسته‌ها"
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:158
+msgid "The icon and color of each category’s button in your customers’ product list. A category left empty has no icon and no color, as the bots show categories by default. A deleted category’s icon and color go with it the next time you save."
+msgstr "آیکون و رنگ دکمهٔ هر دسته در فهرست محصولاتی که مشتری‌ها می‌بینند. دسته‌ای که خالی بماند آیکون و رنگ ندارد، همان‌طور که ربات‌ها دسته‌ها را به‌طور پیش‌فرض نشان می‌دهند. آیکون و رنگ دسته‌ای که حذف شده، در ذخیرهٔ بعدی پاک می‌شود."
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:166
+msgid "Your shop has no product categories yet."
+msgstr "فروشگاه شما هنوز دستهٔ محصولی ندارد."
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:170
+#: src/Features/Appearance/Tabs/MenuTab.php:696
+msgid "Default (no color)"
+msgstr "پیش‌فرض (بی‌رنگ)"
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:172
+msgid "Icon: one emoji. For a Telegram premium emoji, add its id: Bale, Rubika and Telegram apps that can’t show it show the emoji. You can also paste “id emoji” into the emoji box. Color: Telegram only; Bale and Rubika show every button plain."
+msgstr "آیکون: یک ایموجی. برای ایموجی پریمیوم تلگرام، شناسه‌اش را هم بنویسید: بله، روبیکا و برنامه‌های تلگرامی که آن را نشان نمی‌دهند، خود ایموجی را نشان می‌دهند. می‌توانید «شناسه ایموجی» را هم در کادر ایموجی بچسبانید. رنگ: فقط در تلگرام؛ بله و روبیکا همهٔ دکمه‌ها را ساده نشان می‌دهند."
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:177
+msgid "Category"
+msgstr "دسته"
+
+#. translators: %s: a category's name
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:196
+#, php-format
+msgid "Icon of %s"
+msgstr "آیکون %s"
+
+#. translators: %s: a category's name
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:210
+#, php-format
+msgid "Premium emoji id of %s"
+msgstr "شناسهٔ ایموجی پریمیوم %s"
+
+#. translators: %s: a category's name
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:223
+#, php-format
+msgid "Color of %s"
+msgstr "رنگ %s"
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:246
+msgid "Your product categories couldn’t be read, so nothing was saved. Reload the page and try again."
+msgstr "دسته‌های محصول شما خوانده نشد و چیزی ذخیره نشد. صفحه را دوباره بارگذاری کنید و باز امتحان کنید."
+
+#. translators: %s: PHP's max_input_vars setting
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:248
+#, php-format
+msgid "Your server dropped the end of the form, so nothing was saved: it takes at most %s fields (PHP’s max_input_vars), three per category. Ask your host to raise it, then save again."
+msgstr "سرور شما انتهای فرم را دور ریخت و چیزی ذخیره نشد: سرور حداکثر %s فیلد می‌پذیرد (max_input_vars در PHP) و هر دسته سه فیلد دارد. از میزبان سایت بخواهید آن را بیشتر کند، سپس دوباره ذخیره کنید."
+
+#. translators: %s: the most categories
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:250
+#, php-format
+msgid "Up to %s categories can have their own icon or color."
+msgstr "حداکثر %s دسته می‌توانند آیکون یا رنگ خودشان را داشته باشند."
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:251
+#: src/Features/Appearance/Tabs/Fields.php:277
+#: src/Features/Appearance/Tabs/TextsTab.php:298
+msgid "The Nyxify server did not accept these details. Check them and save again."
+msgstr "سرور Nyxify این اطلاعات را نپذیرفت. آن‌ها را بررسی کنید و دوباره ذخیره کنید."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:71
+msgid "Contact"
+msgstr "تماس"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:175
+msgid "How customers reach you. Your bots show these details on their “Support” screen, with a button for each messenger; with every field empty they show no “Support” button. Only this page sets them: bot admins can’t change them from the bot."
+msgstr "راه‌های ارتباط مشتری‌ها با شما. ربات‌ها این اطلاعات را در صفحهٔ «پشتیبانی» نشان می‌دهند و برای هر پیام‌رسان یک دکمه می‌گذارند. اگر همهٔ فیلدها خالی باشند، دکمهٔ «پشتیبانی» نشان داده نمی‌شود. این اطلاعات فقط از همین صفحه تنظیم می‌شود و مدیران ربات نمی‌توانند آن را از ربات تغییر دهند."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:176
+msgid "Everyone who opens your bots sees these details."
+msgstr "هر کسی که ربات‌های شما را باز کند این اطلاعات را می‌بیند."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:179
+msgid "Phone and email"
+msgstr "تلفن و ایمیل"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:182
+msgid "Phone"
+msgstr "تلفن"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:198
+msgid "Email"
+msgstr "ایمیل"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:214
+msgid "Messengers"
+msgstr "پیام‌رسان‌ها"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:215
+msgid "Your id on each messenger, without @; you can also paste the link to your page. The bots show their own messenger first."
+msgstr "شناسهٔ شما در هر پیام‌رسان، بدون @. می‌توانید لینک صفحه‌تان را هم بچسبانید. هر ربات پیام‌رسان خودش را اول نشان می‌دهد."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:233
+msgid "The number with the country code, e.g. 989121234567 for 0912 123 4567."
+msgstr "شماره با کد کشور، مثلاً 989121234567 برای 0912 123 4567."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:240
+msgid "Introduction, address and working hours"
+msgstr "معرفی، نشانی و ساعات کاری"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:241
+msgid "In Persian, English or both: a customer using the other language sees the one you wrote."
+msgstr "به فارسی، انگلیسی یا هر دو. مشتری‌ای که زبان دیگری را انتخاب کرده باشد، همان متنی را می‌بیند که نوشته‌اید."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:291
+msgid "A phone number of 5 to 25 characters: digits, with a leading + , spaces and dashes if you like."
+msgstr "شمارهٔ تلفن ۵ تا ۲۵ نویسه: رقم، و در صورت نیاز + در ابتدا، فاصله و خط تیره."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:292
+msgid "This is not an email address."
+msgstr "این نشانی ایمیل نیست."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:293
+msgid "A Telegram username: 5 to 32 English letters, digits and _, starting with a letter."
+msgstr "نام کاربری تلگرام: ۵ تا ۳۲ حرف انگلیسی، رقم و _، که با حرف شروع شود."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:294
+#: src/Features/Appearance/Tabs/ContactTab.php:295
+msgid "An id of 3 to 32 English letters, digits, _ and dots, starting with a letter."
+msgstr "شناسه‌ای ۳ تا ۳۲ نویسه از حرف انگلیسی، رقم، _ و نقطه، که با حرف شروع شود."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:296
+msgid "The number with the country code, 8 to 15 digits, e.g. 989121234567."
+msgstr "شماره با کد کشور، ۸ تا ۱۵ رقم، مثلاً 989121234567."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:297
+msgid "An Instagram username: up to 30 English letters, digits, _ and dots."
+msgstr "نام کاربری اینستاگرام: حداکثر ۳۰ حرف انگلیسی، رقم، _ و نقطه."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:300
+msgid "This value is not valid."
+msgstr "این مقدار معتبر نیست."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:310
 #: src/Features/Bots/BotPlatform.php:78
 msgid "Telegram"
 msgstr "تلگرام"
 
+#: src/Features/Appearance/Tabs/ContactTab.php:311
 #: src/Features/Bots/BotPlatform.php:79
 msgid "Bale"
 msgstr "بله"
 
+#: src/Features/Appearance/Tabs/ContactTab.php:312
 #: src/Features/Bots/BotPlatform.php:80
 msgid "Rubika"
 msgstr "روبیکا"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:313
+msgid "WhatsApp"
+msgstr "واتس‌اپ"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:314
+msgid "Instagram"
+msgstr "اینستاگرام"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:325
+msgid "Introduction"
+msgstr "معرفی"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:325
+msgid "A few lines at the top of the screen, e.g. when you answer. Up to 500 characters."
+msgstr "چند خط در بالای صفحه، مثلاً ساعت‌هایی که پاسخ می‌دهید. حداکثر ۵۰۰ نویسه."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:326
+msgid "Address"
+msgstr "نشانی"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:326
+msgid "Up to 300 characters."
+msgstr "حداکثر ۳۰۰ نویسه."
+
+#: src/Features/Appearance/Tabs/ContactTab.php:327
+msgid "Working hours"
+msgstr "ساعات کاری"
+
+#: src/Features/Appearance/Tabs/ContactTab.php:327
+msgid "Up to 200 characters."
+msgstr "حداکثر ۲۰۰ نویسه."
+
+#: src/Features/Appearance/Tabs/Fields.php:258
+msgid "Saved now:"
+msgstr "مقدار ذخیره‌شدهٔ فعلی:"
+
+#: src/Features/Appearance/Tabs/Fields.php:259
+msgid "(empty)"
+msgstr "(خالی)"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:100
+msgid "Menu"
+msgstr "منو"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:216
+msgid "Your customers’ main menu: the bot’s own buttons, up to five of your own, and how they are laid out. Anything you leave empty keeps the bot’s default."
+msgstr "منوی اصلی مشتری‌های شما: دکمه‌های خود ربات، تا پنج دکمهٔ خودتان، و چیدمان آن‌ها. هر چه را خالی بگذارید، پیش‌فرض ربات می‌ماند."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:219
+msgid "The bot’s buttons"
+msgstr "دکمه‌های ربات"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:220
+msgid "Open a button to hide it or change its title, icon or color."
+msgstr "هر دکمه را باز کنید تا پنهانش کنید یا عنوان، آیکون یا رنگش را تغییر دهید."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:232
+#: src/Features/Appearance/Tabs/MenuTab.php:250
+msgid "Hidden"
+msgstr "پنهان"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:234
+msgid "Changed"
+msgstr "تغییر کرده"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:240
+msgid "In the menu"
+msgstr "در منو"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:247
+msgid "Show this button"
+msgstr "این دکمه نمایش داده شود"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:249
+msgid "Shown"
+msgstr "نمایش داده می‌شود"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:262
+msgid "Your own buttons"
+msgstr "دکمه‌های خودتان"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:263
+msgid "Up to five. Each one opens a link or shows a text, and needs a title in at least one language. A button with every field empty doesn’t exist."
+msgstr "تا پنج دکمه. هر کدام یک لینک را باز می‌کند یا یک متن را نشان می‌دهد، و دست‌کم در یک زبان عنوان لازم دارد. دکمه‌ای که همهٔ فیلدهایش خالی باشد وجود ندارد."
+
+#. translators: %s: the button's number, 1 to 5
+#: src/Features/Appearance/Tabs/MenuTab.php:274
+#, php-format
+msgid "Your button %s"
+msgstr "دکمهٔ شما %s"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:285
+msgid "Link"
+msgstr "لینک"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:299
+msgid "The page the button opens, starting with https://. Leave it empty for a button that shows a text."
+msgstr "صفحه‌ای که دکمه باز می‌کند، با https:// در آغاز. برای دکمه‌ای که متن نشان می‌دهد خالی بگذارید."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:303
+#: src/Features/Appearance/Tabs/WelcomeTab.php:137
+msgid "Text"
+msgstr "متن"
+
+#. translators: 1: the most characters, 2: the formatting tags allowed
+#: src/Features/Appearance/Tabs/MenuTab.php:328
+#, php-format
+msgid "What the bot sends when the button is pressed, instead of a link. {name} is the customer’s first name and {shop} your shop’s name. Up to %1$s characters. Formatting: %2$s."
+msgstr "آنچه ربات با زدن دکمه می‌فرستد، به جای لینک. {name} نام کوچک مشتری است و {shop} نام فروشگاه شما. حداکثر %1$s حرف. قالب‌بندی: %2$s."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:341
+msgid "Layout"
+msgstr "چیدمان"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:344
+msgid "Rows"
+msgstr "ردیف‌ها"
+
+#. translators: 1: the most rows, 2: the most buttons in a row, 3: the built-in buttons' keys
+#: src/Features/Appearance/Tabs/MenuTab.php:362
+#, php-format
+msgid "One row per line, top first, with the buttons’ keys separated by spaces: up to %1$s rows of up to %2$s buttons. The bot’s buttons are %3$s; your own buttons’ keys are shown next to their names. A button left out isn’t shown. Empty: the default rows, with your own buttons a row each under them."
+msgstr "هر سطر یک ردیف، از بالا، با کلید دکمه‌ها که با فاصله از هم جدا شده‌اند: حداکثر %1$s ردیف و در هر ردیف حداکثر %2$s دکمه. کلید دکمه‌های ربات: %3$s؛ کلید دکمه‌های خودتان کنار نامشان آمده است. دکمه‌ای که در چیدمان نباشد نشان داده نمی‌شود. خالی: ردیف‌های پیش‌فرض، و زیر آن‌ها هر دکمهٔ خودتان در یک ردیف."
+
+#. translators: %s: buttons' keys
+#: src/Features/Appearance/Tabs/MenuTab.php:375
+#, php-format
+msgid "Your buttons not in the layout, so not shown: %s"
+msgstr "دکمه‌های شما که در چیدمان نیستند و نشان داده نمی‌شوند: %s"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:394
+msgid "A key in the layout names no button. Use the keys listed below, and your own buttons’ keys only for buttons you filled in."
+msgstr "یکی از کلیدهای چیدمان به هیچ دکمه‌ای اشاره نمی‌کند. کلیدهای فهرست زیر را به کار ببرید، و کلید دکمه‌های خودتان را فقط برای دکمه‌هایی که پر کرده‌اید."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:395
+msgid "A button can be in the layout only once."
+msgstr "هر دکمه فقط یک بار می‌تواند در چیدمان باشد."
+
+#. translators: %s: the most rows
+#: src/Features/Appearance/Tabs/MenuTab.php:397
+#, php-format
+msgid "Up to %s rows."
+msgstr "حداکثر %s ردیف."
+
+#. translators: %s: the most buttons in a row
+#: src/Features/Appearance/Tabs/MenuTab.php:399
+#, php-format
+msgid "Up to %s buttons in a row."
+msgstr "حداکثر %s دکمه در هر ردیف."
+
+#. translators: %s: the formatting tags allowed
+#: src/Features/Appearance/Tabs/MenuTab.php:413
+#: src/Features/Appearance/Tabs/TextsTab.php:306
+#: src/Features/Appearance/Tabs/WelcomeTab.php:186
+#, php-format
+msgid "The Nyxify server did not accept this text. Use only these tags, each one closed: %s."
+msgstr "سرور نیکسیفای این متن را نپذیرفت. فقط این برچسب‌ها را به کار ببرید و هر کدام را ببندید: %s."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:418
+msgid "Give the button a title in at least one language."
+msgstr "دست‌کم در یک زبان برای دکمه عنوان بنویسید."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:419
+msgid "Give the button a link or a text: one of the two."
+msgstr "برای دکمه یا لینک بگذارید یا متن؛ فقط یکی از این دو."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:420
+msgid "A link starting with https://, without spaces."
+msgstr "لینکی که با https:// شروع شود، بدون فاصله."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:421
+#: src/Features/Appearance/Tabs/WelcomeTab.php:194
+msgid "Only {name} and {shop} can be used here; write {{ and }} for a brace."
+msgstr "اینجا فقط {name} و {shop} را می‌توان به کار برد؛ برای خود آکولاد، {{ و }} بنویسید."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:661
+#: src/Features/Settings/StatusSection.php:153
+msgid "Products"
+msgstr "محصولات"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:662
+msgid "Search"
+msgstr "جست‌وجو"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:663
+msgid "Cart"
+msgstr "سبد خرید"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:664
+msgid "My orders"
+msgstr "سفارش‌های من"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:665
+msgid "My account"
+msgstr "حساب من"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:666
+msgid "Language"
+msgstr "زبان"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:667
+msgid "Shop website"
+msgstr "سایت فروشگاه"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:668
+msgid "Support"
+msgstr "پشتیبانی"
+
+#: src/Features/Appearance/Tabs/MenuTab.php:679
+msgid "Opens your categories and products."
+msgstr "دسته‌ها و محصولات شما را باز می‌کند."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:680
+msgid "Searches your products by name."
+msgstr "محصولات شما را با نامشان جست‌وجو می‌کند."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:681
+msgid "Opens the customer’s cart."
+msgstr "سبد خرید مشتری را باز می‌کند."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:682
+msgid "Lists the customer’s orders."
+msgstr "سفارش‌های مشتری را نشان می‌دهد."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:683
+msgid "The customer’s name, phone and addresses."
+msgstr "نام، تلفن و نشانی‌های مشتری."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:684
+msgid "Switches between Persian and English. Its default title is the other language’s name (English, فارسی)."
+msgstr "زبان را میان فارسی و انگلیسی عوض می‌کند. عنوان پیش‌فرض آن نام زبان دیگر است (English، فارسی)."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:685
+msgid "Opens your site."
+msgstr "سایت شما را باز می‌کند."
+
+#: src/Features/Appearance/Tabs/MenuTab.php:686
+msgid "Opens your contact details; shown only once the Contact tab has some."
+msgstr "اطلاعات تماس شما را باز می‌کند؛ فقط وقتی نشان داده می‌شود که در زبانهٔ «تماس» چیزی نوشته باشید."
+
+#: src/Features/Appearance/Tabs/TextsTab.php:101
+msgid "Texts"
+msgstr "متن‌ها"
+
+#: src/Features/Appearance/Tabs/TextsTab.php:195
+msgid "The texts your customers read in the bots, by part of the bot. Write your own wording in either language; a box left empty keeps the bot’s default in that language."
+msgstr "متن‌هایی که مشتری‌ها در ربات‌ها می‌خوانند، به تفکیک بخش‌های ربات. متن خودتان را به هر زبانی که می‌خواهید بنویسید؛ کادری که خالی بماند، متن پیش‌فرض ربات را در آن زبان نگه می‌دارد."
+
+#. translators: %s: the formatting tags allowed
+#: src/Features/Appearance/Tabs/TextsTab.php:208
+#, php-format
+msgid "Formatting: %s. A text can use only the variables listed with it, in braces; write {{ and }} for a brace. Lengths don’t count the tags."
+msgstr "قالب‌بندی: %s. هر متن فقط متغیرهایی را که کنارش آمده، داخل آکولاد، می‌تواند به کار ببرد؛ برای خود آکولاد {{ و }} بنویسید. برچسب‌ها در طول متن حساب نمی‌شوند."
+
+#. translators: %s: how many texts
+#: src/Features/Appearance/Tabs/TextsTab.php:232
+#, php-format
+msgid "%s text"
+msgid_plural "%s texts"
+msgstr[0] "%s متن"
+msgstr[1] "%s متن"
+
+#. translators: 1: how many texts were changed, 2: how many texts
+#: src/Features/Appearance/Tabs/TextsTab.php:234
+#, php-format
+msgid "%1$s of %2$s text changed"
+msgid_plural "%1$s of %2$s texts changed"
+msgstr[0] "%1$s از %2$s متن تغییر کرده"
+msgstr[1] "%1$s از %2$s متن تغییر کرده"
+
+#: src/Features/Appearance/Tabs/TextsTab.php:262
+msgid "Default:"
+msgstr "پیش‌فرض:"
+
+#. translators: %s: how many texts
+#: src/Features/Appearance/Tabs/TextsTab.php:278
+#, php-format
+msgid "%s text of the bot that this version of the plugin doesn’t list is kept as it is."
+msgid_plural "%s texts of the bot that this version of the plugin doesn’t list are kept as they are."
+msgstr[0] "%s متن ربات که این نسخهٔ افزونه آن را نمی‌شناسد، همان‌طور که هست نگه داشته می‌شود."
+msgstr[1] "%s متن ربات که این نسخهٔ افزونه آن‌ها را نمی‌شناسد، همان‌طور که هستند نگه داشته می‌شوند."
+
+#: src/Features/Appearance/Tabs/TextsTab.php:296
+msgid "The list of the bot’s texts couldn’t be read, so nothing was saved. Reinstall the plugin if this goes on."
+msgstr "فهرست متن‌های ربات خوانده نشد و چیزی ذخیره نشد. اگر این مشکل ادامه داشت، افزونه را دوباره نصب کنید."
+
+#: src/Features/Appearance/Tabs/TextsTab.php:297
+msgid "Your server dropped the end of the form, so nothing was saved. Ask your host to raise PHP’s max_input_vars, then save again."
+msgstr "سرور شما انتهای فرم را دور ریخت و چیزی ذخیره نشد. از میزبان سایت بخواهید max_input_vars در PHP را بیشتر کند، سپس دوباره ذخیره کنید."
+
+#: src/Features/Appearance/Tabs/TextsTab.php:310
+msgid "This text takes no variables; write {{ and }} for a brace."
+msgstr "این متن متغیری نمی‌پذیرد؛ برای آکولاد {{ و }} بنویسید."
+
+#. translators: %s: the variables a text may use
+#: src/Features/Appearance/Tabs/TextsTab.php:312
+#, php-format
+msgid "This text can use only %s; write {{ and }} for a brace."
+msgstr "این متن فقط %s را می‌پذیرد؛ برای آکولاد {{ و }} بنویسید."
+
+#. translators: %s: the most characters
+#: src/Features/Appearance/Tabs/TextsTab.php:314
+#, php-format
+msgid "Up to %s characters with the tags."
+msgstr "حداکثر %s حرف، همراه با برچسب‌ها."
+
+#. translators: %s: the most characters shown
+#: src/Features/Appearance/Tabs/TextsTab.php:316
+#: src/Features/Appearance/Tabs/WelcomeTab.php:198
+#, php-format
+msgid "Up to %s characters, not counting tags."
+msgstr "حداکثر %s حرف، بدون شمردن برچسب‌ها."
+
+#: src/Features/Appearance/Tabs/TextsTab.php:397
+msgid "No variables."
+msgstr "بدون متغیر."
+
+#. translators: %s: the variables a text may use
+#: src/Features/Appearance/Tabs/TextsTab.php:399
+#, php-format
+msgid "Variables: %s."
+msgstr "متغیرها: %s."
+
+#: src/Features/Appearance/Tabs/TextsTab.php:404
+msgid "Shown as plain text: formatting is dropped."
+msgstr "به صورت متن ساده نشان داده می‌شود: قالب‌بندی حذف می‌شود."
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:50
+msgid "Welcome"
+msgstr "خوش‌آمد"
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:115
+msgid "What customers see when they start one of your bots: the banner, then this text, with the main menu under it."
+msgstr "آنچه مشتری با شروع یکی از ربات‌های شما می‌بیند: بنر، سپس این متن، و منوی اصلی زیر آن."
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:119
+msgid "Banner"
+msgstr "بنر"
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:133
+msgid "The address of an image, starting with https://. For an image in your media library, open it and copy its file URL. Empty: your site’s logo."
+msgstr "نشانی یک تصویر که با https:// شروع شود. برای تصویری از کتابخانهٔ پرونده‌ها، آن را باز کنید و نشانی پرونده‌اش را کپی کنید. خالی: لوگوی سایت شما."
+
+#. translators: 1: the most characters shown, 2: the formatting tags allowed
+#: src/Features/Appearance/Tabs/WelcomeTab.php:162
+#, php-format
+msgid "{name} is the customer’s first name and {shop} your shop’s name. Up to %1$s characters, not counting tags. Formatting: %2$s. Empty: the bot’s own welcome; a customer using the other language sees the one you wrote."
+msgstr "{name} نام کوچک مشتری است و {shop} نام فروشگاه شما. حداکثر %1$s حرف، بدون شمردن برچسب‌ها. قالب‌بندی: %2$s. خالی: خوش‌آمد خود ربات؛ مشتری‌ای که زبان دیگر را به کار می‌برد، همانی را می‌بیند که نوشته‌اید."
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:190
+msgid "An image address starting with https://, without spaces."
+msgstr "نشانی یک تصویر که با https:// شروع شود، بدون فاصله."
 
 #. translators: %s: number of products
 #: src/Features/Catalog/PlanLimitNotice.php:135
@@ -61,10 +742,6 @@ msgstr "برای افزودن آن‌ها پلن خود را ارتقا دهید
 #, php-format
 msgid "Last seen %s"
 msgstr "آخرین بار: %s"
-
-#: src/Features/Catalog/PlanLimitNotice.php:160
-msgid "Nyxify settings"
-msgstr "تنظیمات Nyxify"
 
 #: src/Features/Catalog/PlanLimitNotice.php:162
 msgid "Dismiss"
@@ -210,7 +887,7 @@ msgid "Replace with another bot"
 msgstr "جایگزینی با ربات دیگر"
 
 #: src/Features/Settings/BotsSection.php:174
-#: src/Features/Settings/SettingsPage.php:278
+#: src/Features/Settings/SettingsPage.php:294
 msgid "Not connected"
 msgstr "متصل نیست"
 
@@ -315,7 +992,7 @@ msgid "When the plugin is deactivated, Nyxify is told and this site’s connecti
 msgstr "وقتی افزونه غیرفعال شود، به Nyxify خبر داده می‌شود و اتصال این سایت و کلید REST API ووکامرس آن حذف می‌شوند. اگر سرور Nyxify در دسترس نباشد یا اشتراک شما منقضی شده باشد، Nyxify فروشگاه را متصل نگه می‌دارد و هر دو تا زمانی که افزونه را حذف کنید روی این سایت می‌مانند."
 
 #: src/Features/Settings/ErrorNotice.php:35
-#: src/Features/Settings/SettingsPage.php:460
+#: src/Features/Settings/SettingsPage.php:476
 msgid "Request ID (for Nyxify support):"
 msgstr "شناسه‌ی درخواست (برای پشتیبانی Nyxify):"
 
@@ -379,187 +1056,191 @@ msgctxt "Jalali month"
 msgid "Esfand"
 msgstr "اسفند"
 
-#: src/Features/Settings/SettingsPage.php:150
-#: src/Features/Settings/SettingsPage.php:151
-#: src/Features/Settings/SettingsPage.php:266
+#: src/Features/Settings/SettingsPage.php:152
+#: src/Features/Settings/SettingsPage.php:153
+#: src/Features/Settings/SettingsPage.php:282
 msgid "Nyxify"
 msgstr "Nyxify"
 
-#: src/Features/Settings/SettingsPage.php:178
+#: src/Features/Settings/SettingsPage.php:180
 msgid "Settings"
 msgstr "تنظیمات"
 
-#: src/Features/Settings/SettingsPage.php:211
-msgid "Sorry, you are not allowed to access this page."
-msgstr "متأسفانه اجازهٔ دسترسی به این صفحه را ندارید."
-
-#: src/Features/Settings/SettingsPage.php:235
+#: src/Features/Settings/SettingsPage.php:238
 msgid "The bots and the bot admins can be managed here once the store’s status can be read."
 msgstr "وقتی وضعیت فروشگاه خوانده شود، ربات‌ها و ادمین‌های ربات را اینجا می‌توانید مدیریت کنید."
 
+#: src/Features/Settings/SettingsPage.php:266
+msgid "Your contact details on the bots’ “Support” screen, and how the bots look."
+msgstr "اطلاعات تماس شما در صفحهٔ «پشتیبانی» ربات‌ها، و ظاهر ربات‌ها."
+
 #: src/Features/Settings/SettingsPage.php:267
+msgid "Open bot appearance"
+msgstr "باز کردن ظاهر ربات"
+
+#: src/Features/Settings/SettingsPage.php:283
 msgid "Shop bots for WooCommerce on Telegram, Bale and Rubika"
 msgstr "ربات‌های فروشگاهی ووکامرس در تلگرام، بله و روبیکا"
 
-#: src/Features/Settings/SettingsPage.php:272
+#: src/Features/Settings/SettingsPage.php:288
 msgid "Connected"
 msgstr "متصل"
 
-#: src/Features/Settings/SettingsPage.php:274
+#: src/Features/Settings/SettingsPage.php:290
 msgid "Status unavailable"
 msgstr "وضعیت در دسترس نیست"
 
-#: src/Features/Settings/SettingsPage.php:276
+#: src/Features/Settings/SettingsPage.php:292
 msgid "Connection lost"
 msgstr "اتصال از دست رفته"
 
-#: src/Features/Settings/SettingsPage.php:292
+#: src/Features/Settings/SettingsPage.php:308
 msgid "Enter your license key"
 msgstr "کلید لایسنس را وارد کنید"
 
-#: src/Features/Settings/SettingsPage.php:292
+#: src/Features/Settings/SettingsPage.php:308
 msgid "It connects this shop to Nyxify."
 msgstr "این فروشگاه را به Nyxify وصل می‌کند."
 
-#: src/Features/Settings/SettingsPage.php:293
+#: src/Features/Settings/SettingsPage.php:309
 msgid "Connect your bots"
 msgstr "ربات‌ها را وصل کنید"
 
-#: src/Features/Settings/SettingsPage.php:293
+#: src/Features/Settings/SettingsPage.php:309
 msgid "Paste the token each messenger gave you."
 msgstr "توکنی را که هر پیام‌رسان به شما داده وارد کنید."
 
-#: src/Features/Settings/SettingsPage.php:294
+#: src/Features/Settings/SettingsPage.php:310
 msgid "Issue an admin PIN"
 msgstr "PIN ادمین بگیرید"
 
-#: src/Features/Settings/SettingsPage.php:294
+#: src/Features/Settings/SettingsPage.php:310
 msgid "Send it to your bot to manage the shop from there."
 msgstr "آن را به ربات بفرستید تا فروشگاه را از همان‌جا مدیریت کنید."
 
-#: src/Features/Settings/SettingsPage.php:299
-#: src/Features/Settings/SettingsPage.php:421
+#: src/Features/Settings/SettingsPage.php:315
+#: src/Features/Settings/SettingsPage.php:437
 msgid "Activate"
 msgstr "فعال‌سازی"
 
-#: src/Features/Settings/SettingsPage.php:311
+#: src/Features/Settings/SettingsPage.php:327
 msgid "Nothing is sent to the Nyxify server until you enter a license key."
 msgstr "تا وقتی کلید لایسنس را وارد نکنید، هیچ داده‌ای به سرور Nyxify فرستاده نمی‌شود."
 
-#: src/Features/Settings/SettingsPage.php:312
+#: src/Features/Settings/SettingsPage.php:328
 msgid "Nyxify server:"
 msgstr "سرور Nyxify:"
 
-#: src/Features/Settings/SettingsPage.php:327
+#: src/Features/Settings/SettingsPage.php:343
 msgid "Connection"
 msgstr "اتصال"
 
-#: src/Features/Settings/SettingsPage.php:329
+#: src/Features/Settings/SettingsPage.php:345
 msgid "Store ID"
 msgstr "شناسهٔ فروشگاه"
 
-#: src/Features/Settings/SettingsPage.php:331
+#: src/Features/Settings/SettingsPage.php:347
 msgid "Nyxify server"
 msgstr "سرور Nyxify"
 
-#: src/Features/Settings/SettingsPage.php:334
+#: src/Features/Settings/SettingsPage.php:350
 msgid "License"
 msgstr "لایسنس"
 
-#: src/Features/Settings/SettingsPage.php:340
+#: src/Features/Settings/SettingsPage.php:356
 msgid "Check connection"
 msgstr "بررسی اتصال"
 
 #. translators: %s: date and time
-#: src/Features/Settings/SettingsPage.php:345
+#: src/Features/Settings/SettingsPage.php:361
 #, php-format
 msgid "Checked %s"
 msgstr "بررسی‌شده در %s"
 
-#: src/Features/Settings/SettingsPage.php:352
+#: src/Features/Settings/SettingsPage.php:368
 msgid "Shared secret"
 msgstr "کلید مشترک"
 
-#: src/Features/Settings/SettingsPage.php:356
-#: src/Features/Settings/SettingsPage.php:421
+#: src/Features/Settings/SettingsPage.php:372
+#: src/Features/Settings/SettingsPage.php:437
 msgid "Activate again"
 msgstr "فعال‌سازی دوباره"
 
-#: src/Features/Settings/SettingsPage.php:357
+#: src/Features/Settings/SettingsPage.php:373
 msgid "Use this if the connection stops working. This site keeps its store ID and gets a new shared secret."
 msgstr "اگر اتصال از کار افتاد از این استفاده کنید. شناسه‌ی فروشگاه این سایت همان می‌ماند و یک کلید مشترک تازه می‌گیرد."
 
 #. translators: %s: date
-#: src/Features/Settings/SettingsPage.php:381
+#: src/Features/Settings/SettingsPage.php:397
 #, php-format
 msgid "Activated %s"
 msgstr "فعال‌شده در %s"
 
-#: src/Features/Settings/SettingsPage.php:392
+#: src/Features/Settings/SettingsPage.php:408
 msgid "Set by NYXIFY_API_BASE_URL in wp-config.php."
 msgstr "با NYXIFY_API_BASE_URL در wp-config.php تعیین شده است."
 
-#: src/Features/Settings/SettingsPage.php:401
+#: src/Features/Settings/SettingsPage.php:417
 msgid "This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
 msgstr "این سایت هر درخواست به Nyxify را با یک کلید مشترک امضا می‌کند که رمزنگاری‌شده همین‌جا نگه داشته می‌شود و هیچ‌وقت نمایش داده نمی‌شود. اگر فکر می‌کنید ممکن است لو رفته باشد، آن را عوض کنید؛ فروشگاه متصل می‌ماند."
 
-#: src/Features/Settings/SettingsPage.php:402
+#: src/Features/Settings/SettingsPage.php:418
 msgid "Replace the shared secret with a new one now? The store stays connected."
 msgstr "کلید مشترک همین حالا با یک کلید تازه عوض شود؟ فروشگاه متصل می‌ماند."
 
-#: src/Features/Settings/SettingsPage.php:404
+#: src/Features/Settings/SettingsPage.php:420
 msgid "Rotate secret"
 msgstr "تعویض کلید مشترک"
 
-#: src/Features/Settings/SettingsPage.php:418
+#: src/Features/Settings/SettingsPage.php:434
 msgid "License key"
 msgstr "کلید لایسنس"
 
-#: src/Features/Settings/SettingsPage.php:424
+#: src/Features/Settings/SettingsPage.php:440
 msgid "The key is sent once to the Nyxify server and is not stored on this site."
 msgstr "کلید فقط یک بار به سرور Nyxify فرستاده می‌شود و در این سایت ذخیره نمی‌شود."
 
-#: src/Features/Settings/SettingsPage.php:425
+#: src/Features/Settings/SettingsPage.php:441
 msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
 msgstr "فعال‌سازی برای حساب کاربری شما یک کلید REST API ووکامرس (خواندن/نوشتن) می‌سازد؛ Nyxify با آن کاتالوگ شما را می‌خواند و سفارش ثبت می‌کند. اگر این کاربر یا این کلید حذف شود، اتصال فروشگاه قطع می‌شود."
 
-#: src/Features/Settings/SettingsPage.php:453
+#: src/Features/Settings/SettingsPage.php:469
 msgid "Invalid fields:"
 msgstr "فیلدهای نامعتبر:"
 
-#: src/Features/Settings/SettingsPage.php:474
+#: src/Features/Settings/SettingsPage.php:490
 msgid "The store is connected to Nyxify."
 msgstr "فروشگاه به Nyxify متصل شد."
 
-#: src/Features/Settings/SettingsPage.php:475
+#: src/Features/Settings/SettingsPage.php:491
 msgid "The shared secret was replaced with a new one. The store stays connected."
 msgstr "کلید مشترک با یک کلید تازه عوض شد. فروشگاه متصل می‌ماند."
 
-#: src/Features/Settings/SettingsPage.php:476
+#: src/Features/Settings/SettingsPage.php:492
 msgid "The bot token was accepted. Nyxify is setting the bot up; check its status below."
 msgstr "توکن ربات پذیرفته شد. Nyxify در حال راه‌اندازی ربات است؛ وضعیت آن را در پایین ببینید."
 
-#: src/Features/Settings/SettingsPage.php:477
+#: src/Features/Settings/SettingsPage.php:493
 msgid "The bot was removed. It no longer answers your customers."
 msgstr "ربات حذف شد. دیگر به مشتریان شما پاسخ نمی‌دهد."
 
-#: src/Features/Settings/SettingsPage.php:478
+#: src/Features/Settings/SettingsPage.php:494
 msgid "A new admin PIN was issued; the previous one no longer works. Bot admins stay admins."
 msgstr "PIN ادمین جدید صادر شد؛ PIN قبلی دیگر کار نمی‌کند. ادمین‌های ربات ادمین می‌مانند."
 
-#: src/Features/Settings/SettingsPage.php:479
+#: src/Features/Settings/SettingsPage.php:495
 msgid "A new admin PIN was issued and every bot admin was logged out."
 msgstr "PIN ادمین جدید صادر شد و همهٔ ادمین‌های ربات خارج شدند."
 
-#: src/Features/Settings/SettingsPage.php:480
+#: src/Features/Settings/SettingsPage.php:496
 msgid "The bot admin was removed. The current PIN still works for them until you issue a new one."
 msgstr "ادمین ربات حذف شد. تا وقتی PIN جدید صادر نکنید، PIN فعلی هنوز برای او کار می‌کند."
 
-#: src/Features/Settings/SettingsPage.php:481
+#: src/Features/Settings/SettingsPage.php:497
 msgid "Nyxify is reading your catalog again. Check the catalog sync below in a few minutes."
 msgstr "Nyxify در حال خواندن دوبارهٔ کاتالوگ شماست. چند دقیقهٔ دیگر وضعیت همگام‌سازی کاتالوگ را در پایین بررسی کنید."
 
-#: src/Features/Settings/SettingsPage.php:482
+#: src/Features/Settings/SettingsPage.php:498
 msgid "A catalog sync is already running. Check the catalog sync below in a few minutes."
 msgstr "یک همگام‌سازی کاتالوگ از قبل در حال اجراست. چند دقیقهٔ دیگر وضعیت آن را در پایین بررسی کنید."
 
@@ -614,10 +1295,6 @@ msgid "%s day left"
 msgid_plural "%s days left"
 msgstr[0] "%s روز مانده"
 msgstr[1] "%s روز مانده"
-
-#: src/Features/Settings/StatusSection.php:153
-msgid "Products"
-msgstr "محصولات"
 
 #: src/Features/Settings/StatusSection.php:168
 msgid "Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them."
@@ -718,7 +1395,7 @@ msgid "%1$s of %2$s"
 msgstr "%1$s از %2$s"
 
 #. translators: %s: the oldest supported WooCommerce version, e.g. 9.0
-#: src/Plugin.php:184
+#: src/Plugin.php:188
 #, php-format
 msgid "Nyxify needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
 msgstr "Nyxify به ووکامرس %s یا جدیدتر نیاز دارد. برای استفاده از آن، ووکامرس را نصب، فعال یا به‌روزرسانی کنید."
@@ -727,178 +1404,190 @@ msgstr "Nyxify به ووکامرس %s یا جدیدتر نیاز دارد. بر�
 msgid "Sorry, you are not allowed to do that."
 msgstr "متأسفانه اجازهٔ انجام این کار را ندارید."
 
-#: src/Shared/Http/ErrorMessages.php:110
+#: src/Shared/Http/ErrorMessages.php:114
 msgid "This store is not connected to Nyxify yet. Enter your license key to activate it."
 msgstr "این فروشگاه هنوز به Nyxify وصل نشده است. برای فعال‌سازی، کلید لایسنس خود را وارد کنید."
 
-#: src/Shared/Http/ErrorMessages.php:111
+#: src/Shared/Http/ErrorMessages.php:115
 msgid "The saved connection to Nyxify can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect."
 msgstr "اتصال ذخیره‌شده به Nyxify دیگر خوانده نمی‌شود؛ احتمالاً کلیدهای امنیتی سایت (salt) تغییر کرده‌اند. برای اتصال دوباره، کلید لایسنس را دوباره وارد کنید."
 
-#: src/Shared/Http/ErrorMessages.php:112
+#: src/Shared/Http/ErrorMessages.php:116
 msgid "The Nyxify server address is invalid. Check NYXIFY_API_BASE_URL in wp-config.php: it must be an https address."
 msgstr "نشانی سرور Nyxify نامعتبر است. مقدار NYXIFY_API_BASE_URL را در wp-config.php بررسی کنید؛ باید یک نشانی https باشد."
 
-#: src/Shared/Http/ErrorMessages.php:113
+#: src/Shared/Http/ErrorMessages.php:117
 msgid "The data could not be prepared for sending to Nyxify."
 msgstr "داده‌ها برای ارسال به Nyxify آماده نشدند."
 
-#: src/Shared/Http/ErrorMessages.php:114
+#: src/Shared/Http/ErrorMessages.php:118
 msgid "Could not reach the Nyxify server. Check this site’s internet connection and try again in a few minutes."
 msgstr "دسترسی به سرور Nyxify ممکن نشد. اتصال اینترنت این سایت را بررسی کنید و چند دقیقهٔ دیگر دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:115
+#: src/Shared/Http/ErrorMessages.php:119
 msgid "The Nyxify server answered with a redirect, which is not followed. Check the server address."
 msgstr "سرور Nyxify با تغییر مسیر (redirect) پاسخ داد که دنبال نمی‌شود. نشانی سرور را بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:116
+#: src/Shared/Http/ErrorMessages.php:120
 msgid "The Nyxify server sent an unexpected answer. Try again later."
 msgstr "سرور Nyxify پاسخ غیرمنتظره‌ای فرستاد. بعداً دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:117
+#: src/Shared/Http/ErrorMessages.php:121
 msgid "Something went wrong while talking to the Nyxify server. Try again later."
 msgstr "در ارتباط با سرور Nyxify مشکلی پیش آمد. بعداً دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:118
+#: src/Shared/Http/ErrorMessages.php:122
 msgid "This is not a Nyxify license key. A license key looks like NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
 msgstr "این کلید لایسنس Nyxify نیست. کلید لایسنس به این شکل است: NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
 
-#: src/Shared/Http/ErrorMessages.php:119
+#: src/Shared/Http/ErrorMessages.php:123
 msgid "Nyxify needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again."
 msgstr "Nyxify به https نیاز دارد. نشانی وردپرس و نشانی سایت را در تنظیمات ← همگانی به https تغییر دهید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:120
+#: src/Shared/Http/ErrorMessages.php:124
 msgid "This site’s REST API is not on the same address as the site, so Nyxify cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port."
 msgstr "REST API این سایت روی نشانی خود سایت نیست، پس Nyxify نمی‌تواند از آن استفاده کند. نشانی وردپرس و نشانی سایت را در تنظیمات ← همگانی با پروتکل، دامنه و پورت یکسان تنظیم کنید."
 
-#: src/Shared/Http/ErrorMessages.php:121
+#: src/Shared/Http/ErrorMessages.php:125
 msgid "The WooCommerce REST API key Nyxify needs could not be created. Try again; if it keeps failing, check the site’s database error log."
 msgstr "کلید REST API ووکامرس که Nyxify به آن نیاز دارد ساخته نشد. دوباره تلاش کنید؛ اگر باز هم نشد، گزارش خطاهای پایگاه داده‌ی سایت را بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:122
+#: src/Shared/Http/ErrorMessages.php:126
 msgid "The store was activated on Nyxify, but the connection could not be saved on this site. Enter your license key again to activate it once more."
 msgstr "فروشگاه در Nyxify فعال شد، اما اتصال در این سایت ذخیره نشد. کلید لایسنس را دوباره وارد کنید تا یک بار دیگر فعال شود."
 
-#: src/Shared/Http/ErrorMessages.php:123
+#: src/Shared/Http/ErrorMessages.php:127
 msgid "Nyxify issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now."
 msgstr "Nyxify یک کلید مشترک تازه صادر کرد، اما در این سایت ذخیره نشد. کلید فعلی هنوز کار می‌کند: همین حالا دوباره آن را عوض کنید."
 
-#: src/Shared/Http/ErrorMessages.php:124
+#: src/Shared/Http/ErrorMessages.php:128
 msgid "This does not look like a bot token. Paste the token the messenger gave you when you created the bot, without spaces."
 msgstr "این توکن ربات به نظر نمی‌رسد. توکنی را که پیام‌رسان هنگام ساختن ربات به شما داد، بدون فاصله وارد کنید."
 
-#: src/Shared/Http/ErrorMessages.php:125
+#: src/Shared/Http/ErrorMessages.php:129
 msgid "Nyxify issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now."
 msgstr "Nyxify یک PIN ادمین جدید صادر کرد، اما در این سایت ذخیره نشد و PIN قبلی هم دیگر کار نمی‌کند. همین حالا PIN جدیدی صادر کنید."
 
-#: src/Shared/Http/ErrorMessages.php:128
+#: src/Shared/Http/ErrorMessages.php:130
+msgid "Some fields are not valid, so nothing was saved. Correct the fields marked below and save again."
+msgstr "چند فیلد معتبر نیستند و چیزی ذخیره نشد. فیلدهای مشخص‌شده را اصلاح کنید و دوباره ذخیره کنید."
+
+#: src/Shared/Http/ErrorMessages.php:133
 msgid "The Nyxify server rejected the request as invalid. Update the plugin and try again."
 msgstr "سرور Nyxify درخواست را نامعتبر دانست و رد کرد. افزونه را به‌روز کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:129
+#: src/Shared/Http/ErrorMessages.php:134
 msgid "The Nyxify server did not accept this store’s credentials. Activate the store again with your license key."
 msgstr "سرور Nyxify اعتبارنامهٔ این فروشگاه را نپذیرفت. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:130
+#: src/Shared/Http/ErrorMessages.php:135
 msgid "The Nyxify server does not accept this request. Update the plugin."
 msgstr "سرور Nyxify این درخواست را نمی‌پذیرد. افزونه را به‌روز کنید."
 
-#: src/Shared/Http/ErrorMessages.php:131
+#: src/Shared/Http/ErrorMessages.php:136
 msgid "Some of the data sent to Nyxify is invalid. Check it and try again."
 msgstr "بخشی از داده‌های ارسال‌شده به Nyxify نامعتبر است. آن را بررسی کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:132
+#: src/Shared/Http/ErrorMessages.php:137
 msgid "The data is too large for the Nyxify server."
 msgstr "حجم داده‌ها برای سرور Nyxify بیش از حد است."
 
-#: src/Shared/Http/ErrorMessages.php:133
+#: src/Shared/Http/ErrorMessages.php:138
 msgid "The Nyxify server had an internal error. Try again later."
 msgstr "سرور Nyxify با خطای داخلی روبه‌رو شد. بعداً دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:134
+#: src/Shared/Http/ErrorMessages.php:139
 msgid "The Nyxify server could not read this store’s saved credentials. Activate the store again with your license key."
 msgstr "سرور Nyxify نتوانست اعتبارنامهٔ ذخیره‌شدهٔ این فروشگاه را بخواند. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:135
+#: src/Shared/Http/ErrorMessages.php:140
 msgid "Too many attempts. Wait a few minutes and try again."
 msgstr "تعداد تلاش‌ها بیش از حد است. چند دقیقه صبر کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:138
+#: src/Shared/Http/ErrorMessages.php:143
 msgid "The request’s signature was missing or malformed. Activate the store again with your license key."
 msgstr "امضای درخواست وجود نداشت یا نادرست بود. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:139
+#: src/Shared/Http/ErrorMessages.php:144
 msgid "The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again."
 msgstr "درخواست رد شد، چون ساعت این سرور بیش از پنج دقیقه اختلاف دارد. ساعت سرور را درست کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:140
+#: src/Shared/Http/ErrorMessages.php:145
 msgid "The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key."
 msgstr "امضای درخواست مطابقت نداشت؛ ممکن است کلید مشترک قدیمی شده باشد. فروشگاه را با کلید لایسنس دوباره فعال کنید."
 
-#: src/Shared/Http/ErrorMessages.php:141
+#: src/Shared/Http/ErrorMessages.php:146
 msgid "The same request reached the Nyxify server twice and was rejected. Try again."
 msgstr "همین درخواست دو بار به سرور Nyxify رسید و رد شد. دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:144
+#: src/Shared/Http/ErrorMessages.php:149
 msgid "This license key is not valid. Check it and try again."
 msgstr "این کلید لایسنس معتبر نیست. آن را بررسی کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:145
+#: src/Shared/Http/ErrorMessages.php:150
 msgid "This license key has been revoked. Contact Nyxify support."
 msgstr "این کلید لایسنس باطل شده است. با پشتیبانی Nyxify تماس بگیرید."
 
-#: src/Shared/Http/ErrorMessages.php:146
+#: src/Shared/Http/ErrorMessages.php:151
 msgid "This license key is already used by another website."
 msgstr "این کلید لایسنس پیش‌تر برای وب‌سایت دیگری به کار رفته است."
 
-#: src/Shared/Http/ErrorMessages.php:147
+#: src/Shared/Http/ErrorMessages.php:152
 msgid "This website is already activated with another license key."
 msgstr "این وب‌سایت پیش‌تر با کلید لایسنس دیگری فعال شده است."
 
-#: src/Shared/Http/ErrorMessages.php:148
+#: src/Shared/Http/ErrorMessages.php:153
 msgid "This store is deactivated or suspended on Nyxify. Activate it again with your license key; if the license was revoked, contact Nyxify support."
 msgstr "این فروشگاه در Nyxify غیرفعال یا معلق است. آن را با کلید لایسنس دوباره فعال کنید؛ اگر لایسنس باطل شده، با پشتیبانی Nyxify تماس بگیرید."
 
-#: src/Shared/Http/ErrorMessages.php:149
+#: src/Shared/Http/ErrorMessages.php:154
 msgid "Your Nyxify subscription is not active or has expired. Renew it to continue."
 msgstr "اشتراک Nyxify شما فعال نیست یا منقضی شده است. برای ادامه، آن را تمدید کنید."
 
-#: src/Shared/Http/ErrorMessages.php:150
+#: src/Shared/Http/ErrorMessages.php:155
 msgid "Your Nyxify plan does not include this messenger. Upgrade your plan to use it."
 msgstr "طرح Nyxify شما این پیام‌رسان را شامل نمی‌شود. برای استفاده از آن، طرح خود را ارتقا دهید."
 
-#: src/Shared/Http/ErrorMessages.php:151
+#: src/Shared/Http/ErrorMessages.php:156
 msgid "The Nyxify server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again."
 msgstr "سرور Nyxify نتوانست با کلید تازه به REST API ووکامرس این فروشگاه وارد شود. مطمئن شوید هیچ افزونهٔ امنیتی جلوی REST API را نگرفته است، سپس دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:152
+#: src/Shared/Http/ErrorMessages.php:157
 msgid "The Nyxify server could not reach this store. The site must be public, use https, and its REST API must not redirect."
 msgstr "سرور Nyxify به این فروشگاه دسترسی پیدا نکرد. سایت باید عمومی باشد، از https استفاده کند و REST API آن نباید تغییر مسیر (redirect) بدهد."
 
-#: src/Shared/Http/ErrorMessages.php:153
+#: src/Shared/Http/ErrorMessages.php:158
 msgid "This store’s WooCommerce REST API rejected the Nyxify server’s request. Check the firewall and security plugins."
 msgstr "REST API ووکامرس این فروشگاه درخواست سرور Nyxify را رد کرد. فایروال و افزونه‌های امنیتی را بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:154
+#: src/Shared/Http/ErrorMessages.php:159
 msgid "This store’s WooCommerce REST API sent the Nyxify server an unexpected answer. Check for plugins that change REST API responses."
 msgstr "REST API ووکامرس این فروشگاه پاسخ غیرمنتظره‌ای به سرور Nyxify داد. افزونه‌هایی را که پاسخ‌های REST API را تغییر می‌دهند بررسی کنید."
 
-#: src/Shared/Http/ErrorMessages.php:157
+#: src/Shared/Http/ErrorMessages.php:162
 msgid "This bot is already connected to another Nyxify store. Create a new bot for this shop, or remove this one from the other store first."
 msgstr "این ربات به فروشگاه دیگری در Nyxify وصل است. برای این فروشگاه ربات تازه‌ای بسازید، یا اول آن را از فروشگاه دیگر حذف کنید."
 
-#: src/Shared/Http/ErrorMessages.php:158
+#: src/Shared/Http/ErrorMessages.php:163
 msgid "No bot is connected for this messenger."
 msgstr "هیچ رباتی برای این پیام‌رسان وصل نیست."
 
-#: src/Shared/Http/ErrorMessages.php:159
+#: src/Shared/Http/ErrorMessages.php:164
 msgid "This person is no longer a bot admin of this store."
 msgstr "این شخص دیگر ادمین ربات این فروشگاه نیست."
 
-#: src/Shared/Http/ErrorMessages.php:160
+#: src/Shared/Http/ErrorMessages.php:165
 msgid "The messenger rejected this bot token. Check it and try again."
 msgstr "پیام‌رسان این توکن ربات را نپذیرفت. آن را بررسی کنید و دوباره تلاش کنید."
 
-#: src/Shared/Http/ErrorMessages.php:161
+#: src/Shared/Http/ErrorMessages.php:166
 msgid "The messenger’s servers did not respond. Try again in a few minutes."
 msgstr "سرورهای پیام‌رسان پاسخ ندادند. چند دقیقهٔ دیگر دوباره تلاش کنید."
+
+#: src/Shared/Http/ErrorMessages.php:169
+msgid "These settings were changed meanwhile, in the bot or by another user, so your changes were not saved. They are still in the form below, next to the saved values: check them and save again."
+msgstr "این تنظیمات در همین فاصله، در ربات یا به دست کاربر دیگری، تغییر کرده‌اند و تغییرهای شما ذخیره نشد. تغییرهای شما هنوز در فرم زیر، کنار مقدارهای ذخیره‌شده، هستند. آن‌ها را بررسی کنید و دوباره ذخیره کنید."
+
+#: src/Shared/Http/ErrorMessages.php:170
+msgid "The bot appearance settings are too large for the Nyxify server (256 KB in all). Shorten some texts and save again."
+msgstr "تنظیمات ظاهر ربات برای سرور Nyxify بیش از حد بزرگ است (روی هم ۲۵۶ کیلوبایت). چند متن را کوتاه کنید و دوباره ذخیره کنید."

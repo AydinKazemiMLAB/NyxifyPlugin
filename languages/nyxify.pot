@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nyxify – Shop Bots for WooCommerce 1.0.0\n"
+"Project-Id-Version: Nyxify – Shop Bots for WooCommerce 1.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/nyxify\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T20:21:26+00:00\n"
+"POT-Creation-Date: 2026-10-20T08:56:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: nyxify\n"
@@ -29,20 +29,701 @@ msgstr ""
 msgid "Nyxon"
 msgstr ""
 
-#: nyxify.php:46
+#: nyxify.php:48
 msgid "Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip."
 msgstr ""
 
+#: src/Features/Appearance/AppearancePage.php:99
+#: src/Features/Appearance/AppearancePage.php:100
+#: src/Features/Appearance/AppearancePage.php:147
+#: src/Features/Appearance/AppearancePage.php:195
+#: src/Features/Settings/SettingsPage.php:265
+msgid "Bot appearance"
+msgstr ""
+
+#: src/Features/Appearance/AppearancePage.php:138
+#: src/Features/Settings/SettingsPage.php:213
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: src/Features/Appearance/AppearancePage.php:148
+#: src/Features/Catalog/PlanLimitNotice.php:160
+msgid "Nyxify settings"
+msgstr ""
+
+#: src/Features/Appearance/AppearancePage.php:155
+msgid "Go to the Nyxify settings"
+msgstr ""
+
+#. translators: %s: minutes
+#: src/Features/Appearance/AppearancePage.php:162
+#, php-format
+msgid "Your bots show a change within %s minutes: they keep their settings that long."
+msgstr ""
+
+#: src/Features/Appearance/AppearancePage.php:165
+msgid "Bot admins can change the same settings in the bot’s “🎨 Bot appearance” section, apart from the contact details."
+msgstr ""
+
+#: src/Features/Appearance/AppearancePage.php:233
+msgid "Save"
+msgstr ""
+
+#. translators: %s: date and time
+#: src/Features/Appearance/AppearancePage.php:238
+#, php-format
+msgid "Bot appearance last changed %s"
+msgstr ""
+
+#. translators: %s: minutes
+#: src/Features/Appearance/AppearancePage.php:278
+#, php-format
+msgid "Saved. Your bots show the change within %s minutes."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BackButtonTab.php:33
+msgid "Back button"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BackButtonTab.php:77
+msgid "The button that goes back a screen. It looks the same on every screen, the bot admins’ screens included. By default it is blue, with ➡️ in Persian and ⬅️ in English."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BackButtonTab.php:80
+#: src/Features/Appearance/Tabs/MenuTab.php:283
+#: src/Features/Appearance/Tabs/MenuTab.php:696
+msgid "Default (blue)"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:43
+msgid "Bot description"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:108
+msgid "How your Telegram bots introduce themselves, in plain text (Bale and Rubika have no bot descriptions). A bot sets them after the next message it gets."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:126
+#: src/Features/Appearance/Tabs/ButtonFields.php:153
+#: src/Features/Appearance/Tabs/ContactTab.php:258
+#: src/Features/Appearance/Tabs/MenuTab.php:316
+#: src/Features/Appearance/Tabs/TextsTab.php:257
+#: src/Features/Appearance/Tabs/WelcomeTab.php:150
+msgid "Persian"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:126
+#: src/Features/Appearance/Tabs/ButtonFields.php:153
+#: src/Features/Appearance/Tabs/ContactTab.php:258
+#: src/Features/Appearance/Tabs/MenuTab.php:316
+#: src/Features/Appearance/Tabs/TextsTab.php:257
+#: src/Features/Appearance/Tabs/WelcomeTab.php:150
+msgid "English"
+msgstr ""
+
+#. translators: %s: the most characters the field takes
+#: src/Features/Appearance/Tabs/BotProfileTab.php:151
+#: src/Features/Appearance/Tabs/ButtonFields.php:248
+#: src/Features/Appearance/Tabs/ContactTab.php:287
+#: src/Features/Appearance/Tabs/MenuTab.php:423
+#: src/Features/Appearance/Tabs/TextsTab.php:401
+#, php-format
+msgid "Up to %s characters."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:154
+#: src/Features/Appearance/Tabs/ButtonFields.php:233
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:257
+#: src/Features/Appearance/Tabs/ContactTab.php:281
+#: src/Features/Appearance/Tabs/MenuTab.php:400
+#: src/Features/Appearance/Tabs/MenuTab.php:414
+#: src/Features/Appearance/Tabs/WelcomeTab.php:184
+msgid "The Nyxify server did not accept this value."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:165
+msgid "Description"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:166
+msgid "Shown in an empty chat with the bot, before the customer starts it (“What can this bot do?”). Up to 512 characters. Empty: the bot’s own, with your shop’s name."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:169
+msgid "Short description"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/BotProfileTab.php:170
+msgid "On the bot’s profile and in links to it. Up to 120 characters. Empty: the bot’s own, with your shop’s name."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:142
+msgid "Title"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:160
+msgid "Up to 40 characters, without the icon. Empty: the bot’s own title in that language."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:167
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:178
+msgid "Icon"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:177
+msgid "Emoji"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:189
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:179
+msgid "Premium emoji id (Telegram, optional)"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:195
+msgid "One emoji. For a Telegram premium emoji, add its id: Bale, Rubika and Telegram apps that can’t show it show the emoji. You can also paste “id emoji” into the emoji box. Empty: the bot’s own icon."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:199
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:180
+msgid "Color"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:210
+msgid "Telegram only: Bale and Rubika show every button plain."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:239
+msgid "Add the emoji too: Bale, Rubika and some Telegram apps show it instead of the premium emoji."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:240
+msgid "One emoji, e.g. 🛒; or a premium emoji’s id and its emoji, e.g. 5368324170671202286 🛒."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:242
+msgid "A premium emoji’s id: up to 20 digits."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:244
+msgid "Choose a color from the list."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:258
+msgid "Blue"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:259
+msgid "Green"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ButtonFields.php:260
+msgid "Red"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:89
+msgid "Categories"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:158
+msgid "The icon and color of each category’s button in your customers’ product list. A category left empty has no icon and no color, as the bots show categories by default. A deleted category’s icon and color go with it the next time you save."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:166
+msgid "Your shop has no product categories yet."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:170
+#: src/Features/Appearance/Tabs/MenuTab.php:696
+msgid "Default (no color)"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:172
+msgid "Icon: one emoji. For a Telegram premium emoji, add its id: Bale, Rubika and Telegram apps that can’t show it show the emoji. You can also paste “id emoji” into the emoji box. Color: Telegram only; Bale and Rubika show every button plain."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:177
+msgid "Category"
+msgstr ""
+
+#. translators: %s: a category's name
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:196
+#, php-format
+msgid "Icon of %s"
+msgstr ""
+
+#. translators: %s: a category's name
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:210
+#, php-format
+msgid "Premium emoji id of %s"
+msgstr ""
+
+#. translators: %s: a category's name
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:223
+#, php-format
+msgid "Color of %s"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:246
+msgid "Your product categories couldn’t be read, so nothing was saved. Reload the page and try again."
+msgstr ""
+
+#. translators: %s: PHP's max_input_vars setting
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:248
+#, php-format
+msgid "Your server dropped the end of the form, so nothing was saved: it takes at most %s fields (PHP’s max_input_vars), three per category. Ask your host to raise it, then save again."
+msgstr ""
+
+#. translators: %s: the most categories
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:250
+#, php-format
+msgid "Up to %s categories can have their own icon or color."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/CategoryStyleTab.php:251
+#: src/Features/Appearance/Tabs/Fields.php:277
+#: src/Features/Appearance/Tabs/TextsTab.php:298
+msgid "The Nyxify server did not accept these details. Check them and save again."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:71
+msgid "Contact"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:175
+msgid "How customers reach you. Your bots show these details on their “Support” screen, with a button for each messenger; with every field empty they show no “Support” button. Only this page sets them: bot admins can’t change them from the bot."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:176
+msgid "Everyone who opens your bots sees these details."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:179
+msgid "Phone and email"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:182
+msgid "Phone"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:198
+msgid "Email"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:214
+msgid "Messengers"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:215
+msgid "Your id on each messenger, without @; you can also paste the link to your page. The bots show their own messenger first."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:233
+msgid "The number with the country code, e.g. 989121234567 for 0912 123 4567."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:240
+msgid "Introduction, address and working hours"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:241
+msgid "In Persian, English or both: a customer using the other language sees the one you wrote."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:291
+msgid "A phone number of 5 to 25 characters: digits, with a leading + , spaces and dashes if you like."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:292
+msgid "This is not an email address."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:293
+msgid "A Telegram username: 5 to 32 English letters, digits and _, starting with a letter."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:294
+#: src/Features/Appearance/Tabs/ContactTab.php:295
+msgid "An id of 3 to 32 English letters, digits, _ and dots, starting with a letter."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:296
+msgid "The number with the country code, 8 to 15 digits, e.g. 989121234567."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:297
+msgid "An Instagram username: up to 30 English letters, digits, _ and dots."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:300
+msgid "This value is not valid."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:310
 #: src/Features/Bots/BotPlatform.php:78
 msgid "Telegram"
 msgstr ""
 
+#: src/Features/Appearance/Tabs/ContactTab.php:311
 #: src/Features/Bots/BotPlatform.php:79
 msgid "Bale"
 msgstr ""
 
+#: src/Features/Appearance/Tabs/ContactTab.php:312
 #: src/Features/Bots/BotPlatform.php:80
 msgid "Rubika"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:313
+msgid "WhatsApp"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:314
+msgid "Instagram"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:325
+msgid "Introduction"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:325
+msgid "A few lines at the top of the screen, e.g. when you answer. Up to 500 characters."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:326
+msgid "Address"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:326
+msgid "Up to 300 characters."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:327
+msgid "Working hours"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/ContactTab.php:327
+msgid "Up to 200 characters."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/Fields.php:258
+msgid "Saved now:"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/Fields.php:259
+msgid "(empty)"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:100
+msgid "Menu"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:216
+msgid "Your customers’ main menu: the bot’s own buttons, up to five of your own, and how they are laid out. Anything you leave empty keeps the bot’s default."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:219
+msgid "The bot’s buttons"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:220
+msgid "Open a button to hide it or change its title, icon or color."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:232
+#: src/Features/Appearance/Tabs/MenuTab.php:250
+msgid "Hidden"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:234
+msgid "Changed"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:240
+msgid "In the menu"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:247
+msgid "Show this button"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:249
+msgid "Shown"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:262
+msgid "Your own buttons"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:263
+msgid "Up to five. Each one opens a link or shows a text, and needs a title in at least one language. A button with every field empty doesn’t exist."
+msgstr ""
+
+#. translators: %s: the button's number, 1 to 5
+#: src/Features/Appearance/Tabs/MenuTab.php:274
+#, php-format
+msgid "Your button %s"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:285
+msgid "Link"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:299
+msgid "The page the button opens, starting with https://. Leave it empty for a button that shows a text."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:303
+#: src/Features/Appearance/Tabs/WelcomeTab.php:137
+msgid "Text"
+msgstr ""
+
+#. translators: 1: the most characters, 2: the formatting tags allowed
+#: src/Features/Appearance/Tabs/MenuTab.php:328
+#, php-format
+msgid "What the bot sends when the button is pressed, instead of a link. {name} is the customer’s first name and {shop} your shop’s name. Up to %1$s characters. Formatting: %2$s."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:341
+msgid "Layout"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:344
+msgid "Rows"
+msgstr ""
+
+#. translators: 1: the most rows, 2: the most buttons in a row, 3: the built-in buttons' keys
+#: src/Features/Appearance/Tabs/MenuTab.php:362
+#, php-format
+msgid "One row per line, top first, with the buttons’ keys separated by spaces: up to %1$s rows of up to %2$s buttons. The bot’s buttons are %3$s; your own buttons’ keys are shown next to their names. A button left out isn’t shown. Empty: the default rows, with your own buttons a row each under them."
+msgstr ""
+
+#. translators: %s: buttons' keys
+#: src/Features/Appearance/Tabs/MenuTab.php:375
+#, php-format
+msgid "Your buttons not in the layout, so not shown: %s"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:394
+msgid "A key in the layout names no button. Use the keys listed below, and your own buttons’ keys only for buttons you filled in."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:395
+msgid "A button can be in the layout only once."
+msgstr ""
+
+#. translators: %s: the most rows
+#: src/Features/Appearance/Tabs/MenuTab.php:397
+#, php-format
+msgid "Up to %s rows."
+msgstr ""
+
+#. translators: %s: the most buttons in a row
+#: src/Features/Appearance/Tabs/MenuTab.php:399
+#, php-format
+msgid "Up to %s buttons in a row."
+msgstr ""
+
+#. translators: %s: the formatting tags allowed
+#: src/Features/Appearance/Tabs/MenuTab.php:413
+#: src/Features/Appearance/Tabs/TextsTab.php:306
+#: src/Features/Appearance/Tabs/WelcomeTab.php:186
+#, php-format
+msgid "The Nyxify server did not accept this text. Use only these tags, each one closed: %s."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:418
+msgid "Give the button a title in at least one language."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:419
+msgid "Give the button a link or a text: one of the two."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:420
+msgid "A link starting with https://, without spaces."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:421
+#: src/Features/Appearance/Tabs/WelcomeTab.php:194
+msgid "Only {name} and {shop} can be used here; write {{ and }} for a brace."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:661
+#: src/Features/Settings/StatusSection.php:153
+msgid "Products"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:662
+msgid "Search"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:663
+msgid "Cart"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:664
+msgid "My orders"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:665
+msgid "My account"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:666
+msgid "Language"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:667
+msgid "Shop website"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:668
+msgid "Support"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:679
+msgid "Opens your categories and products."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:680
+msgid "Searches your products by name."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:681
+msgid "Opens the customer’s cart."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:682
+msgid "Lists the customer’s orders."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:683
+msgid "The customer’s name, phone and addresses."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:684
+msgid "Switches between Persian and English. Its default title is the other language’s name (English, فارسی)."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:685
+msgid "Opens your site."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/MenuTab.php:686
+msgid "Opens your contact details; shown only once the Contact tab has some."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:101
+msgid "Texts"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:195
+msgid "The texts your customers read in the bots, by part of the bot. Write your own wording in either language; a box left empty keeps the bot’s default in that language."
+msgstr ""
+
+#. translators: %s: the formatting tags allowed
+#: src/Features/Appearance/Tabs/TextsTab.php:208
+#, php-format
+msgid "Formatting: %s. A text can use only the variables listed with it, in braces; write {{ and }} for a brace. Lengths don’t count the tags."
+msgstr ""
+
+#. translators: %s: how many texts
+#: src/Features/Appearance/Tabs/TextsTab.php:232
+#, php-format
+msgid "%s text"
+msgid_plural "%s texts"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: how many texts were changed, 2: how many texts
+#: src/Features/Appearance/Tabs/TextsTab.php:234
+#, php-format
+msgid "%1$s of %2$s text changed"
+msgid_plural "%1$s of %2$s texts changed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:262
+msgid "Default:"
+msgstr ""
+
+#. translators: %s: how many texts
+#: src/Features/Appearance/Tabs/TextsTab.php:278
+#, php-format
+msgid "%s text of the bot that this version of the plugin doesn’t list is kept as it is."
+msgid_plural "%s texts of the bot that this version of the plugin doesn’t list are kept as they are."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:296
+msgid "The list of the bot’s texts couldn’t be read, so nothing was saved. Reinstall the plugin if this goes on."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:297
+msgid "Your server dropped the end of the form, so nothing was saved. Ask your host to raise PHP’s max_input_vars, then save again."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:310
+msgid "This text takes no variables; write {{ and }} for a brace."
+msgstr ""
+
+#. translators: %s: the variables a text may use
+#: src/Features/Appearance/Tabs/TextsTab.php:312
+#, php-format
+msgid "This text can use only %s; write {{ and }} for a brace."
+msgstr ""
+
+#. translators: %s: the most characters
+#: src/Features/Appearance/Tabs/TextsTab.php:314
+#, php-format
+msgid "Up to %s characters with the tags."
+msgstr ""
+
+#. translators: %s: the most characters shown
+#: src/Features/Appearance/Tabs/TextsTab.php:316
+#: src/Features/Appearance/Tabs/WelcomeTab.php:198
+#, php-format
+msgid "Up to %s characters, not counting tags."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:397
+msgid "No variables."
+msgstr ""
+
+#. translators: %s: the variables a text may use
+#: src/Features/Appearance/Tabs/TextsTab.php:399
+#, php-format
+msgid "Variables: %s."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/TextsTab.php:404
+msgid "Shown as plain text: formatting is dropped."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:50
+msgid "Welcome"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:115
+msgid "What customers see when they start one of your bots: the banner, then this text, with the main menu under it."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:119
+msgid "Banner"
+msgstr ""
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:133
+msgid "The address of an image, starting with https://. For an image in your media library, open it and copy its file URL. Empty: your site’s logo."
+msgstr ""
+
+#. translators: 1: the most characters shown, 2: the formatting tags allowed
+#: src/Features/Appearance/Tabs/WelcomeTab.php:162
+#, php-format
+msgid "{name} is the customer’s first name and {shop} your shop’s name. Up to %1$s characters, not counting tags. Formatting: %2$s. Empty: the bot’s own welcome; a customer using the other language sees the one you wrote."
+msgstr ""
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:190
+msgid "An image address starting with https://, without spaces."
 msgstr ""
 
 #. translators: %s: number of products
@@ -61,10 +742,6 @@ msgstr ""
 #: src/Features/Catalog/PlanLimitNotice.php:152
 #, php-format
 msgid "Last seen %s"
-msgstr ""
-
-#: src/Features/Catalog/PlanLimitNotice.php:160
-msgid "Nyxify settings"
 msgstr ""
 
 #: src/Features/Catalog/PlanLimitNotice.php:162
@@ -211,7 +888,7 @@ msgid "Replace with another bot"
 msgstr ""
 
 #: src/Features/Settings/BotsSection.php:174
-#: src/Features/Settings/SettingsPage.php:278
+#: src/Features/Settings/SettingsPage.php:294
 msgid "Not connected"
 msgstr ""
 
@@ -316,7 +993,7 @@ msgid "When the plugin is deactivated, Nyxify is told and this site’s connecti
 msgstr ""
 
 #: src/Features/Settings/ErrorNotice.php:35
-#: src/Features/Settings/SettingsPage.php:460
+#: src/Features/Settings/SettingsPage.php:476
 msgid "Request ID (for Nyxify support):"
 msgstr ""
 
@@ -380,187 +1057,191 @@ msgctxt "Jalali month"
 msgid "Esfand"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:150
-#: src/Features/Settings/SettingsPage.php:151
-#: src/Features/Settings/SettingsPage.php:266
+#: src/Features/Settings/SettingsPage.php:152
+#: src/Features/Settings/SettingsPage.php:153
+#: src/Features/Settings/SettingsPage.php:282
 msgid "Nyxify"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:178
+#: src/Features/Settings/SettingsPage.php:180
 msgid "Settings"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:211
-msgid "Sorry, you are not allowed to access this page."
-msgstr ""
-
-#: src/Features/Settings/SettingsPage.php:235
+#: src/Features/Settings/SettingsPage.php:238
 msgid "The bots and the bot admins can be managed here once the store’s status can be read."
 msgstr ""
 
+#: src/Features/Settings/SettingsPage.php:266
+msgid "Your contact details on the bots’ “Support” screen, and how the bots look."
+msgstr ""
+
 #: src/Features/Settings/SettingsPage.php:267
+msgid "Open bot appearance"
+msgstr ""
+
+#: src/Features/Settings/SettingsPage.php:283
 msgid "Shop bots for WooCommerce on Telegram, Bale and Rubika"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:272
+#: src/Features/Settings/SettingsPage.php:288
 msgid "Connected"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:274
+#: src/Features/Settings/SettingsPage.php:290
 msgid "Status unavailable"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:276
+#: src/Features/Settings/SettingsPage.php:292
 msgid "Connection lost"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:292
+#: src/Features/Settings/SettingsPage.php:308
 msgid "Enter your license key"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:292
+#: src/Features/Settings/SettingsPage.php:308
 msgid "It connects this shop to Nyxify."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:293
+#: src/Features/Settings/SettingsPage.php:309
 msgid "Connect your bots"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:293
+#: src/Features/Settings/SettingsPage.php:309
 msgid "Paste the token each messenger gave you."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:294
+#: src/Features/Settings/SettingsPage.php:310
 msgid "Issue an admin PIN"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:294
+#: src/Features/Settings/SettingsPage.php:310
 msgid "Send it to your bot to manage the shop from there."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:299
-#: src/Features/Settings/SettingsPage.php:421
+#: src/Features/Settings/SettingsPage.php:315
+#: src/Features/Settings/SettingsPage.php:437
 msgid "Activate"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:311
+#: src/Features/Settings/SettingsPage.php:327
 msgid "Nothing is sent to the Nyxify server until you enter a license key."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:312
+#: src/Features/Settings/SettingsPage.php:328
 msgid "Nyxify server:"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:327
+#: src/Features/Settings/SettingsPage.php:343
 msgid "Connection"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:329
+#: src/Features/Settings/SettingsPage.php:345
 msgid "Store ID"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:331
+#: src/Features/Settings/SettingsPage.php:347
 msgid "Nyxify server"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:334
+#: src/Features/Settings/SettingsPage.php:350
 msgid "License"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:340
+#: src/Features/Settings/SettingsPage.php:356
 msgid "Check connection"
 msgstr ""
 
 #. translators: %s: date and time
-#: src/Features/Settings/SettingsPage.php:345
+#: src/Features/Settings/SettingsPage.php:361
 #, php-format
 msgid "Checked %s"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:352
+#: src/Features/Settings/SettingsPage.php:368
 msgid "Shared secret"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:356
-#: src/Features/Settings/SettingsPage.php:421
+#: src/Features/Settings/SettingsPage.php:372
+#: src/Features/Settings/SettingsPage.php:437
 msgid "Activate again"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:357
+#: src/Features/Settings/SettingsPage.php:373
 msgid "Use this if the connection stops working. This site keeps its store ID and gets a new shared secret."
 msgstr ""
 
 #. translators: %s: date
-#: src/Features/Settings/SettingsPage.php:381
+#: src/Features/Settings/SettingsPage.php:397
 #, php-format
 msgid "Activated %s"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:392
+#: src/Features/Settings/SettingsPage.php:408
 msgid "Set by NYXIFY_API_BASE_URL in wp-config.php."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:401
+#: src/Features/Settings/SettingsPage.php:417
 msgid "This site signs every request to Nyxify with a shared secret, kept encrypted here and never shown. Rotate it if you think it may have leaked; the store stays connected."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:402
+#: src/Features/Settings/SettingsPage.php:418
 msgid "Replace the shared secret with a new one now? The store stays connected."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:404
+#: src/Features/Settings/SettingsPage.php:420
 msgid "Rotate secret"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:418
+#: src/Features/Settings/SettingsPage.php:434
 msgid "License key"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:424
+#: src/Features/Settings/SettingsPage.php:440
 msgid "The key is sent once to the Nyxify server and is not stored on this site."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:425
+#: src/Features/Settings/SettingsPage.php:441
 msgid "Activating creates a WooCommerce REST API key (read/write) for your user account; Nyxify uses it to read your catalog and create orders. If this user or the key is deleted, the store is disconnected."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:453
+#: src/Features/Settings/SettingsPage.php:469
 msgid "Invalid fields:"
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:474
+#: src/Features/Settings/SettingsPage.php:490
 msgid "The store is connected to Nyxify."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:475
+#: src/Features/Settings/SettingsPage.php:491
 msgid "The shared secret was replaced with a new one. The store stays connected."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:476
+#: src/Features/Settings/SettingsPage.php:492
 msgid "The bot token was accepted. Nyxify is setting the bot up; check its status below."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:477
+#: src/Features/Settings/SettingsPage.php:493
 msgid "The bot was removed. It no longer answers your customers."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:478
+#: src/Features/Settings/SettingsPage.php:494
 msgid "A new admin PIN was issued; the previous one no longer works. Bot admins stay admins."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:479
+#: src/Features/Settings/SettingsPage.php:495
 msgid "A new admin PIN was issued and every bot admin was logged out."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:480
+#: src/Features/Settings/SettingsPage.php:496
 msgid "The bot admin was removed. The current PIN still works for them until you issue a new one."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:481
+#: src/Features/Settings/SettingsPage.php:497
 msgid "Nyxify is reading your catalog again. Check the catalog sync below in a few minutes."
 msgstr ""
 
-#: src/Features/Settings/SettingsPage.php:482
+#: src/Features/Settings/SettingsPage.php:498
 msgid "A catalog sync is already running. Check the catalog sync below in a few minutes."
 msgstr ""
 
@@ -615,10 +1296,6 @@ msgid "%s day left"
 msgid_plural "%s days left"
 msgstr[0] ""
 msgstr[1] ""
-
-#: src/Features/Settings/StatusSection.php:153
-msgid "Products"
-msgstr ""
 
 #: src/Features/Settings/StatusSection.php:168
 msgid "Your plan’s product limit was reached, so some products are not in your bots. Upgrade your plan to include them."
@@ -719,7 +1396,7 @@ msgid "%1$s of %2$s"
 msgstr ""
 
 #. translators: %s: the oldest supported WooCommerce version, e.g. 9.0
-#: src/Plugin.php:184
+#: src/Plugin.php:188
 #, php-format
 msgid "Nyxify needs WooCommerce %s or later. Install, activate or update WooCommerce to use it."
 msgstr ""
@@ -728,178 +1405,190 @@ msgstr ""
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:110
+#: src/Shared/Http/ErrorMessages.php:114
 msgid "This store is not connected to Nyxify yet. Enter your license key to activate it."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:111
+#: src/Shared/Http/ErrorMessages.php:115
 msgid "The saved connection to Nyxify can no longer be read, probably because the site’s security keys (salts) changed. Enter your license key again to reconnect."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:112
+#: src/Shared/Http/ErrorMessages.php:116
 msgid "The Nyxify server address is invalid. Check NYXIFY_API_BASE_URL in wp-config.php: it must be an https address."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:113
+#: src/Shared/Http/ErrorMessages.php:117
 msgid "The data could not be prepared for sending to Nyxify."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:114
+#: src/Shared/Http/ErrorMessages.php:118
 msgid "Could not reach the Nyxify server. Check this site’s internet connection and try again in a few minutes."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:115
+#: src/Shared/Http/ErrorMessages.php:119
 msgid "The Nyxify server answered with a redirect, which is not followed. Check the server address."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:116
+#: src/Shared/Http/ErrorMessages.php:120
 msgid "The Nyxify server sent an unexpected answer. Try again later."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:117
+#: src/Shared/Http/ErrorMessages.php:121
 msgid "Something went wrong while talking to the Nyxify server. Try again later."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:118
+#: src/Shared/Http/ErrorMessages.php:122
 msgid "This is not a Nyxify license key. A license key looks like NX-XXXXXX-XXXXXX-XXXXXX-XXXXXX."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:119
+#: src/Shared/Http/ErrorMessages.php:123
 msgid "Nyxify needs this site to use https. Change the WordPress Address and Site Address in Settings → General to https, then try again."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:120
+#: src/Shared/Http/ErrorMessages.php:124
 msgid "This site’s REST API is not on the same address as the site, so Nyxify cannot use it. Make the WordPress Address and Site Address in Settings → General use the same scheme, host and port."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:121
+#: src/Shared/Http/ErrorMessages.php:125
 msgid "The WooCommerce REST API key Nyxify needs could not be created. Try again; if it keeps failing, check the site’s database error log."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:122
+#: src/Shared/Http/ErrorMessages.php:126
 msgid "The store was activated on Nyxify, but the connection could not be saved on this site. Enter your license key again to activate it once more."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:123
+#: src/Shared/Http/ErrorMessages.php:127
 msgid "Nyxify issued a new shared secret, but it could not be saved on this site. The current secret still works: rotate it again now."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:124
+#: src/Shared/Http/ErrorMessages.php:128
 msgid "This does not look like a bot token. Paste the token the messenger gave you when you created the bot, without spaces."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:125
+#: src/Shared/Http/ErrorMessages.php:129
 msgid "Nyxify issued a new admin PIN, but it could not be saved on this site, and the previous PIN no longer works. Issue a new PIN now."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:128
-msgid "The Nyxify server rejected the request as invalid. Update the plugin and try again."
-msgstr ""
-
-#: src/Shared/Http/ErrorMessages.php:129
-msgid "The Nyxify server did not accept this store’s credentials. Activate the store again with your license key."
-msgstr ""
-
 #: src/Shared/Http/ErrorMessages.php:130
-msgid "The Nyxify server does not accept this request. Update the plugin."
-msgstr ""
-
-#: src/Shared/Http/ErrorMessages.php:131
-msgid "Some of the data sent to Nyxify is invalid. Check it and try again."
-msgstr ""
-
-#: src/Shared/Http/ErrorMessages.php:132
-msgid "The data is too large for the Nyxify server."
+msgid "Some fields are not valid, so nothing was saved. Correct the fields marked below and save again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:133
-msgid "The Nyxify server had an internal error. Try again later."
+msgid "The Nyxify server rejected the request as invalid. Update the plugin and try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:134
-msgid "The Nyxify server could not read this store’s saved credentials. Activate the store again with your license key."
+msgid "The Nyxify server did not accept this store’s credentials. Activate the store again with your license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:135
-msgid "Too many attempts. Wait a few minutes and try again."
+msgid "The Nyxify server does not accept this request. Update the plugin."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:136
+msgid "Some of the data sent to Nyxify is invalid. Check it and try again."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:137
+msgid "The data is too large for the Nyxify server."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:138
-msgid "The request’s signature was missing or malformed. Activate the store again with your license key."
+msgid "The Nyxify server had an internal error. Try again later."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:139
-msgid "The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again."
+msgid "The Nyxify server could not read this store’s saved credentials. Activate the store again with your license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:140
-msgid "The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key."
+msgid "Too many attempts. Wait a few minutes and try again."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:141
-msgid "The same request reached the Nyxify server twice and was rejected. Try again."
+#: src/Shared/Http/ErrorMessages.php:143
+msgid "The request’s signature was missing or malformed. Activate the store again with your license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:144
-msgid "This license key is not valid. Check it and try again."
+msgid "The request was rejected because this server’s clock is off by more than five minutes. Correct the server time and try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:145
-msgid "This license key has been revoked. Contact Nyxify support."
+msgid "The request’s signature did not match; the shared secret may be out of date. Activate the store again with your license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:146
-msgid "This license key is already used by another website."
-msgstr ""
-
-#: src/Shared/Http/ErrorMessages.php:147
-msgid "This website is already activated with another license key."
-msgstr ""
-
-#: src/Shared/Http/ErrorMessages.php:148
-msgid "This store is deactivated or suspended on Nyxify. Activate it again with your license key; if the license was revoked, contact Nyxify support."
+msgid "The same request reached the Nyxify server twice and was rejected. Try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:149
-msgid "Your Nyxify subscription is not active or has expired. Renew it to continue."
+msgid "This license key is not valid. Check it and try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:150
-msgid "Your Nyxify plan does not include this messenger. Upgrade your plan to use it."
+msgid "This license key has been revoked. Contact Nyxify support."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:151
-msgid "The Nyxify server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again."
+msgid "This license key is already used by another website."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:152
-msgid "The Nyxify server could not reach this store. The site must be public, use https, and its REST API must not redirect."
+msgid "This website is already activated with another license key."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:153
-msgid "This store’s WooCommerce REST API rejected the Nyxify server’s request. Check the firewall and security plugins."
+msgid "This store is deactivated or suspended on Nyxify. Activate it again with your license key; if the license was revoked, contact Nyxify support."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:154
-msgid "This store’s WooCommerce REST API sent the Nyxify server an unexpected answer. Check for plugins that change REST API responses."
+msgid "Your Nyxify subscription is not active or has expired. Renew it to continue."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:155
+msgid "Your Nyxify plan does not include this messenger. Upgrade your plan to use it."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:156
+msgid "The Nyxify server could not sign in to this store’s WooCommerce REST API with the new key. Make sure no security plugin blocks the REST API, then try again."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:157
-msgid "This bot is already connected to another Nyxify store. Create a new bot for this shop, or remove this one from the other store first."
+msgid "The Nyxify server could not reach this store. The site must be public, use https, and its REST API must not redirect."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:158
-msgid "No bot is connected for this messenger."
+msgid "This store’s WooCommerce REST API rejected the Nyxify server’s request. Check the firewall and security plugins."
 msgstr ""
 
 #: src/Shared/Http/ErrorMessages.php:159
+msgid "This store’s WooCommerce REST API sent the Nyxify server an unexpected answer. Check for plugins that change REST API responses."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:162
+msgid "This bot is already connected to another Nyxify store. Create a new bot for this shop, or remove this one from the other store first."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:163
+msgid "No bot is connected for this messenger."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:164
 msgid "This person is no longer a bot admin of this store."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:160
+#: src/Shared/Http/ErrorMessages.php:165
 msgid "The messenger rejected this bot token. Check it and try again."
 msgstr ""
 
-#: src/Shared/Http/ErrorMessages.php:161
+#: src/Shared/Http/ErrorMessages.php:166
 msgid "The messenger’s servers did not respond. Try again in a few minutes."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:169
+msgid "These settings were changed meanwhile, in the bot or by another user, so your changes were not saved. They are still in the form below, next to the saved values: check them and save again."
+msgstr ""
+
+#: src/Shared/Http/ErrorMessages.php:170
+msgid "The bot appearance settings are too large for the Nyxify server (256 KB in all). Shorten some texts and save again."
 msgstr ""
