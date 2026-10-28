@@ -71,8 +71,8 @@ a { color: var(--accent); }
 h1 { font-size: 30px; line-height: 1.3; margin-block: 24px 4px; }
 h2 { font-size: 20px; margin-block: 32px 8px; }
 
-/* The terms and the privacy policy read as documents: their running text is justified. */
-.legal p, .legal li { text-align: justify; text-justify: inter-word; hyphens: auto; }
+/* Every page's running text is justified: the home page's like the terms and the privacy policy. */
+main p, main li { text-align: justify; text-justify: inter-word; hyphens: auto; }
 
 .updated { color: var(--muted); font-size: 14px; margin-block-start: 0; }
 

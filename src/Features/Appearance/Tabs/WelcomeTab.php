@@ -13,7 +13,8 @@ use Nyxify\Features\Appearance\TabInput;
 use Nyxify\Features\Settings\DateFormat;
 
 /**
- * The `welcome` part (contract §4.3): the banner (an https image address; without one the bots show the site's logo)
+ * The `welcome` part (contract §4.3): the banner (an https image address, typed or picked from the media library, where
+ * it can be uploaded too; without one the bots show the site's logo)
  * and the text per language, in the bots' markup with `{name}` (the customer's first name) and `{shop}` (the shop's
  * name). The text goes under the banner, so it is held to a photo caption's room, as the bot's own editor does.
  */
@@ -129,8 +130,17 @@ final class WelcomeTab implements AppearanceTab {
 							'class'       => 'large-text',
 						)
 					);
+					$banner = $values['banner_url'] ?? '';
 					?>
-					<p class="description"><?php esc_html_e( 'The address of an image, starting with https://. For an image in your media library, open it and copy its file URL. Empty: your site’s logo.', 'nyxify' ); ?></p>
+					<p>
+						<button type="button" class="button" data-nyxify-media="<?php echo esc_attr( Fields::id( self::PART, 'banner_url' ) ); ?>" data-title="<?php esc_attr_e( 'Banner', 'nyxify' ); ?>" data-button="<?php esc_attr_e( 'Use this image', 'nyxify' ); ?>"><?php esc_html_e( 'Choose or upload an image', 'nyxify' ); ?></button>
+					</p>
+					<?php if ( Fields::is_https_url( $banner ) ) : ?>
+						<img id="<?php echo esc_attr( Fields::id( self::PART, 'banner_url' ) . '-preview' ); ?>" class="nyxify-banner-preview" src="<?php echo esc_url( $banner ); ?>" alt="" />
+					<?php else : ?>
+						<img id="<?php echo esc_attr( Fields::id( self::PART, 'banner_url' ) . '-preview' ); ?>" class="nyxify-banner-preview" alt="" hidden />
+					<?php endif; ?>
+					<p class="description"><?php esc_html_e( 'Choose an image from your media library or upload a new one, or type the address of an image starting with https://. Empty: your site’s logo.', 'nyxify' ); ?></p>
 				</td>
 			</tr>
 			<tr>

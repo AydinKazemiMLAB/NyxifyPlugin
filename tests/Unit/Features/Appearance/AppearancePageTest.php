@@ -192,6 +192,19 @@ final class AppearancePageTest extends TestCase {
 		self::assertNotFalse( has_action( 'admin_menu', array( $page, 'add_menu' ) ) );
 	}
 
+	public function test_the_welcome_tab_loads_the_media_library_for_the_banner(): void {
+		$page        = $this->page();
+		$_GET['tab'] = 'welcome';
+		Functions\when( 'add_submenu_page' )->justReturn( self::HOOK_SUFFIX );
+		Functions\when( 'plugins_url' )->alias( fn( string $path ): string => 'https://shop.example.com/wp-content/plugins/nyxify/' . $path );
+		Functions\expect( 'wp_enqueue_style' )->once();
+		Functions\expect( 'wp_enqueue_media' )->once();
+		Functions\expect( 'wp_enqueue_script' )->once()->with( 'nyxify-appearance', 'https://shop.example.com/wp-content/plugins/nyxify/assets/js/appearance.js', array( 'media-views' ), NYXIFY_VERSION, array( 'in_footer' => true ) );
+
+		$page->add_menu();
+		$page->enqueue_assets( self::HOOK_SUFFIX );
+	}
+
 	public function test_the_url_names_the_tab(): void {
 		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=nyxify-appearance', AppearancePage::url() );
 		self::assertSame( 'https://shop.example.com/wp-admin/admin.php?page=nyxify-appearance&tab=contact', AppearancePage::url( 'contact' ) );

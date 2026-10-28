@@ -174,9 +174,18 @@ final class WelcomeTabTest extends TestCase {
 		$html = $this->render( $tab->values( array( 'text' => array( 'fa' => '<b>سلام</b> & {name}' ) ) ), array(), null );
 
 		self::assertStringContainsString( 'name="nyxify_welcome[banner_url]" dir="ltr" maxlength="1000" placeholder="https://" class="large-text" type="url" value=""', $html );
+		self::assertStringContainsString( 'data-nyxify-media="nyxify-welcome-banner-url"', $html );
+		self::assertStringContainsString( 'id="nyxify-welcome-banner-url-preview" class="nyxify-banner-preview" alt="" hidden', $html );
 		self::assertStringContainsString( '&lt;b&gt;سلام&lt;/b&gt; &amp; {name}</textarea>', $html );
 		self::assertStringContainsString( 'Up to 960 characters, not counting tags.', $html );
 		self::assertStringNotContainsString( '<b>سلام</b>', $html );
+	}
+
+	public function test_render_shows_the_banners_preview(): void {
+		$tab  = new WelcomeTab();
+		$html = $this->render( $tab->values( array( 'banner_url' => 'https://shop.example.com/banner.png' ) ), array(), null );
+
+		self::assertStringContainsString( 'id="nyxify-welcome-banner-url-preview" class="nyxify-banner-preview" src="https://shop.example.com/banner.png" alt="" />', $html );
 	}
 
 	public function test_render_marks_a_refused_text(): void {

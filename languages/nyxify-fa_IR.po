@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-07T06:30:12+00:00\n"
-"PO-Revision-Date: 2026-10-20T08:57:19+00:00\n"
+"PO-Revision-Date: 2026-10-26T11:43:43+00:00\n"
 "Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Domain: nyxify\n"
@@ -32,50 +32,50 @@ msgstr "Nyxon"
 msgid "Nyxify is incomplete: its vendor folder is missing. Reinstall the plugin from its release zip."
 msgstr "Nyxify ناقص است: پوشهٔ vendor آن وجود ندارد. افزونه را دوباره از فایل zip انتشار نصب کنید."
 
-#: src/Features/Appearance/AppearancePage.php:99
-#: src/Features/Appearance/AppearancePage.php:100
-#: src/Features/Appearance/AppearancePage.php:147
-#: src/Features/Appearance/AppearancePage.php:195
+#: src/Features/Appearance/AppearancePage.php:105
+#: src/Features/Appearance/AppearancePage.php:106
+#: src/Features/Appearance/AppearancePage.php:166
+#: src/Features/Appearance/AppearancePage.php:214
 #: src/Features/Settings/SettingsPage.php:265
 msgid "Bot appearance"
 msgstr "ظاهر ربات"
 
-#: src/Features/Appearance/AppearancePage.php:138
+#: src/Features/Appearance/AppearancePage.php:157
 #: src/Features/Settings/SettingsPage.php:213
 msgid "Sorry, you are not allowed to access this page."
 msgstr "متأسفانه اجازهٔ دسترسی به این صفحه را ندارید."
 
-#: src/Features/Appearance/AppearancePage.php:148
+#: src/Features/Appearance/AppearancePage.php:167
 #: src/Features/Catalog/PlanLimitNotice.php:160
 msgid "Nyxify settings"
 msgstr "تنظیمات Nyxify"
 
-#: src/Features/Appearance/AppearancePage.php:155
+#: src/Features/Appearance/AppearancePage.php:174
 msgid "Go to the Nyxify settings"
 msgstr "رفتن به تنظیمات Nyxify"
 
 #. translators: %s: minutes
-#: src/Features/Appearance/AppearancePage.php:162
+#: src/Features/Appearance/AppearancePage.php:181
 #, php-format
 msgid "Your bots show a change within %s minutes: they keep their settings that long."
 msgstr "ربات‌ها هر تغییر را حداکثر تا %s دقیقه نشان می‌دهند، چون تنظیماتشان را همین مدت نگه می‌دارند."
 
-#: src/Features/Appearance/AppearancePage.php:165
+#: src/Features/Appearance/AppearancePage.php:184
 msgid "Bot admins can change the same settings in the bot’s “🎨 Bot appearance” section, apart from the contact details."
 msgstr "مدیران ربات هم همین تنظیمات را از بخش «🎨 ظاهر ربات» در خود ربات تغییر می‌دهند، به‌جز اطلاعات تماس."
 
-#: src/Features/Appearance/AppearancePage.php:233
+#: src/Features/Appearance/AppearancePage.php:252
 msgid "Save"
 msgstr "ذخیره"
 
 #. translators: %s: date and time
-#: src/Features/Appearance/AppearancePage.php:238
+#: src/Features/Appearance/AppearancePage.php:257
 #, php-format
 msgid "Bot appearance last changed %s"
 msgstr "آخرین تغییر ظاهر ربات: %s"
 
 #. translators: %s: minutes
-#: src/Features/Appearance/AppearancePage.php:278
+#: src/Features/Appearance/AppearancePage.php:297
 #, php-format
 msgid "Saved. Your bots show the change within %s minutes."
 msgstr "ذخیره شد. ربات‌ها این تغییر را حداکثر تا %s دقیقه نشان می‌دهند."
@@ -107,7 +107,7 @@ msgstr "ربات‌های تلگرام شما خودشان را این‌طور 
 #: src/Features/Appearance/Tabs/ContactTab.php:258
 #: src/Features/Appearance/Tabs/MenuTab.php:316
 #: src/Features/Appearance/Tabs/TextsTab.php:257
-#: src/Features/Appearance/Tabs/WelcomeTab.php:150
+#: src/Features/Appearance/Tabs/WelcomeTab.php:160
 msgid "Persian"
 msgstr "فارسی"
 
@@ -116,7 +116,7 @@ msgstr "فارسی"
 #: src/Features/Appearance/Tabs/ContactTab.php:258
 #: src/Features/Appearance/Tabs/MenuTab.php:316
 #: src/Features/Appearance/Tabs/TextsTab.php:257
-#: src/Features/Appearance/Tabs/WelcomeTab.php:150
+#: src/Features/Appearance/Tabs/WelcomeTab.php:160
 msgid "English"
 msgstr "انگلیسی"
 
@@ -136,7 +136,7 @@ msgstr "حداکثر %s نویسه."
 #: src/Features/Appearance/Tabs/ContactTab.php:281
 #: src/Features/Appearance/Tabs/MenuTab.php:400
 #: src/Features/Appearance/Tabs/MenuTab.php:414
-#: src/Features/Appearance/Tabs/WelcomeTab.php:184
+#: src/Features/Appearance/Tabs/WelcomeTab.php:194
 msgid "The Nyxify server did not accept this value."
 msgstr "سرور Nyxify این مقدار را نپذیرفت."
 
@@ -472,7 +472,7 @@ msgid "The page the button opens, starting with https://. Leave it empty for a b
 msgstr "صفحه‌ای که دکمه باز می‌کند، با https:// در آغاز. برای دکمه‌ای که متن نشان می‌دهد خالی بگذارید."
 
 #: src/Features/Appearance/Tabs/MenuTab.php:303
-#: src/Features/Appearance/Tabs/WelcomeTab.php:137
+#: src/Features/Appearance/Tabs/WelcomeTab.php:147
 msgid "Text"
 msgstr "متن"
 
@@ -525,7 +525,7 @@ msgstr "حداکثر %s دکمه در هر ردیف."
 #. translators: %s: the formatting tags allowed
 #: src/Features/Appearance/Tabs/MenuTab.php:413
 #: src/Features/Appearance/Tabs/TextsTab.php:306
-#: src/Features/Appearance/Tabs/WelcomeTab.php:186
+#: src/Features/Appearance/Tabs/WelcomeTab.php:196
 #, php-format
 msgid "The Nyxify server did not accept this text. Use only these tags, each one closed: %s."
 msgstr "سرور نیکسیفای این متن را نپذیرفت. فقط این برچسب‌ها را به کار ببرید و هر کدام را ببندید: %s."
@@ -543,7 +543,7 @@ msgid "A link starting with https://, without spaces."
 msgstr "لینکی که با https:// شروع شود، بدون فاصله."
 
 #: src/Features/Appearance/Tabs/MenuTab.php:421
-#: src/Features/Appearance/Tabs/WelcomeTab.php:194
+#: src/Features/Appearance/Tabs/WelcomeTab.php:204
 msgid "Only {name} and {shop} can be used here; write {{ and }} for a brace."
 msgstr "اینجا فقط {name} و {shop} را می‌توان به کار برد؛ برای خود آکولاد، {{ و }} بنویسید."
 
@@ -680,7 +680,7 @@ msgstr "حداکثر %s حرف، همراه با برچسب‌ها."
 
 #. translators: %s: the most characters shown
 #: src/Features/Appearance/Tabs/TextsTab.php:316
-#: src/Features/Appearance/Tabs/WelcomeTab.php:198
+#: src/Features/Appearance/Tabs/WelcomeTab.php:208
 #, php-format
 msgid "Up to %s characters, not counting tags."
 msgstr "حداکثر %s حرف، بدون شمردن برچسب‌ها."
@@ -699,29 +699,38 @@ msgstr "متغیرها: %s."
 msgid "Shown as plain text: formatting is dropped."
 msgstr "به صورت متن ساده نشان داده می‌شود: قالب‌بندی حذف می‌شود."
 
-#: src/Features/Appearance/Tabs/WelcomeTab.php:50
+#: src/Features/Appearance/Tabs/WelcomeTab.php:51
 msgid "Welcome"
 msgstr "خوش‌آمد"
 
-#: src/Features/Appearance/Tabs/WelcomeTab.php:115
+#: src/Features/Appearance/Tabs/WelcomeTab.php:116
 msgid "What customers see when they start one of your bots: the banner, then this text, with the main menu under it."
 msgstr "آنچه مشتری با شروع یکی از ربات‌های شما می‌بیند: بنر، سپس این متن، و منوی اصلی زیر آن."
 
-#: src/Features/Appearance/Tabs/WelcomeTab.php:119
+#: src/Features/Appearance/Tabs/WelcomeTab.php:120
+#: src/Features/Appearance/Tabs/WelcomeTab.php:136
 msgid "Banner"
 msgstr "بنر"
 
-#: src/Features/Appearance/Tabs/WelcomeTab.php:133
-msgid "The address of an image, starting with https://. For an image in your media library, open it and copy its file URL. Empty: your site’s logo."
-msgstr "نشانی یک تصویر که با https:// شروع شود. برای تصویری از کتابخانهٔ پرونده‌ها، آن را باز کنید و نشانی پرونده‌اش را کپی کنید. خالی: لوگوی سایت شما."
+#: src/Features/Appearance/Tabs/WelcomeTab.php:136
+msgid "Use this image"
+msgstr "استفاده از این تصویر"
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:136
+msgid "Choose or upload an image"
+msgstr "انتخاب یا بارگذاری تصویر"
+
+#: src/Features/Appearance/Tabs/WelcomeTab.php:143
+msgid "Choose an image from your media library or upload a new one, or type the address of an image starting with https://. Empty: your site’s logo."
+msgstr "تصویری از کتابخانهٔ پرونده‌ها انتخاب کنید یا تصویر تازه‌ای بارگذاری کنید، یا نشانی تصویری را که با https:// شروع می‌شود بنویسید. خالی: لوگوی سایت شما."
 
 #. translators: 1: the most characters shown, 2: the formatting tags allowed
-#: src/Features/Appearance/Tabs/WelcomeTab.php:162
+#: src/Features/Appearance/Tabs/WelcomeTab.php:172
 #, php-format
 msgid "{name} is the customer’s first name and {shop} your shop’s name. Up to %1$s characters, not counting tags. Formatting: %2$s. Empty: the bot’s own welcome; a customer using the other language sees the one you wrote."
 msgstr "{name} نام کوچک مشتری است و {shop} نام فروشگاه شما. حداکثر %1$s حرف، بدون شمردن برچسب‌ها. قالب‌بندی: %2$s. خالی: خوش‌آمد خود ربات؛ مشتری‌ای که زبان دیگر را به کار می‌برد، همانی را می‌بیند که نوشته‌اید."
 
-#: src/Features/Appearance/Tabs/WelcomeTab.php:190
+#: src/Features/Appearance/Tabs/WelcomeTab.php:200
 msgid "An image address starting with https://, without spaces."
 msgstr "نشانی یک تصویر که با https:// شروع شود، بدون فاصله."
 

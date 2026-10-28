@@ -154,8 +154,9 @@ The service's privacy policy: https://nyxify.nyxon.tech/privacy/
 = 1.1.0 =
 * New page, WooCommerce > Bot appearance, with a tab per part: the main menu (which buttons, in which rows, their
   icons and colors), the texts the bots send (each with its default, in Persian and English), the welcome message and
-  banner, the back button, an icon and color per product category, the bot's description, and the shop's contact
-  details. Each tab saves only its own part; a save made at the same time by a bot admin is never overwritten.
+  its banner (chosen or uploaded from the media library), the back button, an icon and color per product category,
+  the bot's description, and the shop's contact details. Each tab saves only its own part; a save made at the same
+  time by a bot admin is never overwritten.
 
 = 1.0.0 =
 * First public release: activation with a license key, Telegram, Bale and Rubika bots, the admin PIN and bot admins,

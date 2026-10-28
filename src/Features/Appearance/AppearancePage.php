@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nyxify\Features\Appearance;
 
 use Nyxify\Features\Appearance\Tabs\AppearanceTab;
+use Nyxify\Features\Appearance\Tabs\WelcomeTab;
 use Nyxify\Features\Settings\DateFormat;
 use Nyxify\Features\Settings\ErrorNotice;
 use Nyxify\Features\Settings\SettingsPage;
@@ -38,6 +39,11 @@ final class AppearancePage {
 	 * Minutes the bots keep their config, so a change reaches every bot within this time.
 	 */
 	public const BOT_CACHE_MINUTES = 5;
+
+	/**
+	 * Handle of the script that picks the banner from the media library.
+	 */
+	public const SCRIPT_HANDLE = 'nyxify-appearance';
 
 	/**
 	 * Absolute path of the main plugin file.
@@ -118,7 +124,8 @@ final class AppearancePage {
 	}
 
 	/**
-	 * Loads the settings page's stylesheet on this page only.
+	 * Loads the settings page's stylesheet on this page only, and on the welcome tab the media library with the script
+	 * that picks (or uploads) the banner in it.
 	 *
 	 * @param string $hook_suffix The current admin page.
 	 */
@@ -128,6 +135,18 @@ final class AppearancePage {
 		}
 
 		wp_enqueue_style( SettingsPage::STYLE_HANDLE, plugins_url( 'assets/css/admin.css', $this->plugin_file ), array(), NYXIFY_VERSION );
+		if ( WelcomeTab::PART !== $this->current_tab()->part() ) {
+			return;
+		}
+
+		wp_enqueue_media();
+		wp_enqueue_script(
+			self::SCRIPT_HANDLE,
+			plugins_url( 'assets/js/appearance.js', $this->plugin_file ),
+			array( 'media-views' ),
+			NYXIFY_VERSION,
+			array( 'in_footer' => true )
+		);
 	}
 
 	/**
