@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img"
+     aria-labelledby="title desc" font-family="Vazirmatn, Tahoma, 'Segoe UI', sans-serif">
+  <title id="title">داده‌های فروشگاه چطور جابه‌جا می‌شوند</title>
+  <desc id="desc">فروشگاه کاتالوگ و وضعیت سفارش‌های بات را به سرویس Nyxify می‌فرستد؛ سرویس سفارش‌هایی که بات‌ها
+    می‌سازند و ویرایش‌های مدیران بات را برمی‌گرداند؛ مشتری‌ها و مدیران از بات‌ها در تلگرام، بله و روبیکا استفاده
+    می‌کنند. اطلاعات شخصی مشتری‌ها هیچ‌وقت از فروشگاه بیرون نمی‌رود.</desc>
+
+  <rect width="1200" height="600" rx="26" fill="#140c3a"/>
+
+  <text x="1144" y="58" fill="#c9bcff" font-size="18" direction="rtl">داده‌های فروشگاه چطور جابه‌جا می‌شوند</text>
+
+  <g id="lanes" font-size="21" font-weight="700" text-anchor="middle">
+    <rect x="848" y="84" width="288" height="56" rx="14" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="992" y="120" fill="#ffffff" direction="rtl">فروشگاه ووکامرس شما</text>
+    <rect x="456" y="84" width="288" height="56" rx="14" fill="#5b3cc4"/>
+    <text x="600" y="120" fill="#ffffff" direction="rtl">سرویس Nyxify</text>
+    <rect x="64" y="84" width="288" height="56" rx="14" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="208" y="120" fill="#ffffff" direction="rtl">تلگرام · بله · روبیکا</text>
+
+    <g stroke="#ffffff" stroke-opacity="0.22" stroke-width="2" stroke-dasharray="4 8">
+      <path d="M992 148 V470"/>
+      <path d="M600 148 V470"/>
+      <path d="M208 148 V470"/>
+    </g>
+  </g>
+
+  <g id="shop-and-service" stroke-width="2.5" fill="none">
+    <path d="M984 206 H612" stroke="#2fd3f5"/><path d="M622 199 L612 206 L622 213" stroke="#2fd3f5"/>
+    <path d="M608 282 H980" stroke="#a24bff"/><path d="M970 275 L980 282 L970 289" stroke="#a24bff"/>
+    <path d="M608 358 H980" stroke="#a24bff"/><path d="M970 351 L980 358 L970 365" stroke="#a24bff"/>
+    <path d="M984 434 H612" stroke="#2fd3f5"/><path d="M622 427 L612 434 L622 441" stroke="#2fd3f5"/>
+  </g>
+  <g id="shop-and-service-labels" font-size="20" direction="rtl">
+    <text x="968" y="194" fill="#ffffff">محصولات، دسته‌ها، موجودی</text>
+    <text x="968" y="234" fill="#a99fd8" font-size="18">چند ثانیه بعد از هر ذخیره</text>
+    <text x="968" y="270" fill="#ffffff">سفارش‌هایی که بات‌ها می‌سازند</text>
+    <text x="968" y="310" fill="#a99fd8" font-size="18">پرداخت در صفحهٔ پرداخت خود فروشگاه</text>
+    <text x="968" y="346" fill="#ffffff">ویرایش محصول توسط مدیران بات</text>
+    <text x="968" y="386" fill="#a99fd8" font-size="18">یا دریافت توسط خود افزونه هر ۵ دقیقه</text>
+    <text x="968" y="422" fill="#ffffff">وضعیت سفارش‌های بات‌ها</text>
+    <text x="968" y="462" fill="#a99fd8" font-size="18">پرداخت‌شده، تکمیل، لغو، بازپرداخت</text>
+  </g>
+
+  <g id="service-and-bots" stroke="#ffffff" stroke-opacity="0.7" stroke-width="2.5" fill="none">
+    <path d="M588 244 H220"/><path d="M578 237 L588 244 L578 251"/><path d="M230 237 L220 244 L230 251"/>
+    <path d="M588 396 H220"/><path d="M578 389 L588 396 L578 403"/><path d="M230 389 L220 396 L230 403"/>
+  </g>
+  <g id="service-and-bots-labels" font-size="20" direction="rtl">
+    <text x="564" y="232" fill="#ffffff">کاتالوگ، سبد، خرید، سفارش‌های من</text>
+    <text x="564" y="272" fill="#a99fd8" font-size="18">برای مشتری‌های شما</text>
+    <text x="564" y="384" fill="#ffffff">قیمت، موجودی، عکس، محصول تازه</text>
+    <text x="564" y="424" fill="#a99fd8" font-size="18">برای مدیرانی که انتخاب می‌کنید</text>
+  </g>
+
+  <g id="never">
+    <rect x="56" y="500" width="1088" height="64" rx="16" fill="#ffffff" fill-opacity="0.05" stroke="#2fd3f5" stroke-opacity="0.5"/>
+    <text x="1116" y="540" font-size="18" fill="#ffffff" direction="rtl"><tspan font-weight="700">هیچ‌وقت از فروشگاه بیرون نمی‌رود:</tspan>
+      <tspan fill="#d9d0ff">نام، نشانی، ایمیل و تلفن مشتری‌ها، اطلاعات پرداخت، یادداشت سفارش، فیلدهای سفارشی</tspan></text>
+  </g>
+</svg>

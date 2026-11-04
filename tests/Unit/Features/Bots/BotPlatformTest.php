@@ -27,11 +27,7 @@ final class BotPlatformTest extends TestCase {
 	}
 
 	public function test_the_platforms_match_the_core(): void {
-		$json = file_get_contents( dirname( __DIR__, 4 ) . '/docs/core-api/openapi.json' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		self::assertIsString( $json );
-
-		$spec = json_decode( $json, true );
-		self::assertIsArray( $spec );
+		$spec = self::core_spec();
 		self::assertSame( $spec['components']['schemas']['MessengerPlatform']['enum'], BotPlatform::ALL );
 	}
 

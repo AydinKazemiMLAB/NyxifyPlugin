@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img"
+     aria-labelledby="title desc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+  <title id="title">How a shop's data moves</title>
+  <desc id="desc">The shop sends its catalog and the status of bot orders to the Nyxify service; the service sends back
+    the orders the bots create and the bot admins' product edits; customers and admins use the bots on Telegram, Bale
+    and Rubika. Customers' personal details never leave the shop.</desc>
+
+  <rect width="1200" height="600" rx="26" fill="#140c3a"/>
+
+  <text x="56" y="58" fill="#c9bcff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+        font-size="16" letter-spacing="2">HOW A SHOP'S DATA MOVES</text>
+
+  <g id="lanes">
+    <rect x="64" y="84" width="288" height="56" rx="14" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="208" y="119" fill="#ffffff" font-size="21" font-weight="600" text-anchor="middle">Your WooCommerce shop</text>
+    <rect x="456" y="84" width="288" height="56" rx="14" fill="#5b3cc4"/>
+    <text x="600" y="119" fill="#ffffff" font-size="21" font-weight="600" text-anchor="middle">Nyxify service</text>
+    <rect x="848" y="84" width="288" height="56" rx="14" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.28"/>
+    <text x="992" y="119" fill="#ffffff" font-size="21" font-weight="600" text-anchor="middle">Telegram · Bale · Rubika</text>
+
+    <g stroke="#ffffff" stroke-opacity="0.22" stroke-width="2" stroke-dasharray="4 8">
+      <path d="M208 148 V470"/>
+      <path d="M600 148 V470"/>
+      <path d="M992 148 V470"/>
+    </g>
+  </g>
+
+  <g id="shop-and-service" stroke-width="2.5" fill="none">
+    <path d="M216 206 H588" stroke="#2fd3f5"/><path d="M578 199 L588 206 L578 213" stroke="#2fd3f5"/>
+    <path d="M592 282 H220" stroke="#a24bff"/><path d="M230 275 L220 282 L230 289" stroke="#a24bff"/>
+    <path d="M592 358 H220" stroke="#a24bff"/><path d="M230 351 L220 358 L230 365" stroke="#a24bff"/>
+    <path d="M216 434 H588" stroke="#2fd3f5"/><path d="M578 427 L588 434 L578 441" stroke="#2fd3f5"/>
+  </g>
+  <g id="shop-and-service-labels" font-size="20">
+    <text x="232" y="194" fill="#ffffff">Products, categories, stock</text>
+    <text x="232" y="234" fill="#a99fd8" font-size="18">seconds after each save</text>
+    <text x="232" y="270" fill="#ffffff">Orders the bots create</text>
+    <text x="232" y="310" fill="#a99fd8" font-size="18">paid on your shop's own checkout page</text>
+    <text x="232" y="346" fill="#ffffff">Bot admins' product edits</text>
+    <text x="232" y="386" fill="#a99fd8" font-size="18">or fetched by the plugin every 5 minutes</text>
+    <text x="232" y="422" fill="#ffffff">Status of the bots' orders</text>
+    <text x="232" y="462" fill="#a99fd8" font-size="18">paid, completed, cancelled, refunded</text>
+  </g>
+
+  <g id="service-and-bots" stroke="#ffffff" stroke-opacity="0.7" stroke-width="2.5" fill="none">
+    <path d="M612 244 H980"/><path d="M622 237 L612 244 L622 251"/><path d="M970 237 L980 244 L970 251"/>
+    <path d="M612 396 H980"/><path d="M622 389 L612 396 L622 403"/><path d="M970 389 L980 396 L970 403"/>
+  </g>
+  <g id="service-and-bots-labels" font-size="20">
+    <text x="636" y="232" fill="#ffffff">Catalog, cart, checkout, my orders</text>
+    <text x="636" y="272" fill="#a99fd8" font-size="18">for your customers</text>
+    <text x="636" y="384" fill="#ffffff">Prices, stock, photos, new products</text>
+    <text x="636" y="424" fill="#a99fd8" font-size="18">for the admins you choose</text>
+  </g>
+
+  <g id="never">
+    <rect x="56" y="500" width="1088" height="64" rx="16" fill="#ffffff" fill-opacity="0.05" stroke="#2fd3f5" stroke-opacity="0.5"/>
+    <text x="84" y="539" font-size="18" fill="#ffffff"><tspan font-weight="600">Never leaves your shop:</tspan>
+      <tspan fill="#d9d0ff">customers' names, addresses, e-mails and phones, payment details, order notes, custom fields</tspan></text>
+  </g>
+</svg>

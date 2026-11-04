@@ -9,3 +9,11 @@
 /.phpcs-cache
 /build/
 /dist/
+
+# Kept on the maintainers' machines only: internal plans and notes, and AI agents' settings and skills.
+/docs/private/
+/.agents/
+/.claude/
+/.ignore
+/.mcp.json
+/CLAUDE.md

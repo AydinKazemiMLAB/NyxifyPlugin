@@ -12,9 +12,9 @@ namespace Nyxify\Shared\Http;
 /**
  * A translated message for every `error_code` the plugin can get, so the raw response is never shown.
  *
- * CORE_CODES lists what the core can answer on the plugin's endpoints: the `error_code` enums of
- * `docs/core-api/openapi.json` plus the global codes the spec leaves out (422, 413, 500 from decryption, 401). A test
- * fails when the spec has a code missing here, or when any code has no message.
+ * CORE_CODES lists what the core can answer on the plugin's endpoints: the `error_code` enums of the core's OpenAPI
+ * spec plus the global codes the spec leaves out (422, 413, 500 from decryption, 401). A test fails when the spec has a
+ * code missing here, or when any code has no message.
  */
 final class ErrorMessages {
 

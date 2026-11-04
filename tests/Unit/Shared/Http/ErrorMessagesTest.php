@@ -26,16 +26,12 @@ final class ErrorMessagesTest extends TestCase {
 	}
 
 	/**
-	 * Every `error_code` enum value of the core's spec (docs/core-api/openapi.json).
+	 * Every `error_code` enum value of the core's spec.
 	 *
 	 * @return list<string>
 	 */
 	private static function spec_codes(): array {
-		$json = file_get_contents( dirname( __DIR__, 4 ) . '/docs/core-api/openapi.json' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		self::assertIsString( $json );
-
-		$spec = json_decode( $json, true );
-		self::assertIsArray( $spec );
+		$spec = self::core_spec();
 
 		// An error schema's `error_code` is a $ref to an enum schema (one per endpoint and status).
 		$schemas = $spec['components']['schemas'] ?? array();
