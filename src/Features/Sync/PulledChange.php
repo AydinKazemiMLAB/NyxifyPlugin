@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace Nyxify\Features\Sync;
 
 /**
- * One item of `GET /sync/outbox` (`PulledChange`, contract §5.2), read defensively: an admin's product edit made in a
- * bot that the core couldn't push to the shop.
+ * One item of `GET /sync/outbox` (`PulledChange`, contract §5.2), read defensively: an admin's product or category edit
+ * made in a bot that the core couldn't push to the shop.
  *
  * - The action is any well-formed `entity.verb` name: one the plugin doesn't know is acknowledged as `invalid_change`
  *   when applied, so a newer core can't make every pull fail. The product and variation ids are checked against the
@@ -27,14 +27,34 @@ final class PulledChange {
 
 	public const PRODUCT_DELETE = 'product.delete';
 
+	public const PRODUCT_RESTORE = 'product.restore';
+
+	public const PRODUCT_DELETE_PERMANENT = 'product.delete_permanent';
+
 	public const VARIATION_UPDATE = 'variation.update';
 
+	public const CATEGORY_CREATE = 'category.create';
+
+	public const CATEGORY_UPDATE = 'category.update';
+
+	public const CATEGORY_DELETE = 'category.delete';
+
 	/**
-	 * The actions the core sends (`SyncAction`).
+	 * The actions the core sends (`SyncAction`); a plugin before 1.2.0 knew only the first four.
 	 *
 	 * @var list<string>
 	 */
-	public const ACTIONS = array( self::PRODUCT_CREATE, self::PRODUCT_UPDATE, self::PRODUCT_DELETE, self::VARIATION_UPDATE );
+	public const ACTIONS = array(
+		self::PRODUCT_CREATE,
+		self::PRODUCT_UPDATE,
+		self::PRODUCT_DELETE,
+		self::PRODUCT_RESTORE,
+		self::PRODUCT_DELETE_PERMANENT,
+		self::VARIATION_UPDATE,
+		self::CATEGORY_CREATE,
+		self::CATEGORY_UPDATE,
+		self::CATEGORY_DELETE,
+	);
 
 	private const ACTION_PATTERN = '/^[a-z][a-z0-9_]{0,31}\.[a-z][a-z0-9_]{0,31}$/D';
 
@@ -67,6 +87,13 @@ final class PulledChange {
 	public readonly ?int $woo_variation_id;
 
 	/**
+	 * The category's id in WooCommerce, or null (anything but a category change, and a category create).
+	 *
+	 * @var int|null
+	 */
+	public readonly ?int $woo_category_id;
+
+	/**
 	 * WooCommerce REST fields to write (`{}` for a delete).
 	 *
 	 * @var array<string, mixed>
@@ -80,13 +107,15 @@ final class PulledChange {
 	 * @param string               $action           Action.
 	 * @param int|null             $woo_product_id   Product id, or null.
 	 * @param int|null             $woo_variation_id Variation id, or null.
+	 * @param int|null             $woo_category_id  Category id, or null.
 	 * @param array<string, mixed> $payload          Fields to write.
 	 */
-	private function __construct( int $id, string $action, ?int $woo_product_id, ?int $woo_variation_id, array $payload ) {
+	private function __construct( int $id, string $action, ?int $woo_product_id, ?int $woo_variation_id, ?int $woo_category_id, array $payload ) {
 		$this->id               = $id;
 		$this->action           = $action;
 		$this->woo_product_id   = $woo_product_id;
 		$this->woo_variation_id = $woo_variation_id;
+		$this->woo_category_id  = $woo_category_id;
 		$this->payload          = $payload;
 	}
 
@@ -104,18 +133,19 @@ final class PulledChange {
 		$action           = $data['action'] ?? null;
 		$woo_product_id   = $data['woo_product_id'] ?? null;
 		$woo_variation_id = $data['woo_variation_id'] ?? null;
+		$woo_category_id  = $data['woo_category_id'] ?? null;
 		$payload          = $data['payload'] ?? null;
 
 		if ( ! is_int( $id ) || $id < 1
 			|| ! is_string( $action ) || 1 !== preg_match( self::ACTION_PATTERN, $action )
-			|| ! self::is_optional_id( $woo_product_id ) || ! self::is_optional_id( $woo_variation_id )
+			|| ! self::is_optional_id( $woo_product_id ) || ! self::is_optional_id( $woo_variation_id ) || ! self::is_optional_id( $woo_category_id )
 			|| ! self::is_object( $payload )
 			|| ! is_string( $data['created_at'] ?? null )
 		) {
 			return null;
 		}
 
-		return new self( $id, $action, $woo_product_id, $woo_variation_id, $payload );
+		return new self( $id, $action, $woo_product_id, $woo_variation_id, $woo_category_id, $payload );
 	}
 
 	/**
@@ -129,6 +159,7 @@ final class PulledChange {
 			'action'           => $this->action,
 			'woo_product_id'   => $this->woo_product_id,
 			'woo_variation_id' => $this->woo_variation_id,
+			'woo_category_id'  => $this->woo_category_id,
 		);
 	}
 

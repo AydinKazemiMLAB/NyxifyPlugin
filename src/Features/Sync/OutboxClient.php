@@ -16,7 +16,8 @@ use Nyxify\Shared\Options\SecretStore;
 use Nyxify\Shared\Security\Encryptor;
 
 /**
- * Pulls the changes the core couldn't push and acknowledges them (contract §5.2), each a new signed call.
+ * Pulls the changes the core couldn't push, acknowledges them and gives back those it did not start (contract §5.2),
+ * each a new signed call.
  *
  * - A successful answer is checked against the endpoint's response: one that doesn't match becomes an
  *   `invalid_response` failure carrying the 2xx status. A pull answer with one malformed change is refused whole, so
@@ -28,6 +29,8 @@ final class OutboxClient {
 	public const PATH_PULL = '/sync/outbox';
 
 	public const PATH_ACK = '/sync/outbox/ack';
+
+	public const PATH_RELEASE = '/sync/outbox/release';
 
 	/**
 	 * Changes asked for per pull (the core allows 1–100).
@@ -98,6 +101,29 @@ final class OutboxClient {
 			self::PATH_ACK,
 			array( 'results' => array_map( static fn( ChangeResult $result ): array => $result->to_ack(), $results ) )
 		);
+
+		if ( ! $response->is_success() || ( is_int( $response->data['affected'] ?? null ) && $response->data['affected'] >= 0 ) ) {
+			return $response;
+		}
+
+		return CoreResponse::failure( new CoreError( CoreError::INVALID_RESPONSE, $response->status, $response->request_id ) );
+	}
+
+	/**
+	 * Gives back changes this run did not start (`POST /sync/outbox/release`, `{"ids": [...]}`) so they are handed out
+	 * again at once instead of after their claim expires -> `affected`, the ones the core put back. Never for a change
+	 * that was started: a create might be applied.
+	 *
+	 * @param int[] $ids 1 to MAX_RESULTS outbox entry ids.
+	 *
+	 * @phpstan-param list<int> $ids
+	 */
+	public function release( array $ids ): CoreResponse {
+		if ( array() === $ids || count( $ids ) > self::MAX_RESULTS ) {
+			return CoreResponse::failure( new CoreError( CoreError::INVALID_PAYLOAD ) );
+		}
+
+		$response = $this->client->post( self::PATH_RELEASE, array( 'ids' => $ids ) );
 
 		if ( ! $response->is_success() || ( is_int( $response->data['affected'] ?? null ) && $response->data['affected'] >= 0 ) ) {
 			return $response;

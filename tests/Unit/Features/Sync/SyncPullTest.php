@@ -106,6 +106,27 @@ final class SyncPullTest extends TestCase {
 	private array $acks = array();
 
 	/**
+	 * A clock to use instead of $now, or null.
+	 *
+	 * @var \Closure|null
+	 */
+	private ?\Closure $clock_override = null;
+
+	/**
+	 * The release's answers, in order (the last one repeats; 200 with the count of ids by default).
+	 *
+	 * @var list<array<string, mixed>|\stdClass>
+	 */
+	private array $release_responses = array();
+
+	/**
+	 * Bodies of the releases sent.
+	 *
+	 * @var list<string>
+	 */
+	private array $releases = array();
+
+	/**
 	 * WooCommerce's answers by route; 200 with the product otherwise.
 	 *
 	 * @var array<string, array{int, mixed}>
@@ -213,7 +234,7 @@ final class SyncPullTest extends TestCase {
 	// ------------------------------------------------------------------ fakes
 
 	/**
-	 * The core: the pull and the ack.
+	 * The core: the pull, the ack and the release.
 	 *
 	 * @param string               $url  URL.
 	 * @param array<string, mixed> $args Request arguments.
@@ -223,6 +244,16 @@ final class SyncPullTest extends TestCase {
 		if ( self::BASE_URL . '/api/v1/sync/outbox?limit=20' === $url ) {
 			$this->events[] = 'pull';
 			return $this->pull_response;
+		}
+
+		if ( self::BASE_URL . '/api/v1/sync/outbox/release' === $url ) {
+			$this->events[]   = 'release changes';
+			$this->releases[] = (string) $args['body'];
+			$ids              = json_decode( (string) $args['body'], true )['ids'];
+
+			return count( $this->release_responses ) > 1
+				? array_shift( $this->release_responses )
+				: ( $this->release_responses[0] ?? self::response( 200, '{"affected":' . count( $ids ) . '}' ) );
 		}
 
 		self::assertSame( self::BASE_URL . '/api/v1/sync/outbox/ack', $url );
@@ -279,7 +310,7 @@ final class SyncPullTest extends TestCase {
 		);
 		$logger = new Logger( $wc_logger );
 		$store  = new SecretStore( Encryptor::from_secret( 'site secret' ) );
-		$clock  = fn(): int => $this->now;
+		$clock  = $this->clock_override ?? fn(): int => $this->now;
 
 		$applier = new ChangeApplier(
 			new PayloadFilter(),
@@ -567,6 +598,7 @@ final class SyncPullTest extends TestCase {
 				'applied'        => 4,
 				'failed'         => 1,
 				'not_started'    => 0,
+				'released'       => 0,
 				'request_id'     => 'req-core-200',
 				'ack_request_id' => 'req-core-200',
 				'affected'       => 5,
@@ -595,6 +627,57 @@ final class SyncPullTest extends TestCase {
 		self::assertCount( 3, array_filter( $this->events, static fn( string $event ): bool => str_starts_with( $event, 'apply' ) ) );
 		self::assertSame( array( 1, 2, 3 ), array_column( json_decode( $this->acks[0], true )['results'], 'id' ) );
 		self::assertSame( 2, $this->entry( 'Pulled changes applied.' )['context']['not_started'] );
+	}
+
+	public function test_the_changes_not_started_are_given_back_after_the_ack(): void {
+		$this->apply_seconds = 8;
+		$this->pull_response = self::response( 200, self::pulled( self::updates( 5 ) ) );
+
+		$this->pull()->run();
+
+		self::assertSame( array( '{"ids":[4,5]}' ), $this->releases );
+		self::assertSame( array( 'ack', 'release changes' ), array_values( array_filter( $this->events, static fn( string $event ): bool => 'ack' === $event || 'release changes' === $event ) ) );
+		self::assertSame( 2, $this->entry( 'Pulled changes applied.' )['context']['released'] );
+	}
+
+	public function test_nothing_is_given_back_when_every_change_started(): void {
+		$this->pull_response = self::response( 200, self::pulled( self::updates( 3 ) ) );
+
+		$this->pull()->run();
+
+		self::assertSame( array(), $this->releases );
+		self::assertSame( 0, $this->entry( 'Pulled changes applied.' )['context']['released'] );
+	}
+
+	public function test_a_refused_release_is_logged_and_the_claim_expiring_is_the_fallback(): void {
+		$this->apply_seconds     = 8;
+		$this->pull_response     = self::response( 200, self::pulled( self::updates( 5 ) ) );
+		$this->release_responses = array( self::response( 500, '{"error":{"code":"server_error"}}' ) );
+
+		$this->pull()->run();
+
+		self::assertSame( 0, $this->entry( 'Pulled changes applied.' )['context']['released'] );
+		self::assertContains( 'error:Nyxify core call failed.', $this->logged() );
+		self::assertSame( 'sync/outbox/release', $this->entry( 'Nyxify core call failed.' )['context']['operation'] );
+	}
+
+	public function test_a_run_that_started_nothing_gives_everything_back(): void {
+		$this->pull_response = self::response( 200, self::pulled( self::updates( 2 ) ) );
+
+		// The clock passes the budget right after the pull: no change starts.
+		$after_pull           = 0;
+		$this->clock_override = function () use ( &$after_pull ): int {
+			if ( ! in_array( 'pull', $this->events, true ) ) {
+				return self::NOW;
+			}
+			return 1 === ++$after_pull ? self::NOW : self::NOW + 100;
+		};
+
+		$this->pull()->run();
+
+		self::assertSame( array( '{"ids":[1,2]}' ), $this->releases );
+		self::assertSame( array(), $this->acks );
+		self::assertSame( array(), array_filter( $this->events, static fn( string $event ): bool => str_starts_with( $event, 'apply' ) ) );
 	}
 
 	/**

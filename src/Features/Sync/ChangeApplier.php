@@ -21,9 +21,15 @@ use Nyxify\Shared\Logging\Logger;
  *   the change's `_nyxify_outbox_id`: then that product is reported and nothing is created.
  * - `product.update` -> `PUT /wc/v3/products/{id}`; `product.delete` -> `DELETE /wc/v3/products/{id}` without
  *   `force` (the trash); one already in the trash or gone counts as deleted.
+ * - `product.delete_permanent` -> `DELETE /wc/v3/products/{id}?force=true` (its variations go with it); one already
+ *   gone counts as deleted.
+ * - `product.restore` -> `wp_untrash_post()` (it brings a variable product's variations back too, which a REST status
+ *   update would not), then the status the core asked for when WordPress put another one; one that is not in the trash
+ *   counts as restored.
  * - `variation.update` -> `PUT /wc/v3/products/{pid}/variations/{vid}`.
- * - Errors as the core's push reports them: WooCommerce's code when the core can take it (else `woocommerce_error`)
- *   and its message with tags stripped and every link replaced (an image download error carries the signed link).
+ * - `category.create|update|delete` -> the CategoryWriter.
+ * - Errors as the core's push reports them (RestError): WooCommerce's code when the core can take it (else
+ *   `woocommerce_error`) and its message with tags stripped and every link replaced.
  * - While a change is applied, every HTTP request's timeout is capped at DOWNLOAD_TIMEOUT_SECONDS (WordPress gives an
  *   image download 300 s). The cap is removed and the previous current user restored afterwards, whatever happened.
  * - Logs carry the change's id and action and an exception's class only, never a payload, a message or a link.
@@ -38,7 +44,7 @@ final class ChangeApplier {
 	public const ROUTE_PRODUCTS = '/wc/v3/products';
 
 	/**
-	 * Answers to a delete meaning the product is already in the trash, or gone.
+	 * Answers to a delete (to the trash or for good) meaning the product is already in the trash, or gone.
 	 *
 	 * @var list<string>
 	 */
@@ -50,10 +56,6 @@ final class ChangeApplier {
 	public const PLUGIN_ERROR_MESSAGE = 'The plugin failed while applying the change.';
 
 	public const REST_USER_MISSING_MESSAGE = "The plugin's WooCommerce REST key or its user is missing: activate the store again.";
-
-	private const LINK_PATTERN = '#\b[a-z][a-z0-9+.-]*://[^\s<>"\']+#i';
-
-	private const LINK = '[link]';
 
 	/**
 	 * Fields check.
@@ -83,6 +85,13 @@ final class ChangeApplier {
 	 * @phpstan-var \Closure(string, string, array<string, mixed>): array{int, mixed}
 	 */
 	private \Closure $dispatch;
+
+	/**
+	 * Applies the category changes.
+	 *
+	 * @var CategoryWriter
+	 */
+	private CategoryWriter $categories;
 
 	/**
 	 * The REST key's user, once read (the applier lives for one run).
@@ -119,6 +128,8 @@ final class ChangeApplier {
 
 			return array( $response->get_status(), $response->get_data() );
 		};
+
+		$this->categories = new CategoryWriter( $this->dispatch );
 	}
 
 	/**
@@ -188,6 +199,20 @@ final class ChangeApplier {
 	 * @param array<string, mixed> $body   Its request body.
 	 */
 	private function write( PulledChange $change, array $body ): ChangeResult {
+		switch ( $change->action ) {
+			case PulledChange::CATEGORY_CREATE:
+			case PulledChange::CATEGORY_UPDATE:
+			case PulledChange::CATEGORY_DELETE:
+				return $this->categories->write( $change, $body );
+			case PulledChange::PRODUCT_RESTORE:
+				return $this->restore( $change, $body );
+			case PulledChange::PRODUCT_DELETE_PERMANENT:
+				$body = array( 'force' => true );
+				break;
+			default:
+				break;
+		}
+
 		$is_create = PulledChange::PRODUCT_CREATE === $change->action;
 
 		if ( $is_create ) {
@@ -220,12 +245,50 @@ final class ChangeApplier {
 				: ChangeResult::failure( $change->id, ChangeResult::WOOCOMMERCE_ERROR, 'WooCommerce answered without a product id.' );
 		}
 
-		$code = self::error_code( $data );
-		if ( PulledChange::PRODUCT_DELETE === $change->action && in_array( $code, self::DELETE_DONE_CODES, true ) ) {
+		$is_delete = PulledChange::PRODUCT_DELETE === $change->action || PulledChange::PRODUCT_DELETE_PERMANENT === $change->action;
+		if ( $is_delete && in_array( RestError::code( $data ), self::DELETE_DONE_CODES, true ) ) {
 			return ChangeResult::success( $change->id, $change->woo_product_id );
 		}
 
-		return ChangeResult::failure( $change->id, $code, self::error_message( $data, $status ) );
+		return RestError::failure( $change->id, $data, $status );
+	}
+
+	/**
+	 * Brings a product (and a variable product's variations) back from the trash.
+	 *
+	 * @param PulledChange         $change The change (checked).
+	 * @param array<string, mixed> $body   Its fields: the status it comes back with, when the core says.
+	 */
+	private function restore( PulledChange $change, array $body ): ChangeResult {
+		$product_id = (int) $change->woo_product_id;
+		$post       = get_post( $product_id );
+
+		if ( ! $post instanceof \WP_Post || 'product' !== $post->post_type ) {
+			return ChangeResult::failure( $change->id, 'woocommerce_rest_product_invalid_id', 'Invalid product ID.' );
+		}
+
+		if ( 'trash' !== $post->post_status ) {
+			return ChangeResult::success( $change->id, $product_id );
+		}
+
+		if ( ! current_user_can( 'delete_post', $product_id ) ) {
+			return ChangeResult::failure( $change->id, 'woocommerce_rest_cannot_edit', 'Sorry, you are not allowed to restore this product.' );
+		}
+
+		$restored = wp_untrash_post( $product_id );
+		if ( ! $restored instanceof \WP_Post ) {
+			return ChangeResult::failure( $change->id, ChangeResult::WOOCOMMERCE_ERROR, 'WordPress could not restore the product.' );
+		}
+
+		$status = $body['status'] ?? null;
+		if ( is_string( $status ) && $restored->post_status !== $status ) {
+			[ $code, $data ] = ( $this->dispatch )( 'PUT', self::ROUTE_PRODUCTS . '/' . $product_id, array( 'status' => $status ) );
+			if ( $code < 200 || $code >= 300 ) {
+				return RestError::failure( $change->id, $data, $code );
+			}
+		}
+
+		return ChangeResult::success( $change->id, $product_id );
 	}
 
 	/**
@@ -241,10 +304,12 @@ final class ChangeApplier {
 			case PulledChange::PRODUCT_CREATE:
 				return array( 'POST', self::ROUTE_PRODUCTS );
 			case PulledChange::PRODUCT_DELETE:
+			case PulledChange::PRODUCT_DELETE_PERMANENT:
 				return array( 'DELETE', $product );
 			case PulledChange::VARIATION_UPDATE:
 				return array( 'PUT', $product . '/variations/' . (int) $change->woo_variation_id );
 			default:
+				// product.update.
 				return array( 'PUT', $product );
 		}
 	}
@@ -287,30 +352,5 @@ final class ChangeApplier {
 		}
 
 		return $this->user_id;
-	}
-
-	/**
-	 * WooCommerce's error code when the core can take it, else `woocommerce_error`.
-	 *
-	 * @param mixed $data The error answer.
-	 */
-	private static function error_code( $data ): string {
-		$code = is_array( $data ) ? ( $data['code'] ?? null ) : null;
-
-		return is_string( $code ) && 1 === preg_match( ChangeResult::CODE_PATTERN, $code ) ? $code : ChangeResult::WOOCOMMERCE_ERROR;
-	}
-
-	/**
-	 * WooCommerce's message without tags and links, or one naming the status when it has none.
-	 *
-	 * @param mixed $data   The error answer.
-	 * @param int   $status Its HTTP status.
-	 */
-	private static function error_message( $data, int $status ): string {
-		$message = is_array( $data ) && is_string( $data['message'] ?? null ) ? $data['message'] : '';
-		$message = (string) preg_replace( self::LINK_PATTERN, self::LINK, wp_strip_all_tags( $message ) );
-		$message = trim( (string) preg_replace( '/\s+/u', ' ', $message ) );
-
-		return '' !== $message ? $message : sprintf( 'WooCommerce answered with HTTP %d.', $status );
 	}
 }

@@ -4,7 +4,7 @@ Tags: woocommerce, telegram, chatbot, bot, ecommerce
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,8 +14,9 @@ Sell your WooCommerce products through Telegram, Bale and Rubika bots, run for y
 
 Nyxify turns your WooCommerce shop into shop bots on Telegram, Bale and Rubika. Customers browse your categories and
 products, fill a cart and check out inside the messenger; the order is created in WooCommerce and paid on your shop's
-own checkout page. You and the people you choose manage products from the bot too: prices, stock, descriptions,
-photos, new products.
+own checkout page. You and the people you choose manage the shop from the bot too: products (prices, stock,
+descriptions, photos, new products), categories, the trash, and sales reports for the whole shop and for the bot's
+orders.
 
 The bots run on the Nyxify service, not on your server. This plugin connects your shop to it:
 
@@ -34,7 +35,7 @@ The bots run on the Nyxify service, not on your server. This plugin connects you
 * **Orders placed through the bots stay in step.** When such an order is paid, completed, cancelled or refunded, the
   bot learns of it in the background. Orders from your shop's own checkout are never sent.
 * **Works behind strict hosts too.** When the service can't reach your shop, the plugin fetches the bot admins'
-  product edits itself every few minutes and applies them through WooCommerce.
+  edits (products, categories, the trash) itself every few minutes and applies them through WooCommerce.
 * **Deactivating** the plugin tells the service (the bots stop) and removes the connection and its REST API key;
   **deleting** it removes its settings and data.
 
@@ -49,7 +50,8 @@ In Persian the settings page uses the Vazirmatn font by the Vazirmatn Project Au
 نیکسیفای فروشگاه ووکامرس شما را به ربات‌های فروشگاهی در تلگرام، بله و روبیکا تبدیل می‌کند. مشتری‌ها در پیام‌رسان
 محصولات را می‌بینند، سبد خرید می‌سازند و سفارش می‌دهند؛ سفارش در ووکامرس ثبت می‌شود و پرداخت در صفحهٔ پرداخت
 فروشگاه خودتان انجام می‌شود. شما و مدیرانی که انتخاب می‌کنید، قیمت، موجودی، توضیحات و عکس محصولات را هم از داخل ربات
-ویرایش می‌کنید. منو، متن‌ها، پیام خوش‌آمد، رنگ و نماد دسته‌ها و اطلاعات تماس فروشگاه را هم در ووکامرس > ظاهر ربات
+ویرایش می‌کنید، دسته‌ها را مدیریت می‌کنید، به زباله‌دان سر می‌زنید و گزارش فروش کل فروشگاه یا فقط سفارش‌های ربات را با
+نمودار می‌بینید. منو، متن‌ها، پیام خوش‌آمد، رنگ و نماد دسته‌ها و اطلاعات تماس فروشگاه را هم در ووکامرس > ظاهر ربات
 تغییر می‌دهید. ربات‌ها روی سرویس نیکسیفای اجرا می‌شوند و این افزونه فروشگاه را با کلید لایسنس به آن وصل می‌کند. پیش
 از وارد کردن کلید لایسنس هیچ داده‌ای از فروشگاه ارسال نمی‌شود.
 
@@ -124,8 +126,10 @@ What is sent, and when:
 * **Activation** (when you click "Activate"): the license key, your site's address and REST API address, your
   WordPress and WooCommerce versions, and the consumer key and secret of a new WooCommerce REST API key (read and
   write) that the plugin creates for your administrator account. The service uses that key to read your products and
-  categories, to create the orders customers place through the bots and read their status, and to apply the product
-  edits your bot admins make.
+  categories, to create the orders customers place through the bots and read their status, to apply the product and
+  category edits your bot admins make (moving products to the trash, restoring and deleting them for good included),
+  and to read your shop's sales totals for the reports in the bots (counts and amounts only, never a customer's
+  details).
 * **Status, "Check connection", "Rotate secret" and deactivation** (when you open the settings page, click those
   buttons or deactivate the plugin): only your shop's id and a signature; the answer is the shop's status.
 * **Bots, admin PIN and bot admins** (when you use those sections of the settings page): the bot token you enter, sent
@@ -142,14 +146,23 @@ What is sent, and when:
 * **Order changes** (in the background, after an order placed through a bot changes): the order's id, status, number,
   currency, total, dates and line items (name, product, variation, quantity and total). No customer, address, contact,
   note or payment detail.
-* **Pending product edits** (every 5 minutes in the background while the shop is connected): the plugin asks the
-  service for bot admins' edits it couldn't deliver, applies them through WooCommerce and reports each result (ok, or
-  WooCommerce's error). Product photos in those edits are downloaded by WooCommerce from the links the service gives.
+* **Pending edits** (every 5 minutes in the background while the shop is connected): the plugin asks the service for
+  bot admins' product, category and trash edits it couldn't deliver, applies them through WooCommerce and reports each
+  result (ok, or WooCommerce's error; the id of a category it created). Changes it had no time to start in a run are
+  given back to the service by their ids. Photos in those edits are downloaded by WooCommerce from the links the
+  service gives.
 
 The service's terms of service: https://nyxify.nyxon.tech/terms/
 The service's privacy policy: https://nyxify.nyxon.tech/privacy/
 
 == Changelog ==
+
+= 1.2.0 =
+* When the service can't reach your shop, the plugin now also applies bot admins' category edits (create, change,
+  delete) and their trash actions (restore a product, delete it for good), in addition to product edits. The default
+  category is never deleted.
+* Changes the plugin didn't have time to start in one run are given back to the service at once instead of after a
+  few minutes.
 
 = 1.1.0 =
 * New page, WooCommerce > Bot appearance, with a tab per part: the main menu (which buttons, in which rows, their

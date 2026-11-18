@@ -83,6 +83,36 @@ final class ChangeResultTest extends TestCase {
 		self::assertArrayNotHasKey( 'woo_product_id', $result->to_ack() );
 	}
 
+	public function test_a_created_category_sends_its_id(): void {
+		$result = ChangeResult::success( 52, null, 12 );
+
+		self::assertSame( 12, $result->woo_category_id );
+		self::assertSame(
+			array(
+				'id'              => 52,
+				'success'         => true,
+				'woo_category_id' => 12,
+			),
+			$result->to_ack()
+		);
+	}
+
+	public function test_with_date_keeps_the_category_id(): void {
+		self::assertSame( 12, ChangeResult::success( 52, null, 12 )->with_date( null )->woo_category_id );
+	}
+
+	#[DataProvider( 'invalid_product_ids' )]
+	public function test_a_category_id_below_one_is_left_out( int $id ): void {
+		$result = ChangeResult::success( 52, null, $id );
+
+		self::assertNull( $result->woo_category_id );
+		self::assertArrayNotHasKey( 'woo_category_id', $result->to_ack() );
+	}
+
+	public function test_a_failure_has_no_category_id(): void {
+		self::assertArrayNotHasKey( 'woo_category_id', ChangeResult::failure( 52, 'category_not_found' )->to_ack() );
+	}
+
 	/**
 	 * Dates the core would refuse (or read differently): only `Y-m-d\TH:i:s` of a real moment is sent.
 	 *

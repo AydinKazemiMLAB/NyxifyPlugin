@@ -22,8 +22,8 @@ use Nyxify\Shared\Security\Encryptor;
  * the core's order, then acknowledges them with the products' dates (contract §5.2).
  *
  * - Not connected, paused (OPTION_RETRY_AT) or another run holding the lock: nothing happens.
- * - Changes are applied one by one; none is started once BUDGET_SECONDS have passed. Those not started stay
- *   unacknowledged and come back once the core's claim expires.
+ * - Changes are applied one by one; none is started once BUDGET_SECONDS have passed. Those not started are given back
+ *   to the core at once (`outbox/release`); if that fails they come back once the core's claim expires.
  * - After the changes, WooCommerce's deferred product sync runs (a variation edit saves its parent only at
  *   `shutdown`), then each applied change's product date is read anew: the product's, the parent's for a variation,
  *   in the product webhook's format. The webhooks themselves go out after the run, so the ack comes first.
@@ -48,6 +48,8 @@ final class SyncPull {
 	public const OPERATION_PULL = 'sync/outbox';
 
 	public const OPERATION_ACK = 'sync/outbox/ack';
+
+	public const OPERATION_RELEASE = 'sync/outbox/release';
 
 	/**
 	 * The core's outbox.
@@ -243,21 +245,47 @@ final class SyncPull {
 			$results[] = $this->applier->apply( $change );
 		}
 
+		$not_started = array_slice( $answer->changes, count( $results ) );
+
 		if ( array() === $results ) {
+			$this->release( $not_started );
 			return;
 		}
 
 		( $this->finish_products )();
 		$results = $this->dated( $results );
 
-		$ack         = $this->ack( $results );
-		$not_started = count( $answer->changes ) - count( $results );
+		$ack      = $this->ack( $results );
+		$released = $this->release( $not_started );
 
-		$this->log_run( $answer, $results, $ack );
+		$this->log_run( $answer, $results, $ack, $released );
 
-		if ( OutboxClient::LIMIT === count( $answer->changes ) && 0 === $not_started && $ack->is_success() ) {
+		if ( OutboxClient::LIMIT === count( $answer->changes ) && array() === $not_started && $ack->is_success() ) {
 			$this->scheduler->schedule_now();
 		}
+	}
+
+	/**
+	 * Gives back the changes this run did not start, so they are handed out again at once (not after their claim
+	 * expires). A failure is logged; the claim expiring is the fallback.
+	 *
+	 * @param PulledChange[] $changes The changes that were not started.
+	 * @return int How many the core put back.
+	 *
+	 * @phpstan-param list<PulledChange> $changes
+	 */
+	private function release( array $changes ): int {
+		if ( array() === $changes ) {
+			return 0;
+		}
+
+		$response = $this->client->release( array_map( static fn( PulledChange $change ): int => $change->id, $changes ) );
+		if ( ! $response->is_success() ) {
+			$this->failed( self::OPERATION_RELEASE, $response->error );
+			return 0;
+		}
+
+		return (int) $response->data['affected'];
 	}
 
 	/**
@@ -326,13 +354,14 @@ final class SyncPull {
 	/**
 	 * Logs a run: one warning per refused change (id, action, code) and a summary.
 	 *
-	 * @param PullAnswer     $answer  The pull's answer.
-	 * @param ChangeResult[] $results Results of the changes started.
-	 * @param CoreResponse   $ack     The ack's answer.
+	 * @param PullAnswer     $answer   The pull's answer.
+	 * @param ChangeResult[] $results  Results of the changes started.
+	 * @param CoreResponse   $ack      The ack's answer.
+	 * @param int            $released How many changes not started the core put back.
 	 *
 	 * @phpstan-param list<ChangeResult> $results
 	 */
-	private function log_run( PullAnswer $answer, array $results, CoreResponse $ack ): void {
+	private function log_run( PullAnswer $answer, array $results, CoreResponse $ack, int $released ): void {
 		$actions = array();
 		foreach ( $answer->changes as $change ) {
 			$actions[ $change->id ] = $change->action;
@@ -360,6 +389,7 @@ final class SyncPull {
 			'applied'        => count( $results ) - $failed,
 			'failed'         => $failed,
 			'not_started'    => count( $answer->changes ) - count( $results ),
+			'released'       => $released,
 			'request_id'     => $answer->request_id,
 			'ack_request_id' => $ack->request_id,
 		);

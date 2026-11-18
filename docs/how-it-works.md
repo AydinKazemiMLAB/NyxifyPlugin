@@ -100,12 +100,18 @@ key. When it can't (a host that refuses its requests, a firewall, an outage), th
 - **When:** an Action Scheduler action (`nyxify_sync_pull`, group `nyxify`) every 5 minutes while the shop is
   connected, plus one right away after *Check connection*. One run at a time per site.
 - **What is pulled:** only the changes whose delivery by the service has failed, oldest first: `product.create`,
-  `product.update`, `product.delete` and `variation.update`. While the service reaches the shop, nothing comes back.
+  `product.update`, `product.delete` (to the trash or for good), `product.restore`, `variation.update` and, since 1.2.0,
+  `category.create`, `category.update` and `category.delete`. While the service reaches the shop, nothing comes back.
 - **How they are applied:** one by one, in the service's order, through WooCommerce's own REST controllers in-process
   (`rest_do_request()`: the same validation, image download and meta handling), as the user who owns the plugin's REST
-  API key. Every payload is first checked against the fields the service can send (name, status, visibility,
-  descriptions, SKU, prices, stock, categories, images); anything else fails that change. A create is never applied
-  twice: the product carries the change's id in `_nyxify_outbox_id`.
+  API key. Two exceptions: a restore uses `wp_untrash_post()` (it brings a variable product's variations back too,
+  which a REST status update would not), and a category delete is always forced (a category has no trash) and never
+  removes the shop's default category. Every payload is first checked against the fields the service can send (name,
+  status, visibility, descriptions, SKU, prices, stock, categories, images; for a category its name, parent,
+  description, menu order and image); anything else fails that change. A create is never applied twice: the
+  product or category carries the change's id in `_nyxify_outbox_id` (a category's is term meta).
+- **Time budget:** a run stops starting new changes when its time is up and gives back the ones it did not start at
+  once; if that call fails they come back when the service's claim expires.
 - **Acknowledgement:** each change's result goes back to the service. Failures carry WooCommerce's error code and its
   message without tags or links (shown to the bot's admins).
 - **Failures:** a lapsed subscription, an inactive shop or a rejected signature pauses pulls for an hour; other errors

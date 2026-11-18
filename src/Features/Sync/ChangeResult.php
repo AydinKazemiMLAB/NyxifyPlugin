@@ -17,7 +17,7 @@ namespace Nyxify\Features\Sync;
  * - a message is trimmed and cut to 1000 characters; one that isn't valid UTF-8 is dropped;
  * - a date that isn't a real `Y-m-d\TH:i:s` (UTC, the product webhook's format) is dropped, and only successes keep
  *   one;
- * - `woo_product_id` is kept only when at least 1;
+ * - `woo_product_id` and `woo_category_id` are kept only when at least 1;
  * - fields not set are left out of the ack.
  *
  * The message is WooCommerce's, already free of links and tags (the applier's job); it is sent to the core for its
@@ -80,6 +80,13 @@ final class ChangeResult {
 	public readonly ?int $woo_product_id;
 
 	/**
+	 * The category's id (the created one for a category create), or null.
+	 *
+	 * @var int|null
+	 */
+	public readonly ?int $woo_category_id;
+
+	/**
 	 * The product's `date_modified_gmt` after the run (the parent's for a variation), or null.
 	 *
 	 * @var string|null
@@ -106,14 +113,16 @@ final class ChangeResult {
 	 * @param int         $id                Outbox entry id.
 	 * @param bool        $success           Whether it was applied.
 	 * @param int|null    $woo_product_id    Product id, or null.
+	 * @param int|null    $woo_category_id   Category id, or null.
 	 * @param string|null $date_modified_gmt Product date, or null.
 	 * @param string|null $error_code        Error code, or null.
 	 * @param string      $error_message     Error message, or ''.
 	 */
-	private function __construct( int $id, bool $success, ?int $woo_product_id, ?string $date_modified_gmt, ?string $error_code, string $error_message ) {
+	private function __construct( int $id, bool $success, ?int $woo_product_id, ?int $woo_category_id, ?string $date_modified_gmt, ?string $error_code, string $error_message ) {
 		$this->id                = $id;
 		$this->success           = $success;
 		$this->woo_product_id    = null !== $woo_product_id && $woo_product_id >= 1 ? $woo_product_id : null;
+		$this->woo_category_id   = null !== $woo_category_id && $woo_category_id >= 1 ? $woo_category_id : null;
 		$this->date_modified_gmt = $success ? self::valid_date( $date_modified_gmt ) : null;
 		$this->error_code        = $error_code;
 		$this->error_message     = $error_message;
@@ -122,11 +131,12 @@ final class ChangeResult {
 	/**
 	 * An applied change.
 	 *
-	 * @param int      $id             Outbox entry id.
-	 * @param int|null $woo_product_id The product's id (the created one for a create), or null.
+	 * @param int      $id              Outbox entry id.
+	 * @param int|null $woo_product_id  The product's id (the created one for a create), or null.
+	 * @param int|null $woo_category_id The category's id (the created one for a category create), or null.
 	 */
-	public static function success( int $id, ?int $woo_product_id = null ): self {
-		return new self( $id, true, $woo_product_id, null, null, '' );
+	public static function success( int $id, ?int $woo_product_id = null, ?int $woo_category_id = null ): self {
+		return new self( $id, true, $woo_product_id, $woo_category_id, null, null, '' );
 	}
 
 	/**
@@ -139,7 +149,7 @@ final class ChangeResult {
 	public static function failure( int $id, string $code, string $message = '' ): self {
 		$code = 1 === preg_match( self::CODE_PATTERN, $code ) ? $code : self::PLUGIN_ERROR;
 
-		return new self( $id, false, null, null, $code, self::clean_message( $message ) );
+		return new self( $id, false, null, null, null, $code, self::clean_message( $message ) );
 	}
 
 	/**
@@ -148,7 +158,7 @@ final class ChangeResult {
 	 * @param string|null $date_modified_gmt `wc_rest_prepare_date_response()` of the product's date, or null.
 	 */
 	public function with_date( ?string $date_modified_gmt ): self {
-		return new self( $this->id, $this->success, $this->woo_product_id, $date_modified_gmt, $this->error_code, $this->error_message );
+		return new self( $this->id, $this->success, $this->woo_product_id, $this->woo_category_id, $date_modified_gmt, $this->error_code, $this->error_message );
 	}
 
 	/**
@@ -164,6 +174,9 @@ final class ChangeResult {
 
 		if ( null !== $this->woo_product_id ) {
 			$result['woo_product_id'] = $this->woo_product_id;
+		}
+		if ( null !== $this->woo_category_id ) {
+			$result['woo_category_id'] = $this->woo_category_id;
 		}
 		if ( null !== $this->date_modified_gmt ) {
 			$result['date_modified_gmt'] = $this->date_modified_gmt;

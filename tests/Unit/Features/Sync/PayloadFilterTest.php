@@ -42,14 +42,16 @@ final class PayloadFilterTest extends TestCase {
 	 * @param array<string, mixed> $payload    Payload.
 	 * @param int|null             $product_id Product id.
 	 * @param int|null             $variation  Variation id.
+	 * @param int|null             $category   Category id.
 	 */
-	private static function change( string $action, array $payload, ?int $product_id = 13, ?int $variation = null ): PulledChange {
+	private static function change( string $action, array $payload, ?int $product_id = 13, ?int $variation = null, ?int $category = null ): PulledChange {
 		$change = PulledChange::from_response(
 			array(
 				'id'               => 41,
 				'action'           => $action,
 				'woo_product_id'   => $product_id,
 				'woo_variation_id' => $variation,
+				'woo_category_id'  => $category,
 				'payload'          => $payload,
 				'created_at'       => '2026-10-11T08:15:30Z',
 			)
@@ -202,10 +204,140 @@ final class PayloadFilterTest extends TestCase {
 		self::assertSame( $payload, ( new PayloadFilter() )->check( $change ) );
 	}
 
+	// ------------------------------------------------------------------ trash, restore and categories (plugin 1.2.0)
+
+	public function test_a_restore_carries_the_status_it_comes_back_with(): void {
+		self::assertSame( array( 'status' => 'draft' ), ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'draft' ) ) ) );
+		self::assertSame( array(), ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_RESTORE, array() ) ) );
+	}
+
+	public function test_a_restore_refuses_other_fields_and_statuses(): void {
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_RESTORE, array( 'name' => 'x' ) ) ), 'name' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'trash' ) ) ), 'status' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'future' ) ) ), 'status' );
+	}
+
+	public function test_a_delete_for_good_carries_no_fields(): void {
+		self::assertSame( array(), ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_DELETE_PERMANENT, array() ) ) );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_DELETE_PERMANENT, array( 'force' => true ) ) ), 'force' );
+	}
+
+	public function test_a_category_create_passes_its_fields_without_the_outbox_meta(): void {
+		$payload = array(
+			'name'        => 'کیف',
+			'parent'      => 12,
+			'description' => 'کیف‌های چرمی',
+			'menu_order'  => 3,
+			'image'       => array( 'src' => 'https://bot.example.com:88/media/0123456789abcdef0123456789abcdef.png?expires=1&signature=s' ),
+			'meta_data'   => array(
+				array(
+					'key'   => PayloadFilter::OUTBOX_META_KEY,
+					'value' => '41',
+				),
+			),
+		);
+
+		$body = ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_CREATE, $payload, null ) );
+
+		unset( $payload['meta_data'] );
+		self::assertSame( $payload, $body );
+	}
+
+	public function test_a_category_create_needs_a_name(): void {
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_CREATE, array( 'parent' => 2 ), null ) ), 'Missing category name' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_CREATE, array(), null ) ), 'Missing category name' );
+	}
+
+	public function test_a_category_update_passes_the_fields_to_change(): void {
+		$body = ( new PayloadFilter() )->check(
+			self::change(
+				PulledChange::CATEGORY_UPDATE,
+				array(
+					'name'       => 'کیف و کفش',
+					'menu_order' => 0,
+				),
+				null,
+				null,
+				12
+			)
+		);
+
+		self::assertSame(
+			array(
+				'name'       => 'کیف و کفش',
+				'menu_order' => 0,
+			),
+			$body
+		);
+	}
+
+	public function test_a_removed_category_image_becomes_the_id_zero(): void {
+		self::assertSame(
+			array( 'image' => array( 'id' => 0 ) ),
+			( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_UPDATE, array( 'image' => null ), null, null, 12 ) )
+		);
+		self::assertSame(
+			array( 'image' => array( 'id' => 7 ) ),
+			( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_UPDATE, array( 'image' => array( 'id' => 7 ) ), null, null, 12 ) )
+		);
+	}
+
+	/**
+	 * Category fields that must be refused.
+	 *
+	 * @return array<string, array{array<string, mixed>, string}>
+	 */
+	public static function bad_category_fields(): array {
+		return array(
+			'a blank name'          => array( array( 'name' => '  ' ), 'name' ),
+			'a name that is a list' => array( array( 'name' => array( 'x' ) ), 'name' ),
+			'a negative parent'     => array( array( 'parent' => -1 ), 'parent' ),
+			'a parent as a string'  => array( array( 'parent' => '3' ), 'parent' ),
+			'an order too high'     => array( array( 'menu_order' => 10000 ), 'menu_order' ),
+			'a negative order'      => array( array( 'menu_order' => -1 ), 'menu_order' ),
+			'a slug of its own'     => array( array( 'slug' => 'bags' ), 'slug' ),
+			'an image link, http'   => array( array( 'image' => array( 'src' => 'http://shop.example.com/a.png' ) ), 'image' ),
+			'an image with both'    => array(
+				array(
+					'image' => array(
+						'id'  => 3,
+						'src' => 'https://a.example.com/a.png',
+					),
+				),
+				'image',
+			),
+			'an image id of zero'   => array( array( 'image' => array( 'id' => 0 ) ), 'image' ),
+		);
+	}
+
+	/**
+	 * A bad category field.
+	 *
+	 * @param array<string, mixed> $payload The payload.
+	 * @param string               $field   The field the message names.
+	 */
+	#[DataProvider( 'bad_category_fields' )]
+	public function test_a_category_update_refuses_bad_fields( array $payload, string $field ): void {
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_UPDATE, $payload, null, null, 12 ) ), $field );
+	}
+
+	public function test_a_category_update_needs_a_field_and_a_category_delete_none(): void {
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_UPDATE, array(), null, null, 12 ) ), 'Nothing to change' );
+		self::assertSame( array(), ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_DELETE, array(), null, null, 12 ) ) );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_DELETE, array( 'force' => true ), null, null, 12 ) ), 'force' );
+	}
+
+	public function test_category_changes_need_their_category_id(): void {
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_UPDATE, array( 'name' => 'x' ), null ) ), 'Missing category id' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::CATEGORY_DELETE, array(), null ) ), 'Missing category id' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_RESTORE, array(), null ) ), 'Missing product id' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( PulledChange::PRODUCT_DELETE_PERMANENT, array(), null ) ), 'Missing product id' );
+	}
+
 	// ------------------------------------------------------------------ refused
 
 	public function test_an_unknown_action_is_refused(): void {
-		self::assert_invalid( ( new PayloadFilter() )->check( self::change( 'category.update', array( 'name' => 'x' ) ) ), 'Unknown action' );
+		self::assert_invalid( ( new PayloadFilter() )->check( self::change( 'category.merge', array( 'name' => 'x' ) ) ), 'Unknown action' );
 	}
 
 	/**

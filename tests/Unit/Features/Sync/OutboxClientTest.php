@@ -278,14 +278,105 @@ final class OutboxClientTest extends TestCase {
 		self::assertSame( 'simple', $create->payload['type'] );
 	}
 
-	public function test_an_action_the_plugin_doesnt_know_is_still_read(): void {
-		$this->next_response = self::response( 200, self::pulled( array( self::change( array( 'action' => 'category.update' ) ) ) ) );
+	public function test_the_new_actions_and_the_category_id_are_read(): void {
+		$this->next_response = self::response(
+			200,
+			self::pulled(
+				array(
+					self::change(
+						array(
+							'id'              => 51,
+							'action'          => 'category.update',
+							'woo_product_id'  => null,
+							'woo_category_id' => 12,
+							'payload'         => array( 'name' => 'کیف' ),
+						)
+					),
+					self::change(
+						array(
+							'id'              => 52,
+							'action'          => 'category.create',
+							'woo_product_id'  => null,
+							'woo_category_id' => null,
+							'payload'         => array( 'name' => 'کفش' ),
+						)
+					),
+					self::change(
+						array(
+							'id'      => 53,
+							'action'  => 'product.restore',
+							'payload' => array( 'status' => 'draft' ),
+						)
+					),
+					self::change(
+						array(
+							'id'      => 54,
+							'action'  => 'product.delete_permanent',
+							'payload' => new \stdClass(),
+						)
+					),
+				)
+			)
+		);
 
 		$answer = $this->client()->pull();
 
 		self::assertInstanceOf( PullAnswer::class, $answer );
-		self::assertSame( 'category.update', $answer->changes[0]->action );
-		self::assertNotContains( 'category.update', PulledChange::ACTIONS );
+		self::assertSame(
+			array( 'category.update', 'category.create', 'product.restore', 'product.delete_permanent' ),
+			array_map( static fn( PulledChange $change ): string => $change->action, $answer->changes )
+		);
+		self::assertSame( 12, $answer->changes[0]->woo_category_id );
+		self::assertNull( $answer->changes[1]->woo_category_id );
+		self::assertSame( array( 'status' => 'draft' ), $answer->changes[2]->payload );
+		self::assertSame( array(), $answer->changes[3]->payload );
+		foreach ( $answer->changes as $change ) {
+			self::assertContains( $change->action, PulledChange::ACTIONS );
+		}
+	}
+
+	public function test_a_core_without_categories_sends_no_category_id(): void {
+		$change = self::change();
+		unset( $change['woo_category_id'] );
+		$this->next_response = self::response( 200, self::pulled( array( $change ) ) );
+
+		$answer = $this->client()->pull();
+
+		self::assertInstanceOf( PullAnswer::class, $answer );
+		self::assertNull( $answer->changes[0]->woo_category_id );
+	}
+
+	/**
+	 * Category ids that make a pull answer invalid.
+	 *
+	 * @return array<string, array{mixed}>
+	 */
+	public static function bad_category_ids(): array {
+		return array(
+			'zero'   => array( 0 ),
+			'text'   => array( '12' ),
+			'a list' => array( array( 12 ) ),
+		);
+	}
+
+	#[DataProvider( 'bad_category_ids' )]
+	public function test_a_bad_category_id_makes_the_pull_answer_invalid( mixed $id ): void {
+		$this->next_response = self::response( 200, self::pulled( array( self::change( array( 'woo_category_id' => $id ) ) ) ) );
+
+		$answer = $this->client()->pull();
+
+		self::assertInstanceOf( CoreError::class, $answer );
+		self::assertSame( CoreError::INVALID_RESPONSE, $answer->code );
+	}
+
+	public function test_an_action_the_plugin_doesnt_know_is_still_read(): void {
+		$this->next_response = self::response( 200, self::pulled( array( self::change( array( 'action' => 'category.merge' ) ) ) ) );
+
+		$answer = $this->client()->pull();
+
+		self::assertInstanceOf( PullAnswer::class, $answer );
+		self::assertSame( 'category.merge', $answer->changes[0]->action );
+		self::assertNotContains( 'category.merge', PulledChange::ACTIONS );
 	}
 
 	public function test_a_change_without_ids_is_read_and_left_to_the_applier(): void {
@@ -450,6 +541,7 @@ final class OutboxClientTest extends TestCase {
 				ChangeResult::success( 44, 77 )->with_date( '2026-10-11T08:16:03' ),
 				ChangeResult::failure( 45, 'woocommerce_rest_product_invalid_sku', 'Invalid or duplicated SKU.' ),
 				ChangeResult::failure( 46, ChangeResult::INVALID_CHANGE ),
+				ChangeResult::success( 47, null, 12 ),
 			)
 		);
 
@@ -468,7 +560,8 @@ final class OutboxClientTest extends TestCase {
 				. '{"id":43,"success":true},'
 				. '{"id":44,"success":true,"woo_product_id":77,"date_modified_gmt":"2026-10-11T08:16:03"},'
 				. '{"id":45,"success":false,"error_code":"woocommerce_rest_product_invalid_sku","error_message":"Invalid or duplicated SKU."},'
-				. '{"id":46,"success":false,"error_code":"invalid_change"}'
+				. '{"id":46,"success":false,"error_code":"invalid_change"},'
+				. '{"id":47,"success":true,"woo_category_id":12}'
 				. ']}',
 			$request['args']['body']
 		);
@@ -586,6 +679,63 @@ final class OutboxClientTest extends TestCase {
 		$this->options = array();
 
 		$response = $this->client()->ack( array( ChangeResult::success( 41 ) ) );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( CoreError::NOT_ACTIVATED, $response->error->code );
+		self::assertSame( array(), $this->requests );
+	}
+
+	// ------------------------------------------------------------------ release
+
+	public function test_release_is_a_signed_post_of_the_ids(): void {
+		$this->next_response = self::response( 200, '{"affected":2}' );
+
+		$response = $this->client()->release( array( 44, 45 ) );
+
+		self::assertTrue( $response->is_success() );
+		self::assertSame( 2, $response->data['affected'] );
+		self::assertCount( 1, $this->requests );
+		$request = $this->requests[0];
+		self::assertSame( self::BASE_URL . '/api/v1/sync/outbox/release', $request['url'] );
+		self::assertSame( 'POST', $request['args']['method'] );
+		self::assertSame( '{"ids":[44,45]}', $request['args']['body'] );
+		self::assert_signed( $request );
+	}
+
+	#[DataProvider( 'invalid_result_counts' )]
+	public function test_a_release_the_core_would_refuse_is_not_sent( int $count ): void {
+		$response = $this->client()->release( $count > 0 ? range( 1, $count ) : array() );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( CoreError::INVALID_PAYLOAD, $response->error->code );
+		self::assertSame( array(), $this->requests );
+	}
+
+	#[DataProvider( 'invalid_ack_answers' )]
+	public function test_an_invalid_release_answer_is_invalid_response_with_its_status( string $body ): void {
+		$this->next_response = self::response( 200, $body );
+
+		$response = $this->client()->release( array( 44 ) );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( CoreError::INVALID_RESPONSE, $response->error->code );
+		self::assertSame( 200, $response->error->status );
+	}
+
+	public function test_release_errors_pass_through(): void {
+		$this->next_response = self::response( 403, '{"message":"Suspended","error_code":"store_suspended"}' );
+
+		$response = $this->client()->release( array( 44 ) );
+
+		self::assertFalse( $response->is_success() );
+		self::assertSame( 'store_suspended', $response->error->code );
+		self::assertSame( 403, $response->error->status );
+	}
+
+	public function test_without_a_connection_nothing_is_released(): void {
+		$this->options = array();
+
+		$response = $this->client()->release( array( 44 ) );
 
 		self::assertFalse( $response->is_success() );
 		self::assertSame( CoreError::NOT_ACTIVATED, $response->error->code );

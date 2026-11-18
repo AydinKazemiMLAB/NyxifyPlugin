@@ -83,6 +83,41 @@ final class ChangeApplierTest extends TestCase {
 	private array $lookups = array();
 
 	/**
+	 * The products get_post() finds, by id.
+	 *
+	 * @var array<int, \WP_Post>
+	 */
+	private array $posts = array();
+
+	/**
+	 * What current_user_can( 'delete_post' ) answers.
+	 *
+	 * @var bool
+	 */
+	private bool $can_delete = true;
+
+	/**
+	 * The status wp_untrash_post() gives a product back, or null when it fails.
+	 *
+	 * @var string|null
+	 */
+	private ?string $untrash_status = 'publish';
+
+	/**
+	 * The ids wp_untrash_post() was called with.
+	 *
+	 * @var list<int>
+	 */
+	private array $untrashed = array();
+
+	/**
+	 * The current user at each permission check.
+	 *
+	 * @var list<int>
+	 */
+	private array $checked_as = array();
+
+	/**
 	 * Each dispatched request: method, route, body, the current user and whether the timeout cap was on.
 	 *
 	 * @var list<array{method: string, route: string, body: array<string, mixed>, user: int, capped: bool}>
@@ -146,6 +181,37 @@ final class ChangeApplierTest extends TestCase {
 		);
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
 		Functions\when( 'wp_get_environment_type' )->justReturn( 'production' );
+		Functions\when( 'get_post' )->alias( fn( int $id ) => $this->posts[ $id ] ?? null );
+		Functions\when( 'current_user_can' )->alias(
+			function ( string $capability, int $id ): bool {
+				$this->checked_as[] = $this->current_user;
+				return $this->can_delete && 'delete_post' === $capability && 13 === $id;
+			}
+		);
+		Functions\when( 'wp_untrash_post' )->alias(
+			function ( int $id ) {
+				$this->untrashed[] = $id;
+				if ( null === $this->untrash_status ) {
+					return false;
+				}
+				$this->posts[ $id ] = self::post( 'product', $this->untrash_status );
+				return $this->posts[ $id ];
+			}
+		);
+	}
+
+	/**
+	 * A post as get_post() returns it.
+	 *
+	 * @param string $type   Post type.
+	 * @param string $status Post status.
+	 */
+	private static function post( string $type, string $status ): \WP_Post {
+		$post              = Mockery::mock( \WP_Post::class );
+		$post->post_type   = $type;
+		$post->post_status = $status;
+
+		return $post;
 	}
 
 	protected function tearDown(): void {
@@ -195,14 +261,16 @@ final class ChangeApplierTest extends TestCase {
 	 * @param int|null             $product_id Product id.
 	 * @param int|null             $variation  Variation id.
 	 * @param int                  $id         Outbox id.
+	 * @param int|null             $category   Category id.
 	 */
-	private static function change( string $action, array $payload = array(), ?int $product_id = 13, ?int $variation = null, int $id = 41 ): PulledChange {
+	private static function change( string $action, array $payload = array(), ?int $product_id = 13, ?int $variation = null, int $id = 41, ?int $category = null ): PulledChange {
 		$change = PulledChange::from_response(
 			array(
 				'id'               => $id,
 				'action'           => $action,
 				'woo_product_id'   => $product_id,
 				'woo_variation_id' => $variation,
+				'woo_category_id'  => $category,
 				'payload'          => $payload,
 				'created_at'       => '2026-10-11T08:15:30Z',
 			)
@@ -291,7 +359,7 @@ final class ChangeApplierTest extends TestCase {
 	 */
 	public static function requests(): array {
 		return array(
-			'create'    => array(
+			'create'          => array(
 				self::create(),
 				'POST',
 				'/wc/v3/products',
@@ -306,7 +374,7 @@ final class ChangeApplierTest extends TestCase {
 					),
 				),
 			),
-			'update'    => array(
+			'update'          => array(
 				self::update(),
 				'PUT',
 				'/wc/v3/products/13',
@@ -315,8 +383,16 @@ final class ChangeApplierTest extends TestCase {
 					'images' => array( array( 'src' => self::SIGNED_LINK ) ),
 				),
 			),
-			'delete'    => array( self::change( PulledChange::PRODUCT_DELETE ), 'DELETE', '/wc/v3/products/13', array() ),
-			'variation' => array(
+			'delete'          => array( self::change( PulledChange::PRODUCT_DELETE ), 'DELETE', '/wc/v3/products/13', array() ),
+			'delete for good' => array( self::change( PulledChange::PRODUCT_DELETE_PERMANENT ), 'DELETE', '/wc/v3/products/13', array( 'force' => true ) ),
+			'category update' => array(
+				self::change( PulledChange::CATEGORY_UPDATE, array( 'name' => 'کیف' ), null, null, 41, 12 ),
+				'PUT',
+				'/wc/v3/products/categories/12',
+				array( 'name' => 'کیف' ),
+			),
+			'category delete' => array( self::change( PulledChange::CATEGORY_DELETE, array(), null, null, 41, 12 ), 'DELETE', '/wc/v3/products/categories/12', array( 'force' => true ) ),
+			'variation'       => array(
 				self::change( PulledChange::VARIATION_UPDATE, array( 'stock_quantity' => 3 ), 13, 70 ),
 				'PUT',
 				'/wc/v3/products/13/variations/70',
@@ -663,6 +739,160 @@ final class ChangeApplierTest extends TestCase {
 
 		self::assertSame( 1, $this->key_reads );
 		self::assertCount( 3, $this->requests );
+	}
+
+	// ------------------------------------------------------------------ deleting for good
+
+	#[DataProvider( 'deleted_already' )]
+	public function test_a_delete_for_good_of_a_product_already_gone_succeeds( int $status, string $code ): void {
+		$this->answer = self::error( $status, $code );
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_DELETE_PERMANENT ) );
+
+		self::assertTrue( $result->success );
+		self::assertSame( 13, $result->woo_product_id );
+	}
+
+	public function test_a_delete_for_good_that_woocommerce_refuses_fails_with_its_code(): void {
+		$this->answer = self::error( 500, 'woocommerce_rest_cannot_delete', 'The product cannot be deleted.' );
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_DELETE_PERMANENT ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( 'woocommerce_rest_cannot_delete', $result->error_code );
+		self::assertSame( 'The product cannot be deleted.', $result->error_message );
+	}
+
+	// ------------------------------------------------------------------ restoring
+
+	public function test_a_restore_uses_wordpress_to_bring_the_product_and_its_variations_back(): void {
+		$this->posts[13] = self::post( 'product', 'trash' );
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertTrue( $result->success );
+		self::assertSame( 13, $result->woo_product_id );
+		self::assertSame( array( 13 ), $this->untrashed );
+		self::assertSame( array(), $this->requests );
+		self::assertSame( array( self::KEY_USER ), $this->checked_as );
+		self::assertSame( 1, $this->current_user );
+	}
+
+	public function test_a_restore_sets_the_status_when_wordpress_put_another_one(): void {
+		$this->posts[13]      = self::post( 'product', 'trash' );
+		$this->untrash_status = 'draft';
+		$this->answer         = array( 200, array( 'id' => 13 ) );
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertTrue( $result->success );
+		self::assertCount( 1, $this->requests );
+		self::assertSame( 'PUT', $this->requests[0]['method'] );
+		self::assertSame( '/wc/v3/products/13', $this->requests[0]['route'] );
+		self::assertSame( array( 'status' => 'publish' ), $this->requests[0]['body'] );
+		self::assertSame( self::KEY_USER, $this->requests[0]['user'] );
+	}
+
+	public function test_a_restore_without_a_status_keeps_the_one_wordpress_gave(): void {
+		$this->posts[13]      = self::post( 'product', 'trash' );
+		$this->untrash_status = 'private';
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE ) );
+
+		self::assertTrue( $result->success );
+		self::assertSame( array(), $this->requests );
+	}
+
+	public function test_a_refused_status_after_a_restore_fails_with_its_code(): void {
+		$this->posts[13]      = self::post( 'product', 'trash' );
+		$this->untrash_status = 'draft';
+		$this->answer         = self::error( 400, 'woocommerce_rest_invalid_status', 'Invalid status.' );
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( 'woocommerce_rest_invalid_status', $result->error_code );
+	}
+
+	public function test_a_product_that_is_not_in_the_trash_counts_as_restored(): void {
+		$this->posts[13] = self::post( 'product', 'draft' );
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertTrue( $result->success );
+		self::assertSame( array(), $this->untrashed );
+		self::assertSame( array(), $this->requests );
+	}
+
+	/**
+	 * What get_post() can find for a product that can't be restored.
+	 *
+	 * @return array<string, array{string|null}>
+	 */
+	public static function not_products(): array {
+		return array(
+			'gone'     => array( null ),
+			'a page'   => array( 'page' ),
+			'an order' => array( 'shop_order' ),
+		);
+	}
+
+	#[DataProvider( 'not_products' )]
+	public function test_a_restore_of_something_that_is_no_product_fails( ?string $type ): void {
+		if ( null !== $type ) {
+			$this->posts[13] = self::post( $type, 'trash' );
+		}
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( 'woocommerce_rest_product_invalid_id', $result->error_code );
+		self::assertSame( array(), $this->untrashed );
+	}
+
+	public function test_a_restore_the_keys_user_may_not_make_fails(): void {
+		$this->posts[13]  = self::post( 'product', 'trash' );
+		$this->can_delete = false;
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( 'woocommerce_rest_cannot_edit', $result->error_code );
+		self::assertSame( array(), $this->untrashed );
+	}
+
+	public function test_a_restore_wordpress_cannot_make_fails(): void {
+		$this->posts[13]      = self::post( 'product', 'trash' );
+		$this->untrash_status = null;
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( ChangeResult::WOOCOMMERCE_ERROR, $result->error_code );
+	}
+
+	public function test_a_restore_that_throws_is_a_plugin_error_and_the_user_is_back(): void {
+		$this->posts[13] = self::post( 'product', 'trash' );
+		Functions\when( 'wp_untrash_post' )->alias(
+			static function (): never {
+				throw new \RuntimeException( 'secret detail' );
+			}
+		);
+
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array( 'status' => 'publish' ) ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( ChangeResult::PLUGIN_ERROR, $result->error_code );
+		self::assertSame( 1, $this->current_user );
+		$this->assert_logs_hold_no_content();
+	}
+
+	public function test_a_restore_is_refused_without_its_product_id(): void {
+		$result = $this->applier()->apply( self::change( PulledChange::PRODUCT_RESTORE, array(), null ) );
+
+		self::assertFalse( $result->success );
+		self::assertSame( ChangeResult::INVALID_CHANGE, $result->error_code );
+		self::assertSame( array(), $this->untrashed );
 	}
 
 	// ------------------------------------------------------------------ the timeout cap

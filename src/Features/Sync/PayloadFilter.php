@@ -12,8 +12,9 @@ namespace Nyxify\Features\Sync;
 use Nyxify\Shared\Http\CoreClient;
 
 /**
- * Checks a pulled change against what the core can send (contract §5.1: `ProductFields`, `UpdateVariationRequest`,
- * images resolved to `src` links) and returns the body of its WooCommerce REST request.
+ * Checks a pulled change against what the core can send (contract §5.1 and §5.2: `ProductFields`,
+ * `UpdateVariationRequest`, category fields, images resolved to `src` links) and returns the body of its WooCommerce
+ * REST request.
  *
  * - Every field is checked by name, type and allowed values, nested ones included (categories and images); a field
  *   outside the whitelist, or of the wrong type, fails the change with `invalid_change`. The message names the
@@ -21,7 +22,11 @@ use Nyxify\Shared\Http\CoreClient;
  * - Image links must be https (http only where CoreClient allows plain http to the core), without whitespace.
  * - A create's `meta_data` is the plugin's own: `_nyxify_outbox_id` = the change's id, whatever the core sent (only
  *   that key is accepted from it).
- * - A delete carries no fields; an update or a variation edit at least one.
+ * - A delete (to the trash or for good) and a category delete carry no fields; an update, a variation edit and a
+ *   category update at least one; a restore only the status the product comes back with.
+ * - A category create's `meta_data` holds the outbox id too, but it is not part of the REST body: the applier keeps it
+ *   as the category's term meta.
+ * - A category's `image` of `null` (remove it) becomes `{"id": 0}`, the way WooCommerce's category endpoint removes one.
  */
 final class PayloadFilter {
 
@@ -44,6 +49,11 @@ final class PayloadFilter {
 	 * The longest image link (the core's limit).
 	 */
 	public const MAX_SRC_LENGTH = 2000;
+
+	/**
+	 * The most a category's `menu_order` can be (the core's limit).
+	 */
+	public const MAX_MENU_ORDER = 9999;
 
 	private const PRICE_PATTERN = '/^\d{1,16}(?:\.\d{1,4})?$/D';
 
@@ -75,15 +85,33 @@ final class PayloadFilter {
 				}
 				return $this->fields( $change, $this->product_checks(), true );
 			case PulledChange::PRODUCT_DELETE:
+			case PulledChange::PRODUCT_DELETE_PERMANENT:
 				if ( null === $change->woo_product_id ) {
 					return self::invalid( $change, 'Missing product id.' );
 				}
-				return array() === $change->payload ? array() : self::not_allowed( $change, array_keys( $change->payload ) );
+				return self::no_fields( $change );
+			case PulledChange::PRODUCT_RESTORE:
+				if ( null === $change->woo_product_id ) {
+					return self::invalid( $change, 'Missing product id.' );
+				}
+				return $this->fields( $change, array( 'status' => static fn( $value ): bool => in_array( $value, self::PRODUCT_STATUSES, true ) ), false );
 			case PulledChange::VARIATION_UPDATE:
 				if ( null === $change->woo_product_id || null === $change->woo_variation_id ) {
 					return self::invalid( $change, 'Missing product or variation id.' );
 				}
 				return $this->fields( $change, $this->variation_checks(), true );
+			case PulledChange::CATEGORY_CREATE:
+				return $this->category_create( $change );
+			case PulledChange::CATEGORY_UPDATE:
+				if ( null === $change->woo_category_id ) {
+					return self::invalid( $change, 'Missing category id.' );
+				}
+				return $this->category_body( $this->fields( $change, $this->category_checks(), true ) );
+			case PulledChange::CATEGORY_DELETE:
+				if ( null === $change->woo_category_id ) {
+					return self::invalid( $change, 'Missing category id.' );
+				}
+				return self::no_fields( $change );
 			default:
 				return self::invalid( $change, 'Unknown action.' );
 		}//end switch
@@ -111,6 +139,44 @@ final class PayloadFilter {
 				'value' => (string) $change->id,
 			),
 		);
+
+		return $body;
+	}
+
+	/**
+	 * A category create's body: the category fields (the outbox id in `meta_data` is the applier's, not the REST body's).
+	 *
+	 * @param PulledChange $change The change.
+	 * @return array<string, mixed>|ChangeResult
+	 */
+	private function category_create( PulledChange $change ): array|ChangeResult {
+		$checks              = $this->category_checks();
+		$checks['meta_data'] = static fn( $value ): bool => self::is_outbox_meta( $value );
+
+		$body = $this->fields( $change, $checks, false );
+		if ( $body instanceof ChangeResult ) {
+			return $body;
+		}
+
+		if ( ! isset( $body['name'] ) ) {
+			return self::invalid( $change, 'Missing category name.' );
+		}
+
+		unset( $body['meta_data'] );
+
+		return $this->category_body( $body );
+	}
+
+	/**
+	 * A category's request body: a removed image (`null`) is `{"id": 0}`.
+	 *
+	 * @param array<string, mixed>|ChangeResult $body The checked fields.
+	 * @return array<string, mixed>|ChangeResult
+	 */
+	private function category_body( array|ChangeResult $body ): array|ChangeResult {
+		if ( is_array( $body ) && array_key_exists( 'image', $body ) && null === $body['image'] ) {
+			$body['image'] = array( 'id' => 0 );
+		}
 
 		return $body;
 	}
@@ -161,6 +227,21 @@ final class PayloadFilter {
 			'backorders'         => static fn( $value ): bool => in_array( $value, self::BACKORDERS, true ),
 			'categories'         => static fn( $value ): bool => self::is_categories( $value ),
 			'images'             => fn( $value ): bool => $this->is_images( $value ),
+		);
+	}
+
+	/**
+	 * Checks of the category fields (the REST category object, only the fields to change).
+	 *
+	 * @return array<string, callable(mixed): bool>
+	 */
+	private function category_checks(): array {
+		return array(
+			'name'        => static fn( $value ): bool => is_string( $value ) && '' !== trim( $value ),
+			'parent'      => static fn( $value ): bool => is_int( $value ) && $value >= 0,
+			'description' => static fn( $value ): bool => is_string( $value ),
+			'menu_order'  => static fn( $value ): bool => is_int( $value ) && $value >= 0 && $value <= self::MAX_MENU_ORDER,
+			'image'       => fn( $value ): bool => null === $value || $this->is_image( $value ),
 		);
 	}
 
@@ -296,6 +377,16 @@ final class PayloadFilter {
 		}
 
 		return true;
+	}
+
+	/**
+	 * An empty body, or an `invalid_change` result naming the fields of a change that must carry none.
+	 *
+	 * @param PulledChange $change The change.
+	 * @return array<string, mixed>|ChangeResult
+	 */
+	private static function no_fields( PulledChange $change ): array|ChangeResult {
+		return array() === $change->payload ? array() : self::not_allowed( $change, array_keys( $change->payload ) );
 	}
 
 	/**
